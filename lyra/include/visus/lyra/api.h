@@ -97,6 +97,20 @@ LYRA_NAMESPACE_BEGIN _LYRA_NAMESPACE_BEGIN(detail)
 
 
 #if defined(_WIN32)
+
+#if defined(LYRA_EXPORTS)
+#define LYRA_API __declspec(dllexport)
+#else /* defined(LYRA_EXPORTS) */
+#define LYRA_API __declspec(dllimport)
+#endif /* defined(LYRA_EXPORTS) */
+
+#else /* defined(_WIN32) */
+
+#define LYRA_API
+
+#endif /* defined(_WIN32) */
+
+#if defined(_WIN32)
 #include <sal.h>
 #include <Windows.h>
 
