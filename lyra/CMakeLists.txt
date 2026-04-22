@@ -19,7 +19,7 @@ file(GLOB_RECURSE SourceFiles RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "${SourceDi
 
 source_group("Header Files\\include" FILES  ${PublicHeaderFiles})
 source_group("Header Files\\src" FILES  ${PrivateHeaderFiles})
-source_group("Source Files" FILES  ${SourceFiles})
+source_group("Source Files\\src" FILES  ${SourceFiles})
 
 # Define the output.
 add_library(${PROJECT_NAME} SHARED ${PublicHeaderFiles} ${PrivateHeaderFiles} ${SourceFiles})
