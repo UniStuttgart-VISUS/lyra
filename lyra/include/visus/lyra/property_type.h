@@ -8,6 +8,9 @@
 #define _LYRA_PROPERTY_TYPE_H
 #pragma once
 
+#include <cinttypes>
+#include <string>
+
 #include "visus/lyra/dispatch_list.h"
 
 
@@ -57,6 +60,134 @@ enum class property_type {
     /// </summary>
     float32
 };
+
+
+/// <summary>
+/// Derives the C/C++ type for a <see cref="property_type" />.
+/// </summary>
+/// <typeparam name="Type">The property type to reflect on.</typeparam>
+template<property_type Type> struct property_type_type;
+
+/// <summary>
+/// Specialisation for <see cref="property_type::none" />.
+/// </summary>
+template<> struct property_type_type<property_type::none> final {
+    typedef std::nullptr_t type;
+};
+
+/// <summary>
+/// Specialisation for <see cref="property_type::string" />.
+/// </summary>
+template<> struct property_type_type<property_type::string> final {
+    typedef std::string type;
+};
+
+/// <summary>
+/// Specialisation for <see cref="property_type::properties" />.
+/// </summary>
+template<> struct property_type_type<property_type::properties> final {
+    typedef class property_set type;
+};
+
+/// <summary>
+/// Specialisation for <see cref="property_type::boolean" />.
+/// </summary>
+template<> struct property_type_type<property_type::boolean> final {
+    typedef bool type;
+};
+
+/// <summary>
+/// Specialisation for <see cref="property_type::int32" />.
+/// </summary>
+template<> struct property_type_type<property_type::int32> final {
+    typedef std::int32_t type;
+};
+
+/// <summary>
+/// Specialisation for <see cref="property_type::uint32" />.
+/// </summary>
+template<> struct property_type_type<property_type::uint32> final {
+    typedef std::uint32_t type;
+};
+
+/// <summary>
+/// Specialisation for <see cref="property_type::float32" />.
+/// </summary>
+template<> struct property_type_type<property_type::float32> final {
+    typedef float type;
+};
+
+
+/// <summary>
+/// Derives the C/C++ type for a <see cref="property_type" />.
+/// </summary>
+/// <typeparam name="Type">The property type to reflect on.</typeparam>
+template<property_type Type>
+using property_type_type_t = typename property_type_type<Type>::type;
+
+
+/// <summary>
+/// Derives the <see cref="property_type" /> from a C++ type.
+/// </summary>
+/// <typeparam name="TType">The C/C++ type to reflect on.</typeparam>
+template<class TType> struct property_type_value;
+
+/// <summary>
+/// Specialisation for <see cref="std::nullptr_t" />.
+/// </summary>
+template<> struct property_type_value<std::nullptr_t> final {
+    static constexpr property_type value = property_type::none;
+};
+
+/// <summary>
+/// Specialisation for <see cref="std::string" />.
+/// </summary>
+template<> struct property_type_value<std::string> final {
+    static constexpr property_type value = property_type::string;
+};
+
+/// <summary>
+/// Specialisation for <see cref="property_set" />.
+/// </summary>
+template<> struct property_type_value<class property_set> final {
+    static constexpr property_type value = property_type::properties;
+};
+
+/// <summary>
+/// Specialisation for <see langword="bool" />.
+/// </summary>
+template<> struct property_type_value<bool> final {
+    static constexpr property_type value = property_type::boolean;
+};
+
+/// <summary>
+/// Specialisation for <see cref="std::int32_t" />.
+/// </summary>
+template<> struct property_type_value<std::int32_t> final {
+    static constexpr property_type value = property_type::int32;
+};
+
+/// <summary>
+/// Specialisation for <see cref="std::uint32_t" />.
+/// </summary>
+template<> struct property_type_value<std::uint32_t> final {
+    static constexpr property_type value = property_type::uint32;
+};
+
+/// <summary>
+/// Specialisation for <see langword="float" />.
+/// </summary>
+template<> struct property_type_value<float> final {
+    static constexpr property_type value = property_type::float32;
+};
+
+
+/// <summary>
+/// Allows for deriving the <see cref="property_type" /> from a C++ type.
+/// </summary>
+/// <typeparam name="TType">The C/C++ type to reflect on.</typeparam>
+template<class TType>
+constexpr auto property_type_value_v = property_type_value<TType>::value;
 
 LYRA_NAMESPACE_END
 

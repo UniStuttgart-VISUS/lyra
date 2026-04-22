@@ -104,6 +104,10 @@ LYRA_NAMESPACE::result_type LYRA_NAMESPACE::to_utf8(
         _Inout_ std::size_t& cnt_dst,
         _In_reads_or_z_(cnt_src) const char32_t *src,
         _In_ int cnt_src) {
+    constexpr auto utf32 = (endian::system == endian::big)
+        ? "UTF-32-BE"
+        : "UTF-32-LE";
+
     if (dst == nullptr) {
         // Make sure that the output buffer size is zero if the output
         // buffer is invalid, such that we get the required buffer size.
@@ -126,25 +130,18 @@ LYRA_NAMESPACE::result_type LYRA_NAMESPACE::to_utf8(
     assert(cnt_src <= (std::numeric_limits<std::int32_t>::max)());
 
     auto status = U_ZERO_ERROR;
-    cnt_dst = ::ucnv_convert(
-        "UTF-8",
-        (endian::system == endian::big) ? "UTF-32-BE" : "UTF-32-LE",
+    cnt_dst = ::ucnv_convert("UTF-8", utf32,
         reinterpret_cast<char *>(dst),
         static_cast<std::int32_t>(cnt_dst),
         reinterpret_cast<const char *>(src),
         static_cast<std::int32_t>(cnt_src),
         &status);
 
-    switch (status) {
-        case U_ZERO_ERROR:
-            return detail::results::success;
-
-        case U_BUFFER_OVERFLOW_ERROR:
-            return detail::results::insufficient_buffer;
-
-        default:
-            return U_FAILURE(status)
-                ? detail::results::catastrophic_failure
-                : detail::results::success;
+    if (status == U_BUFFER_OVERFLOW_ERROR) {
+        return detail::results::insufficient_buffer;
     }
+
+    return U_FAILURE(status)
+        ? detail::results::catastrophic_failure
+        : detail::results::success;
 }

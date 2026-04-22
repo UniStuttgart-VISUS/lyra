@@ -22,7 +22,7 @@
 #define _LYRA_RESULT(name, win, lin) constexpr result_type name = (win)
 #define _LYRA_W32(code) HRESULT_FROM_WIN32(code)
 #else /* defined(_WIN32) */
-#define _LYRA_RESULT(name win, lin) constexpr result_type name = (lin)
+#define _LYRA_RESULT(name, win, lin) constexpr result_type name = (lin)
 #define _LYRA_W32(code)
 #endif /* defined(_WIN32) */
 

@@ -11,7 +11,7 @@ include(FetchContent)
 include(GNUInstallDirs)
 
 # User-configurable options.
-cmake_dependent_option(LYRA_BuildTests "Build unit tests." ON WIN32 OFF)
+option(LYRA_BuildTests "Build unit tests." OFF)
 cmake_dependent_option(LYRA_Profile "Build with profiling information." OFF WIN32 OFF)
 
 # Dependencies

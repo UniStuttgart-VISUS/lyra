@@ -12,6 +12,26 @@
       "ctestCommandArgs": "",
       "cmakeExecutable": "C:/Program Files/CMake/bin/cmake.exe",
       "intelliSenseMode": "windows-msvc-x64"
+    },
+    {
+      "name": "WSL-Clang-Debug",
+      "generator": "Ninja",
+      "configurationType": "Debug",
+      "buildRoot": "${projectDir}\\out\\build\\${name}",
+      "installRoot": "${projectDir}\\out\\install\\${name}",
+      "cmakeExecutable": "cmake",
+      "cmakeCommandArgs": "",
+      "buildCommandArgs": "",
+      "ctestCommandArgs": "",
+      "inheritEnvironments": [ "linux_clang_x64" ],
+      "wslPath": "${defaultWSLPath}",
+      "variables": [
+        {
+          "name": "LYRA_BuildTests",
+          "value": "True",
+          "type": "BOOL"
+        }
+      ]
     }
   ]
 }
