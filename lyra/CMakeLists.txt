@@ -44,7 +44,7 @@ endif ()
 
 # Publish the private headers for testing.
 if (LYRA_BuildTests)
-    set(LyraTestHeaders ${PrivateHeaderFiles} PARENT_SCOPE)
+    set(LyraTestInclude ${SourceDir} PARENT_SCOPE)
 endif ()
 
 # Install

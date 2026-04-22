@@ -10,6 +10,7 @@
 
 #include <cstdlib>
 
+#include "visus/lyra/result_type.h"
 #include "visus/lyra/unicode_type.h"
 
 
@@ -23,15 +24,13 @@ LYRA_NAMESPACE_BEGIN
 /// <param name="src"></param>
 /// <param name="cnt_src"></param>
 /// <returns></returns>
-std::size_t LYRA_API to_utf8(
+result_type LYRA_API to_utf8(
     _Out_writes_to_opt_(cnt_dst, return) char *dst,
-    _In_ std::size_t cnt_dst,
+    _Inout_ std::size_t& cnt_dst,
     _In_reads_or_z_(cnt_src) const unicode_type *src,
     _In_ int cnt_src = -1);
 
-
 #if (defined(_WIN32) && (NTDDI_VERSION >= NTDDI_WIN10_RS2))
-
 /// <summary>
 /// Converts a string from UTF-16 to UTF-8.
 /// </summary>
@@ -40,21 +39,18 @@ std::size_t LYRA_API to_utf8(
 /// <param name="src"></param>
 /// <param name="cnt_src"></param>
 /// <returns></returns>
-inline std::size_t LYRA_API to_utf8(
+inline result_type LYRA_API to_utf8(
         _Out_writes_to_opt_(cnt_dst, return) char *dst,
-        _In_ const std::size_t cnt_dst,
+        _Inout_ std::size_t& cnt_dst,
         _In_reads_or_z_(cnt_src) const wchar_t *src,
         _In_ const int cnt_src = -1) {
     static_assert(sizeof(wchar_t) == sizeof(unicode_type),
         "wchar_t must be the same size as unicode_type");
-    return to_utf8(
-        dst, cnt_dst,
-        reinterpret_cast<const unicode_type *>(src), cnt_src);
+    auto s = reinterpret_cast<const unicode_type *>(src);
+    return to_utf8(dst, cnt_dst, s, cnt_src);
 }
-
 #endif /* (defined(_WIN32) && (NTDDI_VERSION >= NTDDI_WIN10_RS2)) */
 
-
 /// <summary>
 /// Converts a string from UTF-32 to UTF-8.
 /// </summary>
@@ -63,15 +59,13 @@ inline std::size_t LYRA_API to_utf8(
 /// <param name="src"></param>
 /// <param name="cnt_src"></param>
 /// <returns></returns>
-std::size_t LYRA_API to_utf8(
+result_type LYRA_API to_utf8(
     _Out_writes_to_opt_(cnt_dst, return) char *dst,
-    _In_ std::size_t cnt_dst,
+    _Inout_ std::size_t& cnt_dst,
     _In_reads_or_z_(cnt_src) const char32_t *src,
-    _In_ const int cnt_src = -1);
-
+    _In_ int cnt_src = -1);
 
 #if !defined(_WIN32)
-
 /// <summary>
 /// Converts a string from UTF-32 to UTF-8.
 /// </summary>
@@ -80,18 +74,16 @@ std::size_t LYRA_API to_utf8(
 /// <param name="src"></param>
 /// <param name="cnt_src"></param>
 /// <returns></returns>
-inline std::size_t LYRA_API to_utf8(
+inline result_type LYRA_API to_utf8(
         _Out_writes_to_opt_(cnt_dst, return) char *dst,
-        _In_ const std::size_t cnt_dst,
+        _In_ std::size_t& cnt_dst,
         _In_reads_or_z_(cnt_src) const wchar_t *src,
         _In_ const int cnt_src = -1) {
     static_assert(sizeof(wchar_t) == sizeof(char32_t),
         "wchar_t must be the same size as unicode_type");
-    return to_utf8(
-        dst, cnt_dst,
-        reinterpret_cast<const char32_t *>(src), cnt_src);
+    auto s = reinterpret_cast<const char32_t *>(src);
+    return to_utf8(dst, cnt_dst, s, cnt_src);
 }
-
 #endif /* !defined(_WIN32) */
 
 LYRA_NAMESPACE_END

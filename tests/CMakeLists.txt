@@ -4,20 +4,20 @@
 
 project(tests)
 
-# Collect all test sources to be run by a single exectuable.
+
+# Collect all test cases.
 file(GLOB_RECURSE TestFiles RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "*.cpp")
 
-create_test_sourcelist(Tests ${PROJECT_NAME}.cpp ${TestFiles})
-
-# Create the test executable running all the tests in the source list.
-add_executable(${PROJECT_NAME} ${Tests})
+# Create the test executable.
+add_executable(${PROJECT_NAME} ${TestFiles})
+target_include_directories(${PROJECT_NAME} PRIVATE ${LyraTestInclude})
 target_link_libraries(${PROJECT_NAME} PRIVATE sysinfo)
+target_link_libraries(${PROJECT_NAME} PRIVATE GTest::gtest_main)
 
 # Grab the library and copy it to the test output directory.
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:sysinfo> $<TARGET_FILE_DIR:${PROJECT_NAME}>)
 
-foreach (t ${TestFiles})
-    get_filename_component(TestName ${t} NAME_WE)
-    add_test(NAME ${TestName} COMMAND ${PROJECT_NAME} ${TestName})
-endforeach ()
+# Discover the test cases such that the Test Explorer knows about it.
+include(GoogleTest)
+gtest_discover_tests(${PROJECT_NAME})

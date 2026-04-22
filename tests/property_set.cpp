@@ -4,10 +4,12 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+#include <gtest/gtest.h>
+
 #include "visus/lyra/property_set.h"
 
 
-int test_property_set_ctor(int, char *[]) {
+TEST(property_set, ctor) {
     LYRA_NAMESPACE::property_set properties;
-    return properties.empty() ? 0 : 1;
+    EXPECT_TRUE(properties.empty());
 }

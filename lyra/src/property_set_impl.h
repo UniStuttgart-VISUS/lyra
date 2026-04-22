@@ -4,6 +4,10 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+#if !defined(_LYRA_PROPERTY_SET_IMPL_H)
+#define _LYRA_PROPERTY_SET_IMPL_H
+#pragma once
+
 #include <variant>
 #include <vector>
 
@@ -18,3 +22,5 @@ LYRA_DETAIL_NAMESPACE_BEGIN
 struct property_set_impl final { };
 
 LYRA_DETAIL_NAMESPACE_END
+
+#endif /* !defined(_LYRA_PROPERTY_SET_IMPL_H) */
