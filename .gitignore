@@ -13,3 +13,5 @@ CMakeUserPresets.json
 CppProperties.json
 
 /.vs/*
+/_build*
+/out/*

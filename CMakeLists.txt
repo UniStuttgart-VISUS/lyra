@@ -17,9 +17,10 @@ cmake_dependent_option(LYRA_Profile "Build with profiling information." OFF WIN3
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lyra)
 
 # Unit tests
-#if (SLEIPNIR_BuildTests)
-#    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/test)
-#endif ()
+if (LYRA_BuildTests)
+    enable_testing()
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tests)
+endif ()
 
 # A demo application
 #add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/demo)

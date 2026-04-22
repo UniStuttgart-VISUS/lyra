@@ -32,7 +32,7 @@ BOOL WINAPI DllMain(
             break;
 
         case DLL_PROCESS_DETACH:
-            if (peserved == nullptr) {
+            if (reserved == nullptr) {
             }
             break;
     }

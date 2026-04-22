@@ -2,7 +2,7 @@
 # Copyright © 2026 Visualisierungsinstitut der Universität Stuttgart.
 # Licensed under the MIT licence. See LICENCE file for details.
 
-project(liblyra)
+project(sysinfo)
 
 
 # Search for LibICU for handling different encodings.
@@ -25,16 +25,39 @@ source_group("Source Files" FILES  ${SourceFiles})
 add_library(${PROJECT_NAME} SHARED ${PublicHeaderFiles} ${PrivateHeaderFiles} ${SourceFiles})
 
 # Configure the compiler
-target_include_directories(${PROJECT_NAME} PUBLIC ${IncludeDir})
-target_include_directories(${PROJECT_NAME} PRIVATE ${SourceDir})
+target_include_directories(${PROJECT_NAME}
+    PUBLIC
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+        $<BUILD_INTERFACE:${IncludeDir}>
+    PRIVATE
+        $<BUILD_INTERFACE:${SourceDir}>)
+target_compile_definitions(${PROJECT_NAME} PRIVATE LYRA_EXPORTS)
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_EXTENSIONS OFF)
 
 # Configure the linker.
 if (WIN32)
-    target_link_libraries(${PROJECT_NAME} INTERFACE icu)
+    target_link_libraries(${PROJECT_NAME} PRIVATE icu)
 else ()
-    target_link_libraries(${PROJECT_NAME} INTERFACE ICU::uc ICU::data)
+    target_link_libraries(${PROJECT_NAME} PRIVATE ICU::uc ICU::data)
+endif ()
+
+# Publish the private headers for testing.
+if (LYRA_BuildTests)
+    set(LyraTestHeaders ${PrivateHeaderFiles} PARENT_SCOPE)
 endif ()
 
 # Install
+install(TARGETS ${PROJECT_NAME}
+    EXPORT ${PROJECT_NAME}Targets
+    #PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
 install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+install(EXPORT ${PROJECT_NAME}Targets
+    FILE ${PROJECT_NAME}Config.cmake
+    #NAMESPACE ${PROJECT_NAME}::
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})

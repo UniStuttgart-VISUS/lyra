@@ -8,6 +8,8 @@
 
 #include <memory>
 
+#include "property_set_impl.h"
+
 
 /*
  * LYRA_NAMESPACE::property_set::property_set
