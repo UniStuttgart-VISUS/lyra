@@ -21,7 +21,7 @@ namespace detail { void move(property_set&, property_set_impl&&); }
 /// <summary>
 /// Represents a group of properties about the system.
 /// </summary>
-class LYRA_API property_set final {
+class LYRA_API property_set {
 
 public:
 
