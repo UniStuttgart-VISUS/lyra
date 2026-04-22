@@ -1,2 +1,1 @@
-# lyra
-Project Lyra
+# Project Lyra
