@@ -8,9 +8,12 @@
 #define _LYRA_PROPERTY_SET_IMPL_H
 #pragma once
 
-#include <vector>
+#include <algorithm>
+#include <cassert>
+#include <map>
 #include <string>
 
+#include "visus/lyra/property_set.h"
 #include "visus/lyra/property_variant.h"
 
 
@@ -33,15 +36,40 @@ struct property_set_impl final {
     typedef property_variant value_type;
 
     /// <summary>
-    /// Stores the names of the properties.
+    /// Stores the properties.
     /// </summary>
-    std::vector<key_type> keys;
+    std::map<key_type, value_type> values;
 
     /// <summary>
-    /// Stores the values in the same order as the <see cref="keys" />.
+    /// Convenience method for adding a new property to the set.
     /// </summary>
-    std::vector<value_type> values;
+    /// <typeparam name="TValue"></typeparam>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
+    template<class TValue> inline void add(
+            _In_z_ const key_type::value_type *key,
+            _In_ const TValue& value) {
+        assert(key != nullptr);
+        assert(this->values.find(key) == this->values.cend());
+        this->values.emplace(key, value);
+    }
 };
+
+
+/// <summary>
+/// Moves the implementation into a <see cref="property_set" />.
+/// </summary>
+/// <remarks>
+/// This function is intended for implementors that want to construct a publicly
+/// accessible <see cref="property_set" /> after filling an implementation.
+/// </remarks>
+/// <param name="dst"></param>
+/// <param name="src"></param>
+void move(_In_ property_set& dst, _Inout_ property_set_impl&& src) {
+    assert(dst._impl == nullptr);
+    dst._impl = new property_set_impl();
+    dst._impl->values = std::move(src.values);
+}
 
 LYRA_DETAIL_NAMESPACE_END
 

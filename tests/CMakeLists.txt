@@ -13,6 +13,7 @@ add_executable(${PROJECT_NAME} ${TestFiles})
 target_include_directories(${PROJECT_NAME} PRIVATE ${LyraTestInclude})
 target_link_libraries(${PROJECT_NAME} PRIVATE sysinfo)
 target_link_libraries(${PROJECT_NAME} PRIVATE GTest::gtest_main)
+target_link_libraries(${PROJECT_NAME} PRIVATE gmock_main)
 
 # Grab the library and copy it to the test output directory.
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
