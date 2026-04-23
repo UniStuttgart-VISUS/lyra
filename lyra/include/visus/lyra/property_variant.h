@@ -10,10 +10,30 @@
 
 #include <variant>
 
+#include "visus/lyra/boolean.h"
+#include "visus/lyra/property_set.h"
 #include "visus/lyra/property_type.h"
 
 
 LYRA_DETAIL_NAMESPACE_BEGIN
+
+/// <summary>
+/// Creates a vectorised version of a <typeparamref name="TType" />.
+/// </summary>
+/// <typeparam name="TType"></typeparam>
+template<class TType> struct make_vector_property final {
+    typedef std::vector<TType> type;
+};
+
+/// <summary>
+/// Forces Booleans to be wrapped with our <see cref="boolean" /> wrapper such
+/// that the bitfield specialisation is not used, which would prevent the
+/// callers from accessing the stored values via pointer arithmetic.
+/// </summary>
+template<> struct make_vector_property<bool> final {
+    typedef std::vector<boolean> type;
+};
+
 
 /// <summary>
 /// Derives a variant type from a dispatch list of
@@ -28,7 +48,8 @@ template<class TDispatch> struct make_property_variant;
 /// <typeparam name="Types"></typeparam>
 template<property_type... Types>
 struct make_property_variant<property_type_dispatch_list<Types...>> final {
-    typedef std::variant<property_type_type_t<Types>...> type;
+    typedef std::variant<property_type_t<Types>...,
+        typename make_vector_property<property_type_t<Types>>::type...> type;
 };
 
 LYRA_DETAIL_NAMESPACE_END

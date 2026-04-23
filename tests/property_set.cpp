@@ -9,6 +9,7 @@
 
 #include "property_set_impl.h"
 #include "visus/lyra/property_set.h"
+#include "visus/lyra/version.h"
 
 
 TEST(property_set, default_ctor) {
@@ -133,6 +134,7 @@ TEST(property_set, single_get) {
 
     EXPECT_TRUE(properties.get(value, size, type, "foo"));
     EXPECT_EQ(type, LYRA_NAMESPACE::property_type::string);
+    EXPECT_STREQ("bar", static_cast<const char *>(value));
 
     EXPECT_FALSE(properties.get(value, size, type, "answer"));
 
@@ -153,9 +155,29 @@ TEST(property_set, multiple_get) {
 
     EXPECT_TRUE(properties.get(value, size, type, "foo"));
     EXPECT_EQ(type, LYRA_NAMESPACE::property_type::string);
+    EXPECT_STREQ("bar", static_cast<const char *>(value));
 
     EXPECT_TRUE(properties.get(value, size, type, "answer"));
     EXPECT_EQ(type, LYRA_NAMESPACE::property_type::int32);
+    EXPECT_EQ(42, *static_cast<const std::int32_t *>(value));
 
     EXPECT_FALSE(properties.get(value, size, type, nullptr));
+}
+
+
+TEST(property_set, version_get) {
+    LYRA_NAMESPACE::property_set properties;
+    LYRA_DETAIL_NAMESPACE::property_set_impl impl;
+    impl.add<LYRA_NAMESPACE::version::major>(42);
+    impl.add<LYRA_NAMESPACE::version::minor>(43);
+    impl.add<LYRA_NAMESPACE::version::patch>(44);
+    LYRA_DETAIL_NAMESPACE::move(properties, std::move(impl));
+
+    EXPECT_NE(properties.get<LYRA_NAMESPACE::version::major>(), nullptr);
+    EXPECT_EQ(*properties.get<LYRA_NAMESPACE::version::major>(), 42);
+    EXPECT_NE(properties.get<LYRA_NAMESPACE::version::minor>(), nullptr);
+    EXPECT_EQ(*properties.get<LYRA_NAMESPACE::version::minor>(), 43);
+    EXPECT_NE(properties.get<LYRA_NAMESPACE::version::patch>(), nullptr);
+    EXPECT_EQ(*properties.get<LYRA_NAMESPACE::version::patch>(), 44);
+    EXPECT_EQ(properties.get<LYRA_NAMESPACE::version::prerelease>(), nullptr);
 }

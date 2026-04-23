@@ -50,7 +50,7 @@ bool LYRA_NAMESPACE::property_set::empty(void) const noexcept {
  */
 bool LYRA_NAMESPACE::property_set::get(
         _Out_ value_type& dst,
-        _Out_ std::size_t& length,
+        _Out_ std::size_t& cnt,
         _Out_ property_type& type,
         _In_z_ const char *name) const noexcept {
     if ((this->_impl == nullptr) || (name == nullptr)) {
@@ -64,9 +64,10 @@ bool LYRA_NAMESPACE::property_set::get(
 
     std::visit([&](auto&& v) {
             typedef std::decay_t<decltype(v)> value_type;
-            dst = std::addressof(v);
-            length = sizeof(value_type);
-            type = property_type_value_v<value_type>;
+            typedef detail::property_traits<value_type> traits;
+            dst = traits::data(v);
+            cnt = traits::count(v);
+            type = traits::value;
         }, it->second);
 
     return true;

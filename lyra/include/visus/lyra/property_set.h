@@ -21,14 +21,14 @@ namespace detail { void move(property_set&, property_set_impl&&); }
 /// <summary>
 /// Represents a group of properties about the system.
 /// </summary>
-class LYRA_API property_set {
+class LYRA_API property_set final {
 
 public:
 
     /// <summary>
     /// The type-erased value type used to represent a property.
     /// </summary>
-    typedef void *value_type;
+    typedef const void *value_type;
 
     /// <summary>
     /// Initialises a new instance.
@@ -72,12 +72,40 @@ public:
     /// Gets a pointer to the value of the property with the specified name.
     /// </summary>
     /// <param name="dst"></param>
-    /// <param name="length"></param>
+    /// <param name="cnt"></param>
     /// <param name="type"></param>
     /// <param name="name"></param>
     /// <returns></returns>
-    bool get(_Out_ value_type& dst, _Out_ std::size_t& length,
+    bool get(_Out_ value_type& dst, _Out_ std::size_t& cnt,
         _Out_ property_type& type, _In_z_ const char *name) const noexcept;
+
+    /// <summary>
+    /// Gets a pointer to the property identified by the
+    /// <typeparam name="TProp" /> descriptor if the described property is in
+    /// the property set.
+    /// </summary>
+    /// <typeparam name="TProp"></typeparam>
+    /// <param name="cnt"></param>
+    /// <returns></returns>
+    template<class TProp> _Ret_maybenull_
+    typename detail::property_traits<typename TProp::type>::pointer get(
+        _Out_ std::size_t& cnt) const noexcept;
+
+    /// <summary>
+/// Gets a pointer to the property identified by the
+    /// <typeparam name="TProp" /> descriptor if the described property is in
+    /// the property set.
+    /// </summary>
+    /// <typeparam name="TProp"></typeparam>
+    /// <param name=""></param>
+    /// <returns></returns>
+    template<class TProp> _Ret_maybenull_
+    inline typename detail::property_traits<typename TProp::type>::pointer get(
+            void) const noexcept {
+        std::size_t cnt;
+        auto retval = this->get<TProp>(cnt);
+        return (cnt > 0) ? retval : nullptr;
+    }
 
     /// <summary>
     /// Answer the number (and names) of the properties in the set.
@@ -118,5 +146,7 @@ private:
 };
 
 LYRA_NAMESPACE_END
+
+#include "visus/lyra/property_set.inl"
 
 #endif /* !defined(_LYRA_PROPERTY_SET_H) */

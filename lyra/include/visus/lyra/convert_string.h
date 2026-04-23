@@ -8,7 +8,9 @@
 #define _LYRA_CONVERT_STRING_H
 #pragma once
 
+#include <algorithm>
 #include <cstdlib>
+#include <string>
 
 #include "visus/lyra/result_type.h"
 #include "visus/lyra/unicode_type.h"
@@ -85,6 +87,48 @@ inline result_type LYRA_API to_utf8(
     return to_utf8(dst, cnt_dst, s, cnt_src);
 }
 #endif /* !defined(_WIN32) */
+
+/// <summary>
+/// Converts UTF-16 or UTF-32 strings to UTF-8.
+/// </summary>
+/// <typeparam name="TTraits"></typeparam>
+/// <typeparam name="TAlloc"></typeparam>
+/// <typeparam name="TChar"></typeparam>
+/// <param name="dst"></param>
+/// <param name="src"></param>
+/// <param name="cnt_src"></param>
+/// <returns></returns>
+template<class TTraits, class TAlloc, class TChar>
+result_type to_utf8(
+        _Out_ std::basic_string<char, TTraits, TAlloc>& dst,
+        _In_reads_or_z_(cnt_src) const TChar *src,
+        _In_ int cnt_src = -1) {
+    std::size_t cnt = 0;
+    to_utf8(nullptr, cnt, src, cnt_src);
+    dst.resize(cnt);
+    const auto retval = to_utf8(dst.data(), cnt, src, cnt_src);
+    const auto end = std::remove(dst.begin(), dst.end(), static_cast<char>(0));
+    dst.erase(end, dst.end());
+    return retval;
+}
+
+/// <summary>
+/// Converts UTF-16 or UTF-32 strings to UTF-8.
+/// </summary>
+/// <typeparam name="TChar"></typeparam>
+/// <param name="dst"></param>
+/// <param name="src"></param>
+/// <param name="cnt_src"></param>
+/// <returns>The converted string, or an empty string on error.</returns>
+template<class TChar> inline std::string to_utf8(
+        _In_reads_or_z_(cnt_src) const TChar *src,
+        _In_ int cnt_src = -1) {
+    std::string retval;
+    if (LYRA_FAILED(to_utf8(retval, src, cnt_src))) {
+        retval.clear();
+    }
+    return retval;
+}
 
 LYRA_NAMESPACE_END
 

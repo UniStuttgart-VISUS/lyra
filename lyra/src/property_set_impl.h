@@ -13,6 +13,7 @@
 #include <map>
 #include <string>
 
+#include "visus/lyra/convert_string.h"
 #include "visus/lyra/property_set.h"
 #include "visus/lyra/property_variant.h"
 
@@ -22,7 +23,7 @@ LYRA_DETAIL_NAMESPACE_BEGIN
 /// <summary>
 /// Implementation details of the <see cref="property_set" />.
 /// </summary>
-struct property_set_impl final {
+struct LYRA_API property_set_impl final {
 
     /// <summary>
     /// The key type, which are UTF-8-encoded property names.
@@ -48,11 +49,46 @@ struct property_set_impl final {
     /// <param name="value"></param>
     template<class TValue> inline void add(
             _In_z_ const key_type::value_type *key,
-            _In_ const TValue& value) {
+            _In_ TValue&& value) {
         assert(key != nullptr);
         assert(this->values.find(key) == this->values.cend());
-        this->values.emplace(key, value);
+        this->values.emplace(key, std::forward<TValue>(value));
     }
+
+    /// <summary>
+    /// Adds a wide string property, converting its value to UTF-8 first.
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
+    inline void add(
+            _In_z_ const key_type::value_type *key,
+            _In_z_ const wchar_t *value) {
+        this->add(key, to_utf8(value));
+    }
+
+    /// <summary>
+    /// Adds a UTF-16 string property, converting its value to UTF-8 first.
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
+    inline void add(
+            _In_z_ const key_type::value_type *key,
+            _In_z_ const char16_t *value) {
+        this->add(key, to_utf8(value));
+    }
+
+    /// <summary>
+    /// Convenience method for adding a new property using a property
+    /// descriptor, which will enforce the expected type and set the correct
+    /// name implicitly.
+    /// </summary>
+    /// <typeparam name="TProp"></typeparam>
+    /// <param name="value"></param>
+    template<class TProp>
+    inline void add(_In_ typename TProp::type&& value) {
+        this->add(TProp::name, std::forward<typename TProp::type>(value));
+    }
+
 };
 
 

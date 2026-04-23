@@ -38,6 +38,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES CXX_EXTENSIONS OFF)
 # Configure the linker.
 if (WIN32)
     target_link_libraries(${PROJECT_NAME} PRIVATE icu)
+    target_link_libraries(${PROJECT_NAME} PRIVATE WIL::WIL)
 else ()
     target_link_libraries(${PROJECT_NAME} PRIVATE ICU::uc ICU::data)
 endif ()

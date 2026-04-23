@@ -19,11 +19,19 @@ LYRA_NAMESPACE_BEGIN
 /// </summary>
 typedef HRESULT result_type;
 
+#define LYRA_FAILED(hr) FAILED(hr)
+
+#define LYRA_SUCCEEDED(hr) SUCCEEDED(hr)
+
 #else /* defined(_WIN32) */
 /// <summary>
 /// The type used to indicate the result of an operation.
 /// </summary>
 typedef int result_type;
+
+#define LYRA_FAILED(res) ((res) != 0)
+
+#define LYRA_SUCCEEDED(res) ((res) == 0)
 
 #endif /* defined(_WIN32) */
 
