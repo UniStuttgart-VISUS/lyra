@@ -7,9 +7,13 @@
 #include <gtest/gtest.h>
 
 #include "visus/lyra/operating_system.h"
+#include "visus/lyra/version.h"
 
 
 TEST(operating_system, version) {
     auto result = LYRA_NAMESPACE::operating_system::get_version();
     EXPECT_TRUE(!result.empty());
+    EXPECT_NE(result.get<LYRA_NAMESPACE::version::major>(), nullptr);
+    EXPECT_NE(result.get<LYRA_NAMESPACE::version::minor>(), nullptr);
+    EXPECT_NE(result.get<LYRA_NAMESPACE::version::patch>(), nullptr);
 }
