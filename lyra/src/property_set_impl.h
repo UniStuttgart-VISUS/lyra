@@ -23,7 +23,7 @@ LYRA_DETAIL_NAMESPACE_BEGIN
 /// <summary>
 /// Implementation details of the <see cref="property_set" />.
 /// </summary>
-struct LYRA_API property_set_impl final {
+struct LYRA_TEST_API property_set_impl final {
 
     /// <summary>
     /// The key type, which are UTF-8-encoded property names.
@@ -101,11 +101,9 @@ struct LYRA_API property_set_impl final {
 /// </remarks>
 /// <param name="dst"></param>
 /// <param name="src"></param>
-void move(_In_ property_set& dst, _Inout_ property_set_impl&& src) {
-    assert(dst._impl == nullptr);
-    dst._impl = new property_set_impl();
-    dst._impl->values = std::move(src.values);
-}
+/// <returns><paramref name="dst" />.</returns>
+LYRA_TEST_API property_set& move(_In_ property_set& dst,
+    _Inout_ property_set_impl&& src);
 
 LYRA_DETAIL_NAMESPACE_END
 

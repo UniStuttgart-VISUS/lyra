@@ -14,8 +14,10 @@
 LYRA_NAMESPACE_BEGIN
 
 // Forward declarations.
-namespace detail { struct property_set_impl; }
-namespace detail { void move(property_set&, property_set_impl&&); }
+namespace detail { 
+    struct property_set_impl;
+    LYRA_TEST_API property_set& move(property_set&, property_set_impl&&);
+}
 
 
 /// <summary>
@@ -142,7 +144,8 @@ private:
 
     detail::property_set_impl *_impl;
 
-    friend void detail::move(property_set&, detail::property_set_impl&&);
+    friend property_set& detail::move(property_set&,
+        detail::property_set_impl&&);
 };
 
 LYRA_NAMESPACE_END

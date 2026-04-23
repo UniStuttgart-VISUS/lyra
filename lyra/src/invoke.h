@@ -20,14 +20,14 @@ LYRA_DETAIL_NAMESPACE_BEGIN
 /// </summary>
 /// <param name="cmd">The command to be invoked.</param>
 /// <exception cref="std::system_error"></exception>
-std::string LYRA_API invoke(_In_z_ const char *cmd);
+LYRA_TEST_API std::string invoke(_In_z_ const char *cmd);
 
 /// <summary>
 /// Invokes the given command and returns it output.
 /// </summary>
 /// <param name="cmd">The command to be invoked.</param>
 /// <exception cref="std::system_error"></exception>
-std::string LYRA_API invoke(_In_z_ const wchar_t *cmd);
+LYRA_TEST_API std::string invoke(_In_z_ const wchar_t *cmd);
 
 LYRA_DETAIL_NAMESPACE_END
 

@@ -11,7 +11,14 @@
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
       "cmakeExecutable": "C:/Program Files/CMake/bin/cmake.exe",
-      "intelliSenseMode": "windows-msvc-x64"
+      "intelliSenseMode": "windows-msvc-x64",
+      "variables": [
+        {
+          "name": "LYRA_BuildTests",
+          "value": "True",
+          "type": "BOOL"
+        }
+      ]
     },
     {
       "name": "WSL-Clang-Debug",
@@ -42,8 +49,7 @@
       "cmakeCommandArgs": "",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "clang_cl_x64_x64" ],
-      "variables": []
+      "inheritEnvironments": [ "clang_cl_x64_x64" ]
     }
   ]
 }

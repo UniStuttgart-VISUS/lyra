@@ -100,13 +100,29 @@ LYRA_NAMESPACE_BEGIN _LYRA_NAMESPACE_BEGIN(detail)
 
 #if defined(LYRA_EXPORTS)
 #define LYRA_API __declspec(dllexport)
+
+// If we are building the tests, also export private APIs for testing.
+#if defined(LYRA_EXPORT_TESTS)
+#define LYRA_TEST_API __declspec(dllexport)
+#else /* defined(LYRA_EXPORT_TESTS) */
+#define LYRA_TEST_API
+#endif /* defined(LYRA_EXPORT_TESTS) */
+
 #else /* defined(LYRA_EXPORTS) */
 #define LYRA_API __declspec(dllimport)
+
+// If we are building the tests, import private APIs as well.
+#if defined(LYRA_EXPORT_TESTS)
+#define LYRA_TEST_API __declspec(dllimport)
+#else /* defined(LYRA_EXPORT_TESTS) */
+#define LYRA_TEST_API
+#endif /* defined(LYRA_EXPORT_TESTS) */
+
 #endif /* defined(LYRA_EXPORTS) */
 
 #else /* defined(_WIN32) */
-
 #define LYRA_API
+#define LYRA_TEST_API
 
 #endif /* defined(_WIN32) */
 

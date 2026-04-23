@@ -27,7 +27,7 @@ LYRA_DETAIL_NAMESPACE_BEGIN
 /// <summary>
 /// A RAII wrapper for performing conversions between UTF-16 and UTF-8.
 /// </summary>
-class icu_converter final {
+class LYRA_TEST_API icu_converter final {
 
 public:
 

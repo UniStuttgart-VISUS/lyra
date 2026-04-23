@@ -25,6 +25,9 @@ namespace operating_system {
         static constexpr auto name = u8"version";
     };
 
+
+    LYRA_API property_set get_version(void);
+
 } /* namespace operating_system */
 
 LYRA_NAMESPACE_END

@@ -24,7 +24,7 @@ LYRA_DETAIL_NAMESPACE_BEGIN
 /// <summary>
 /// RAII wrapper for POSIX file descriptors.
 /// </summary>
-class LYRA_API unique_fd final {
+class LYRA_TEST_API unique_fd final {
 
 public:
 

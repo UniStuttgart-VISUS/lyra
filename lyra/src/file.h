@@ -44,7 +44,7 @@ typedef unique_fd unique_file;
 /// <param name="handle"></param>
 /// <returns></returns>
 /// <exception cref="std::system_error"></exception>
-std::size_t LYRA_API file_size(_In_ HANDLE handle);
+LYRA_TEST_API std::size_t file_size(_In_ HANDLE handle);
 #endif /* defined (_WIN32) */
 
 /// <summary>
@@ -53,7 +53,7 @@ std::size_t LYRA_API file_size(_In_ HANDLE handle);
 /// <param name="fd"></param>
 /// <returns></returns>
 /// <exception cref="std::system_error"></exception>
-std::size_t LYRA_API file_size(_In_ int fd);
+LYRA_TEST_API std::size_t file_size(_In_ int fd);
 
 /// <summary>
 /// Answer the size of the given file, in bytes.
@@ -61,7 +61,7 @@ std::size_t LYRA_API file_size(_In_ int fd);
 /// <param name="path"></param>
 /// <returns></returns>
 /// <exception cref="std::system_error"></exception>
-std::size_t LYRA_API file_size(_In_z_ const char *path);
+LYRA_TEST_API std::size_t file_size(_In_z_ const char *path);
 
 /// <summary>
 /// Answer the size of the given file, in bytes.
@@ -69,26 +69,27 @@ std::size_t LYRA_API file_size(_In_z_ const char *path);
 /// <param name="path"></param>
 /// <returns></returns>
 /// <exception cref="std::system_error"></exception>
-std::size_t LYRA_API file_size(_In_z_ const wchar_t *path);
+LYRA_TEST_API std::size_t file_size(_In_z_ const wchar_t *path);
 
 /// <summary>
 /// Opens an existing file for reading.
 /// </summary>
 /// <param name="path"></param>
 /// <returns></returns>
-unique_file LYRA_API open_read(_In_z_ const char *path);
+LYRA_TEST_API unique_file open_read(_In_z_ const char *path);
 
 /// <summary>
 /// Opens an existing file for reading.
 /// </summary>
 /// <param name="path"></param>
 /// <returns></returns>
-unique_file LYRA_API open_read(_In_z_ const wchar_t *path);
+LYRA_TEST_API unique_file open_read(_In_z_ const wchar_t *path);
 
 /// <summary>
 /// Read all contents of a binary file.
 /// </summary>
-std::vector<std::uint8_t> LYRA_API read_all_bytes(_In_ const unique_file& file);
+LYRA_TEST_API std::vector<std::uint8_t> read_all_bytes(
+    _In_ const unique_file& file);
 
 //#if defined(_WIN32)
 ///// <summary>

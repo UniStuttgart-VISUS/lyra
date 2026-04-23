@@ -35,6 +35,11 @@ if (LYRA_BuildTests)
     FetchContent_MakeAvailable(googletest)
 endif ()
 
+# Signal that we need to access private APIs for testing.
+if (LYRA_BuildTests)
+    add_compile_definitions(LYRA_EXPORT_TESTS)
+endif ()
+
 # The library
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lyra)
 
