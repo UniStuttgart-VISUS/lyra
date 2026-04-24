@@ -15,6 +15,11 @@ target_link_libraries(${PROJECT_NAME} PRIVATE sysinfo)
 target_link_libraries(${PROJECT_NAME} PRIVATE GTest::gtest_main)
 target_link_libraries(${PROJECT_NAME} PRIVATE gmock_main)
 
+if (WIN32)
+    target_link_libraries(${PROJECT_NAME} PRIVATE WIL::WIL)
+    target_link_libraries(${PROJECT_NAME} PRIVATE SetupAPI)
+endif ()
+
 # Grab the library and copy it to the test output directory.
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:sysinfo> $<TARGET_FILE_DIR:${PROJECT_NAME}>)

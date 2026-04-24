@@ -12,8 +12,9 @@
 #include <system_error>
 
 #ifdef _WIN32
-#include <Windows.h>
 #include <lmcons.h>
+#include <tchar.h>
+#include <Windows.h>
 #else /* _WIN32 */
 #include <unistd.h>
 
@@ -22,6 +23,7 @@
 #include <sys/types.h>
 #endif /* _WIN32 */
 
+#include "visus/lyra/trace.h"
 #include "visus/lyra/version.h"
 
 #include "property_set_impl.h"
@@ -47,6 +49,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::operating_system::get_version(
     // First, try calling the runtime library directly, which will give us the
     // real OS version rather than the SDK version we use.
     if (gv != nullptr) {
+        LYRA_TRACE(_T("Using RtlGetVersion to determine the Windows version."));
         RTL_OSVERSIONINFOW vi = { 0 };
         vi.dwOSVersionInfoSize = sizeof(vi);
 
@@ -56,6 +59,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::operating_system::get_version(
             ps.add<LYRA_NAMESPACE::version::patch>(vi.dwBuildNumber);
 
         } else {
+            LYRA_TRACE(_T("RtlGetVersion failed."));
             gv = nullptr;
         }
     }
@@ -101,18 +105,16 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::operating_system::get_version(
     utsname vi;
 
     // http://stackoverflow.com/questions/6315666/c-get-linux-distribution-name-version
-    if (::uname(&vi) < 0) {
-        throw std::system_error(errno, std::system_category());
-    }
+    if (::uname(&vi) >= 0) {
+        if (std::regex_match(vi.release, m, rx)) {
+            ps.add<LYRA_NAMESPACE::version::major>(std::stoul(m[1].str()));
+            ps.add<LYRA_NAMESPACE::version::minor>(std::stoul(m[2].str()));
+            ps.add<LYRA_NAMESPACE::version::patch>(std::stoul(m[3].str()));
+        }
 
-    if (std::regex_match(vi.release, m, rx)) {
-        ps.add<LYRA_NAMESPACE::version::major>(std::stoul(m[1].str()));
-        ps.add<LYRA_NAMESPACE::version::minor>(std::stoul(m[2].str()));
-        ps.add<LYRA_NAMESPACE::version::patch>(std::stoul(m[3].str()));
+        ps.add(u8"release", vi.release);
+        ps.add(u8"version", vi.version);
     }
-
-    ps.add(u8"release", vi.release);
-    ps.add(u8"version", vi.version);
 
     //this->name = vi.sysname;
     //this->version = vi.release;

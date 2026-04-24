@@ -13,43 +13,28 @@
 #include <array>
 #include <cinttypes>
 #include <functional>
+#include <system_error>
 #include <vector>
 
+#include <tchar.h>
 #include <Windows.h>
-#include <devguid.h>
 #include <SetupAPI.h>
+#include <devguid.h>
 
-#include "visus/lyra/api.h"
+#include "visus/lyra/trace.h"
 
 
 LYRA_DETAIL_NAMESPACE_BEGIN
 
 /// <summary>
-/// Callback passed to <see cref="enum_class_devices" />.
-/// </summary>
-typedef std::function<bool(HDEVINFO, SP_DEVINFO_DATA&)> enum_class_devices_cb;
-
-/// <summary>
-/// Callback passed to <see cref="enum_device_interfaces" />.
-/// </summary>
-typedef std::function<bool(HDEVINFO, SP_DEVINFO_DATA&, SP_DEVICE_INTERFACE_DATA&)> enum_device_interfaces_cb;
-
-/// <summary>
-/// Callback passed to <see cref="enum_driver_info" />.
-/// <summary>
-typedef std::function<bool(HDEVINFO, PSP_DEVINFO_DATA, SP_DRVINFO_DATA&)> enum_driver_info_cb;
-
-/// <summary>
-/// The GUID of the display devices class, which is not defined in the
-/// public header of SetupAPI.
-/// </summary>
-extern const GUID display_device_class;
-
-/// <summary>
 /// Retrieves the device installation parameters for the given device
 /// information set, adds the given flags to the set and updates it.
 /// </summary>
-LYRA_TEST_API void add_device_install_flags(HDEVINFO hDevInfo, SP_DEVINFO_DATA *devInfo, const DWORD flags, const DWORD flagsEx);
+/// <exception cref="std::system_error">If any of the API calls failed.
+/// </exception>
+LYRA_TEST_API void add_device_install_flags(_In_ HANDLE handle,
+    _In_opt_ SP_DEVINFO_DATA *info, _In_ const DWORD flags,
+    _In_ const DWORD flags_ex);
 
 /// <summary>
 /// Invoke <paramref name="cb" /> for all devices of the given class.
@@ -60,87 +45,111 @@ LYRA_TEST_API void add_device_install_flags(HDEVINFO hDevInfo, SP_DEVINFO_DATA *
 /// <para><paramref name="cb" /> should not throw exceptions. Failing to
 /// fulfil this requirement might result in a memory leak.</para>
 /// </remarks>
+/// <typeparam name="TCallback"></typeparam>
 /// <param name="class_guid">A pointer to the class GUID to enumerate or
 /// <c>nullptr</c> to enumerate all classes in combination with the
 /// <c>DIGCF_ALLCLASSES</c> flag.</param>
 /// <param name="cb">The callback to be invoked for all results.</param>
-/// <param name="flags">The enumeration flagsas described on
+/// <param name="flags">The enumeration flags as described on
 /// https://msdn.microsoft.com/en-us/library/windows/hardware/ff551069(v=vs.85).aspx
 /// The parameter defaults to <c>DIGCF_PRESENT</c>.</param>
 /// <returns>The number of elements that have been enumerated.</returns>
-LYRA_TEST_API std::size_t enum_class_devices(const GUID *class_guid, const enum_class_devices_cb& cb,
-    const DWORD flags = DIGCF_PRESENT);
+/// <exception cref="std::system_error">If any of the API calls failed.
+/// </exception>
+template<class TCallback> std::size_t enum_class_devices(
+    _In_opt_ const GUID *class_guid,
+    _In_ TCallback cb,
+    _In_ const DWORD flags = DIGCF_PRESENT);
 
 /// <summary>
 /// Invokes a callback for all device interfaces in a device information
 /// set.
 /// </summary>
-/// <param name="hDevInfo"></param>
-/// <param name="devInfo"></param>
-/// <param name="interfaceGuid"></param>
+/// <typeparam name="TCallback"></typeparam>
+/// <param name="handle"></param>
+/// <param name="info"></param>
+/// <param name="interface_guid"></param>
 /// <param name="cb"></param>
 /// <returns></returns>
-LYRA_TEST_API std::size_t enum_device_interfaces(HDEVINFO hDevInfo, SP_DEVINFO_DATA& devInfo,
-    const GUID& interfaceGuid, const enum_device_interfaces_cb& cb);
+/// <exception cref="std::system_error">If any of the API calls failed.
+/// </exception>
+template<class TCallback> std::size_t enum_device_interfaces(
+    _In_ HANDLE handle,
+    _In_ SP_DEVINFO_DATA& info,
+    _In_ const GUID& interface_guid,
+    _In_ TCallback cb);
 
 /// <summary>
 /// Enumerates a list of drivers.
 /// </summary>
-/// <param name="hDevInfo">A handle to the device information set that
-/// contains the driver list to enumerate.</param>
+/// <typeparam name="TCallback"></typeparam>
+/// <param name="handle">A handle to the device information set that
+/// contains the info list to enumerate.</param>
 /// <param name="devInfo">An optional pointer to an 
 /// <see cref="SP_DEVINFO_DATA" /> structure that specifies a device
-/// information element in <paramref name="hDevInfo" />. If this parameter
+/// information element in <paramref name="handle" />. If this parameter
 /// is <c>nullptr</c>, the function enumerates the global class driver list
-/// that is associated with <paramref name="hDevInfo" />. Otherwise, it
+/// that is associated with <paramref name="handle" />. Otherwise, it
 /// lists the drivers for the specified device.</param>
-/// <param name="driverType"><c>SPDIT_CLASSDRIVER</c> to enumerate a
+/// <param name="type"><c>SPDIT_CLASSDRIVER</c> to enumerate a
 /// class driver list, or <c>SPDIT_COMPATDRIVER</c> to list the drivers
 /// compatible with the specified device.</param>
 /// <param name="cb"></param>
 /// <returns>The number of elements that have been enumerated.</returns>
-LYRA_TEST_API std::size_t enum_driver_info(HDEVINFO hDevInfo, SP_DEVINFO_DATA *devInfo,
-    const DWORD driverType, const enum_driver_info_cb& cb);
+/// <exception cref="std::system_error">If any of the API calls failed.
+/// </exception>
+template<class TCallback> std::size_t enum_driver_info(
+    _In_ HANDLE handle,
+    _In_opt_ SP_DEVINFO_DATA *info,
+    _In_ const DWORD type,
+    _In_ const TCallback cb);
 
 /// <summary>
-/// Gets the <see cref="SP_DEVINFO_DATA" /> for the given device interface
-/// data.
+/// Gets the <see cref="SP_DEVICE_INTERFACE_DETAIL_DATA_W" /> for the given
+/// device interface data.
 /// </summary>
+/// <exception cref="std::system_error">If any of the API calls failed.
+/// </exception>
 std::vector<std::uint8_t> get_device_interface_detail(
-    _In_ HDEVINFO hDevInfo,
-    _In_ SP_DEVICE_INTERFACE_DATA& devIfData,
-    _In_ SP_DEVINFO_DATA *outDevInfo = nullptr);
+    _In_ HANDLE handle,
+    _In_ SP_DEVICE_INTERFACE_DATA& data,
+    _In_opt_ SP_DEVINFO_DATA *detail = nullptr);
 
 /// <summary>
 /// Retrieves a registry-stored property of the device identified by
-/// <paramref name="hDevInfo" /> and <paramref name="devInfo" />.
+/// <paramref name="handle" /> and <paramref name="info" />.
 /// </summary>
-/// <param name="hDevInfo">A handle to a device information set that
+/// <param name="handle">A handle to a device information set that
 /// contains a device information element that represents the device for
 /// which to retrieve a property.</param>
-/// <param name="devInfo">A pointer to an <c>SP_DEVINFO_DATA</c> structure
-/// from <paramref name="hDevInfo" /> which specifies the device information
+/// <param name="info">A pointer to an <see cref="SP_DEVINFO_DATA" /> structure
+/// from <paramref name="handle" /> which specifies the device information
 /// element.</param>
 /// <param name="property">The property to be retrieved. Valid values can be
 /// found at
 /// https://msdn.microsoft.com/en-us/library/windows/hardware/ff551967(v=vs.85).aspx
 /// </param>
-/// <param name="outRegDataType">If not <c>nullptr</c>, retrieves the registry
+/// <param name="type">If not <see langword="nullptr" />, retrieves the registry
 /// type of the data returned.</param>
 /// <returns></returns>
+/// <exception cref="std::system_error">If any of the API calls failed.
+/// </exception>
 LYRA_TEST_API std::vector<std::uint8_t> get_device_registry_property(
-    HDEVINFO hDevInfo,
-    SP_DEVINFO_DATA& devInfo, const DWORD property,
-    DWORD *outRegDataType = nullptr);
+    _In_ HANDLE handle,
+    _In_ SP_DEVINFO_DATA& info,
+    _In_ const DWORD property,
+    _Out_opt_ DWORD *type= nullptr);
 
 /// <summary>
 /// Splits the driver version from <see cref="SP_DRVINFO_DATA_W" /> into
 /// (in this order) major version, minor version, patch and revision.
 /// </summary>
 LYRA_TEST_API std::array<std::uint16_t, 4> split_driver_version(
-    _In_ decltype(SP_DRVINFO_DATA_W::DriverVersion) version);
+    _In_ decltype(SP_DRVINFO_DATA_W::DriverVersion) version) noexcept;
 
 LYRA_DETAIL_NAMESPACE_END
+
+#include "setup_api.inl"
 
 #endif /* defined(_WIN32) */
 #endif /* !defined(_LYRA_SETUP_API_H) */
