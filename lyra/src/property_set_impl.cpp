@@ -6,11 +6,51 @@
 
 #include "property_set_impl.h"
 
+#include "visus/lyra/convert_string.h"
+
 
 /*
- * LYRA_DETAIL_NAMESPACE::move
+ * LYRA_DETAIL_NAMESPACE::property_set_impl::add
  */
-LYRA_NAMESPACE::property_set& LYRA_DETAIL_NAMESPACE::move(
+void LYRA_DETAIL_NAMESPACE::property_set_impl::add(
+        _In_z_ const key_type::value_type *key,
+        _In_opt_z_ const wchar_t *value) {
+    if (value != nullptr) {
+        this->add(key, to_utf8(value));
+    }
+}
+
+
+/*
+ * LYRA_DETAIL_NAMESPACE::property_set_impl::add
+ */
+void LYRA_DETAIL_NAMESPACE::property_set_impl::add(
+        _In_z_ const key_type::value_type *key,
+        _In_opt_z_ const char16_t *value) {
+    if (value != nullptr) {
+        this->add(key, to_utf8(value));
+    }
+}
+
+
+/*
+ * LYRA_DETAIL_NAMESPACE::property_set_impl::find
+ */
+_Ret_maybenull_ const LYRA_DETAIL_NAMESPACE::property_set_impl::value_type *
+LYRA_DETAIL_NAMESPACE::property_set_impl::find(
+        _In_ const key_type& key) const noexcept {
+    auto it = std::find_if(
+        this->values.begin(),
+        this->values.end(),
+        [&key](const value_type& v) { return (v.name() == key); });
+    return (it != this->values.end()) ? std::addressof(*it) : nullptr;
+}
+
+
+/*
+ * LYRA_DETAIL_NAMESPACE::realise
+ */
+LYRA_NAMESPACE::property_set& LYRA_DETAIL_NAMESPACE::realise(
         _In_ property_set& dst,
         _Inout_ property_set_impl&& src) {
     assert(dst._impl == nullptr);

@@ -88,8 +88,28 @@ LYRA_TEST_API unique_file open_read(_In_z_ const wchar_t *path);
 /// <summary>
 /// Read all contents of a binary file.
 /// </summary>
+/// <param name="file"></param>
+/// <returns></returns>
 LYRA_TEST_API std::vector<std::uint8_t> read_all_bytes(
     _In_ const unique_file& file);
+
+/// <summary>
+/// Read all contents of a binary file.
+/// </summary>
+/// <param name="path"></param>
+/// <returns></returns>
+inline std::vector<std::uint8_t> read_all_bytes(_In_z_ const char *path) {
+    return read_all_bytes(open_read(path));
+}
+
+/// <summary>
+/// Read all contents of a binary file.
+/// </summary>
+/// <param name="path"></param>
+/// <returns></returns>
+inline  std::vector<std::uint8_t> read_all_bytes(_In_z_ const wchar_t *path) {
+    return read_all_bytes(open_read(path));
+}
 
 //#if defined(_WIN32)
 ///// <summary>

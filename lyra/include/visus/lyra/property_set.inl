@@ -20,9 +20,10 @@ LYRA_NAMESPACE::property_set::get(_Out_ std::size_t& cnt) const noexcept {
         return nullptr;
     }
 
+    assert(type == traits::value);
     if (type != traits::value) {
         return nullptr;
     }
 
-    return traits::data(*static_cast<const typename traits::type *>(value));
+    return static_cast<traits::pointer>(value);
 }

@@ -43,9 +43,42 @@ namespace version {
     /// Identifies whether the version is a pre-release version.
     /// </summary>
     struct prerelease final {
-        typedef std::string type;
+        typedef multi_sz type;
         static constexpr auto name = u8"prerelease";
     };
+
+    /// <summary>
+    /// Identifies the version as a whole, which is a <see cref="property_set" />
+    /// containing the individual version components as properties.
+    /// </summary>
+    struct version final {
+        typedef property_set type;
+        static constexpr auto name = u8"version";
+    };
+
+    /// <summary>
+    /// Constructs a new property set representing the specified version.
+    /// </summary>
+    /// <param name="major">The major version component.</param>
+    /// <param name="minor">The minor version component.</param>
+    /// <param name="patch">The patch level.</param>
+    /// <param name="prerelease">The pre-release identifier. This is optional
+    /// and will be skipped if <see langword="nullptr" /> is passed.</param>
+    /// <returns>A property set representing the specified version.</returns>
+    LYRA_API property_set make(
+        _In_ const std::uint32_t major,
+        _In_ const std::uint32_t minor,
+        _In_ const std::uint32_t patch,
+        _In_opt_z_ const char *prerelease = nullptr);
+
+    /// <summary>
+    /// Constructs a new property set representing the specified version.
+    /// </summary>
+    /// <param name="major">The major version component.</param>
+    /// <param name="minor">The minor version component.</param>
+    /// <returns>A property set representing the specified version.</returns>
+    LYRA_API property_set make(_In_ const std::uint32_t major,
+        _In_ const std::uint32_t minor);
 
 } /* namespace version */
 

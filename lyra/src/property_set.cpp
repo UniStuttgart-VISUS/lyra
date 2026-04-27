@@ -12,15 +12,15 @@
 #include "property_set_impl.h"
 
 
-/*
- * LYRA_NAMESPACE::property_set::property_set
- */
-LYRA_NAMESPACE::property_set::property_set(_In_ const property_set& other)
-        : _impl(nullptr) {
-    if (other._impl != nullptr) {
-        this->_impl = new detail::property_set_impl(*other._impl);
-    }
-}
+///*
+// * LYRA_NAMESPACE::property_set::property_set
+// */
+//LYRA_NAMESPACE::property_set::property_set(_In_ const property_set& other)
+//        : _impl(nullptr) {
+//    if (other._impl != nullptr) {
+//        this->_impl = new detail::property_set_impl(*other._impl);
+//    }
+//}
 
 
 /*
@@ -32,8 +32,8 @@ bool LYRA_NAMESPACE::property_set::contains(
         return false;
     }
 
-    const auto it = this->_impl->values.find(name);
-    return (it != this->_impl->values.end());
+    const auto it = this->_impl->find(name);
+    return (it != nullptr);
 }
 
 
@@ -57,19 +57,14 @@ bool LYRA_NAMESPACE::property_set::get(
         return false;
     }
 
-    const auto it = this->_impl->values.find(name);
-    if (it == this->_impl->values.end()) {
+    const auto retval = this->_impl->find(name);
+    if (retval == nullptr) {
         return false;
     }
 
-    std::visit([&](auto&& v) {
-            typedef std::decay_t<decltype(v)> value_type;
-            typedef detail::property_traits<value_type> traits;
-            dst = traits::data(v);
-            cnt = traits::count(v);
-            type = traits::value;
-        }, it->second);
-
+    dst = retval->data();
+    cnt = retval->count();
+    type = retval->type();
     return true;
 }
 
@@ -94,7 +89,7 @@ std::size_t LYRA_NAMESPACE::property_set::properties(
         for (auto it = this->_impl->values.begin();
                 (it != end) && (cur < cnt);
                 ++it, ++cur) {
-            *dst++ = it->first.c_str();
+            *dst++ = it->name().c_str();
         }
     }
 
@@ -110,20 +105,20 @@ std::size_t LYRA_NAMESPACE::property_set::size(void) const noexcept {
 }
 
 
-/*
- * LYRA_NAMESPACE::property_set::operator =
- */
-LYRA_NAMESPACE::property_set& LYRA_NAMESPACE::property_set::operator =(
-        _In_ const property_set& rhs) {
-    if (this != std::addressof(rhs)) {
-        delete this->_impl;
-        this->_impl = (rhs._impl != nullptr)
-            ? new detail::property_set_impl(*rhs._impl)
-            : nullptr;
-    }
-
-    return *this;
-}
+///*
+// * LYRA_NAMESPACE::property_set::operator =
+// */
+//LYRA_NAMESPACE::property_set& LYRA_NAMESPACE::property_set::operator =(
+//        _In_ const property_set& rhs) {
+//    if (this != std::addressof(rhs)) {
+//        delete this->_impl;
+//        this->_impl = (rhs._impl != nullptr)
+//            ? new detail::property_set_impl(*rhs._impl)
+//            : nullptr;
+//    }
+//
+//    return *this;
+//}
 
 
 /*

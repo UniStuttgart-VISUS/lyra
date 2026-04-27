@@ -79,8 +79,10 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::operating_system::get_version(
                 ps.add<LYRA_NAMESPACE::version::patch>(vi.dwBuildNumber);
             }
 
-            ps.add(u8"service_pack_major", vi.wServicePackMajor);
-            ps.add(u8"service_pack_minor", vi.wServicePackMinor);
+            ps.add(u8"service_pack_major", static_cast<std::uint32_t>(
+                vi.wServicePackMajor));
+            ps.add(u8"service_pack_minor", static_cast<std::uint32_t>(
+                vi.wServicePackMinor));
 
             switch (vi.wProductType) {
                 case VER_NT_WORKSTATION:
@@ -122,5 +124,6 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::operating_system::get_version(
 
 #endif /* defined(_WIN32) */
 
-    return detail::move(retval, std::move(ps));
+    detail::realise(retval, std::move(ps));
+    return retval;
 }

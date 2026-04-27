@@ -8,15 +8,15 @@
 #define _LYRA_PROPERTY_SET_H
 #pragma once
 
-#include "visus/lyra/property_type.h"
+#include "visus/lyra/property_traits.h"
 
 
 LYRA_NAMESPACE_BEGIN
 
 // Forward declarations.
-namespace detail { 
+namespace detail {
     struct property_set_impl;
-    LYRA_TEST_API property_set& move(property_set&, property_set_impl&&);
+    LYRA_TEST_API property_set& realise(property_set&, property_set_impl&&);
 }
 
 
@@ -37,11 +37,11 @@ public:
     /// </summary>
     inline property_set(void) noexcept : _impl(nullptr) { }
 
-    /// <summary>
-    /// Clone <see cref="other" />
-    /// </summary>
-    /// <param name="other">The object to be cloned.</param>
-    property_set(_In_ const property_set& other);
+    ///// <summary>
+    ///// Clone <see cref="other" />
+    ///// </summary>
+    ///// <param name="other">The object to be cloned.</param>
+    //property_set(_In_ const property_set& other);
 
     /// <summary>
     /// Move <see cref="other" />
@@ -94,7 +94,7 @@ public:
         _Out_ std::size_t& cnt) const noexcept;
 
     /// <summary>
-/// Gets a pointer to the property identified by the
+    /// Gets a pointer to the property identified by the
     /// <typeparam name="TProp" /> descriptor if the described property is in
     /// the property set.
     /// </summary>
@@ -126,12 +126,12 @@ public:
     /// <returns>The total number of properties in the set.</returns>
     std::size_t size(void) const noexcept;
 
-    /// <summary>
-    /// Assignment.
-    /// </summary>
-    /// <param name="rhs">The right-hand-side operand.</param>
-    /// <returns><c>*<see langword="this" /></c>.</returns>
-    property_set& operator =(_In_ const property_set& rhs);
+    ///// <summary>
+    ///// Assignment.
+    ///// </summary>
+    ///// <param name="rhs">The right-hand-side operand.</param>
+    ///// <returns><c>*<see langword="this" /></c>.</returns>
+    //property_set& operator =(_In_ const property_set& rhs);
 
     /// <summary>
     /// Move assignment.
@@ -144,7 +144,7 @@ private:
 
     detail::property_set_impl *_impl;
 
-    friend property_set& detail::move(property_set&,
+    friend property_set& detail::realise(property_set&,
         detail::property_set_impl&&);
 };
 

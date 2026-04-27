@@ -12,9 +12,15 @@
 #include <cwchar>
 #include <iostream>
 #include <thread>
+#include <vector>
 
 #if defined(_WIN32)
+#include <tchar.h>
 #include <Windows.h>
+#else /* defined(_WIN32) */
+#if !defined(_T)
+#define _T(x) x
+#endif /* !defined(_T) */
 #endif /* defined(_WIN32) */
 
 #include "visus/lyra/api.h"
