@@ -16,7 +16,7 @@ LYRA_NAMESPACE_BEGIN
 namespace operating_system {
 
     struct family final {
-        typedef multi_sz type;
+        typedef const char *type;
         static constexpr auto name = u8"family";
     };
 

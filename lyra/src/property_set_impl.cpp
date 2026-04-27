@@ -13,6 +13,18 @@
  * LYRA_DETAIL_NAMESPACE::property_set_impl::add
  */
 void LYRA_DETAIL_NAMESPACE::property_set_impl::add(
+        _Inout_ std::string&& key,
+        _In_opt_z_ const char *value) {
+    if (value != nullptr) {
+        this->add(std::move(key), std::string(value));
+    }
+}
+
+
+/*
+ * LYRA_DETAIL_NAMESPACE::property_set_impl::add
+ */
+void LYRA_DETAIL_NAMESPACE::property_set_impl::add(
         _In_z_ const key_type::value_type *key,
         _In_opt_z_ const wchar_t *value) {
     if (value != nullptr) {
@@ -39,11 +51,8 @@ void LYRA_DETAIL_NAMESPACE::property_set_impl::add(
 _Ret_maybenull_ const LYRA_DETAIL_NAMESPACE::property_set_impl::value_type *
 LYRA_DETAIL_NAMESPACE::property_set_impl::find(
         _In_ const key_type& key) const noexcept {
-    auto it = std::find_if(
-        this->values.begin(),
-        this->values.end(),
-        [&key](const value_type& v) { return (v.name() == key); });
-    return (it != this->values.end()) ? std::addressof(*it) : nullptr;
+    auto it = this->values.find(key);
+    return (it != this->values.end()) ? std::addressof(it->second) : nullptr;
 }
 
 

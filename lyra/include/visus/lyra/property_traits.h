@@ -8,6 +8,8 @@
 #define _LYRA_PROPERTY_TRAITS_H
 #pragma once
 
+#include <cinttypes>
+
 #include "visus/lyra/dispatch_list.h"
 #include "visus/lyra/property_type.h"
 
@@ -32,7 +34,6 @@ template<property_type... Types> using property_type_dispatch_list
 /// The dispatch list for all <see cref="property_type" /> values.
 /// </summary>
 typedef property_type_dispatch_list<
-    property_type::none,
     property_type::string,
     property_type::properties,
     property_type::boolean,
@@ -56,8 +57,7 @@ template<> struct property_type_traits<property_type::v> final {\
     typedef t type;\
 }
 
-_LYRA_PROP_TRAITS(none, std::nullptr_t);
-_LYRA_PROP_TRAITS(string, multi_sz);
+_LYRA_PROP_TRAITS(string, const char *);
 _LYRA_PROP_TRAITS(properties, property_set);
 _LYRA_PROP_TRAITS(boolean, bool);
 _LYRA_PROP_TRAITS(int32, std::int32_t);
@@ -92,11 +92,7 @@ template<> struct property_traits<t> final {\
 }
 
 _LYRA_PROP_TRAITS(boolean, bool);
-_LYRA_PROP_TRAITS(string, multi_sz);
-_LYRA_PROP_TRAITS(string, std::string);
 _LYRA_PROP_TRAITS(string, const char *);
-_LYRA_PROP_TRAITS(string, const wchar_t *);
-_LYRA_PROP_TRAITS(string, const char16_t *);
 _LYRA_PROP_TRAITS(properties, property_set);
 _LYRA_PROP_TRAITS(int32, std::int32_t);
 _LYRA_PROP_TRAITS(int64, std::int64_t);

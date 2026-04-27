@@ -77,10 +77,8 @@ LYRA_DETAIL_NAMESPACE_END
 
 #if (defined(_DEBUG) || defined(DEBUG))
 #define LYRA_TRACE LYRA_DETAIL_NAMESPACE::tracer(__FILE__, __LINE__)
-#elif defined(_MSC_VER)
-#define LYRA_TRACE __noop
 #else /* (defined(_DEBUG) || defined(DEBUG)) */
-#define LYRA_TRACE static_cast<void>(0)
+#define LYRA_TRACE(...)
 #endif /* (defined(_DEBUG) || defined(DEBUG)) */
 
 

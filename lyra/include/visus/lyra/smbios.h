@@ -484,13 +484,15 @@ namespace smbios {
         std::size_t _size;
         version_type _version;
 
-        /// <summary>
-        /// Reads the SMBIOS information of the local system and returns the
-        /// whole block in a <see cref="data" /> structure.
-        /// </summary>
-        /// <returns>The SMBIOS data of the system.</returns>
         friend LYRA_API data read(void);
     };
+
+    /// <summary>
+    /// Reads the SMBIOS information of the local system and returns the
+    /// whole block in a <see cref="data" /> structure.
+    /// </summary>
+    /// <returns>The SMBIOS data of the system.</returns>
+    LYRA_API data read(void);
 
     /// <summary>
     /// Identifies an asset tag assigned to a component via SMBIOS.

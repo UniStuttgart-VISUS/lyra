@@ -43,7 +43,7 @@ namespace version {
     /// Identifies whether the version is a pre-release version.
     /// </summary>
     struct prerelease final {
-        typedef multi_sz type;
+        typedef const char *type;
         static constexpr auto name = u8"prerelease";
     };
 

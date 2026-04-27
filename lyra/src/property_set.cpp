@@ -9,18 +9,20 @@
 #include <memory>
 #include <type_traits>
 
+#include "visus/lyra/property_traits.h"
+
 #include "property_set_impl.h"
 
 
-///*
-// * LYRA_NAMESPACE::property_set::property_set
-// */
-//LYRA_NAMESPACE::property_set::property_set(_In_ const property_set& other)
-//        : _impl(nullptr) {
-//    if (other._impl != nullptr) {
-//        this->_impl = new detail::property_set_impl(*other._impl);
-//    }
-//}
+/*
+ * LYRA_NAMESPACE::property_set::property_set
+ */
+LYRA_NAMESPACE::property_set::property_set(_In_ const property_set& other)
+        : _impl(nullptr) {
+    if (other._impl != nullptr) {
+        this->_impl = new detail::property_set_impl(*other._impl);
+    }
+}
 
 
 /*
@@ -62,9 +64,14 @@ bool LYRA_NAMESPACE::property_set::get(
         return false;
     }
 
-    dst = retval->data();
-    cnt = retval->count();
-    type = retval->type();
+    std::visit([&dst, &cnt, &type](const auto& v) {
+        typedef std::decay_t<decltype(v)> value_type;
+        typedef detail::property_variant_access<value_type> accessor;
+        dst = accessor::get(v);
+        cnt = accessor::count(v);
+        type = accessor::type;
+    }, *retval);
+
     return true;
 }
 
@@ -89,7 +96,7 @@ std::size_t LYRA_NAMESPACE::property_set::properties(
         for (auto it = this->_impl->values.begin();
                 (it != end) && (cur < cnt);
                 ++it, ++cur) {
-            *dst++ = it->name().c_str();
+            *dst++ = it->first.c_str();
         }
     }
 
@@ -105,20 +112,20 @@ std::size_t LYRA_NAMESPACE::property_set::size(void) const noexcept {
 }
 
 
-///*
-// * LYRA_NAMESPACE::property_set::operator =
-// */
-//LYRA_NAMESPACE::property_set& LYRA_NAMESPACE::property_set::operator =(
-//        _In_ const property_set& rhs) {
-//    if (this != std::addressof(rhs)) {
-//        delete this->_impl;
-//        this->_impl = (rhs._impl != nullptr)
-//            ? new detail::property_set_impl(*rhs._impl)
-//            : nullptr;
-//    }
-//
-//    return *this;
-//}
+/*
+ * LYRA_NAMESPACE::property_set::operator =
+ */
+LYRA_NAMESPACE::property_set& LYRA_NAMESPACE::property_set::operator =(
+        _In_ const property_set& rhs) {
+    if (this != std::addressof(rhs)) {
+        delete this->_impl;
+        this->_impl = (rhs._impl != nullptr)
+            ? new detail::property_set_impl(*rhs._impl)
+            : nullptr;
+    }
+
+    return *this;
+}
 
 
 /*

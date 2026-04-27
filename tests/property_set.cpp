@@ -134,7 +134,7 @@ TEST(property_set, single_get) {
 
     EXPECT_TRUE(properties.get(value, size, type, "foo"));
     EXPECT_EQ(type, LYRA_NAMESPACE::property_type::string);
-    EXPECT_STREQ("bar", static_cast<const LYRA_NAMESPACE::multi_sz *>(value)->data());
+    EXPECT_STREQ("bar", static_cast<const char *>(value));
 
     EXPECT_FALSE(properties.get(value, size, type, "answer"));
 
@@ -155,7 +155,7 @@ TEST(property_set, multiple_get) {
 
     EXPECT_TRUE(properties.get(value, size, type, "foo"));
     EXPECT_EQ(type, LYRA_NAMESPACE::property_type::string);
-    EXPECT_STREQ("bar", static_cast<const LYRA_NAMESPACE::multi_sz *>(value)->data());
+    EXPECT_STREQ("bar", static_cast<const char *>(value));
 
     EXPECT_TRUE(properties.get(value, size, type, "answer"));
     EXPECT_EQ(type, LYRA_NAMESPACE::property_type::int32);

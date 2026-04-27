@@ -824,7 +824,7 @@ static bool validate_checksum(_In_reads_bytes_(cnt) const std::uint8_t *buffer,
         for (auto v : values) {\
             sets.push_back(get_##e(v, data.version()));\
         }\
-        ps.add(n::name, sets.begin(), sets.end());\
+        ps.add(n::name, std::move(sets));\
     }
 
 

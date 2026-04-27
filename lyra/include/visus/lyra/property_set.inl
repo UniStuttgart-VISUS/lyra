@@ -25,5 +25,5 @@ LYRA_NAMESPACE::property_set::get(_Out_ std::size_t& cnt) const noexcept {
         return nullptr;
     }
 
-    return static_cast<traits::pointer>(value);
+    return static_cast<typename traits::pointer>(value);
 }

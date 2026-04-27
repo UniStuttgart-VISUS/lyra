@@ -37,11 +37,11 @@ public:
     /// </summary>
     inline property_set(void) noexcept : _impl(nullptr) { }
 
-    ///// <summary>
-    ///// Clone <see cref="other" />
-    ///// </summary>
-    ///// <param name="other">The object to be cloned.</param>
-    //property_set(_In_ const property_set& other);
+    /// <summary>
+    /// Clone <see cref="other" />
+    /// </summary>
+    /// <param name="other">The object to be cloned.</param>
+    property_set(_In_ const property_set& other);
 
     /// <summary>
     /// Move <see cref="other" />
@@ -126,12 +126,12 @@ public:
     /// <returns>The total number of properties in the set.</returns>
     std::size_t size(void) const noexcept;
 
-    ///// <summary>
-    ///// Assignment.
-    ///// </summary>
-    ///// <param name="rhs">The right-hand-side operand.</param>
-    ///// <returns><c>*<see langword="this" /></c>.</returns>
-    //property_set& operator =(_In_ const property_set& rhs);
+    /// <summary>
+    /// Assignment.
+    /// </summary>
+    /// <param name="rhs">The right-hand-side operand.</param>
+    /// <returns><c>*<see langword="this" /></c>.</returns>
+    property_set& operator =(_In_ const property_set& rhs);
 
     /// <summary>
     /// Move assignment.

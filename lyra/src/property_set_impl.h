@@ -10,14 +10,14 @@
 
 #include <algorithm>
 #include <cassert>
+#include <map>
 #include <string>
 #include <type_traits>
-#include <vector>
 
 #include "visus/lyra/property_set.h"
 #include "visus/lyra/property_traits.h"
 
-#include "property.h"
+#include "property_variant.h"
 
 
 LYRA_DETAIL_NAMESPACE_BEGIN
@@ -42,19 +42,12 @@ struct LYRA_TEST_API property_set_impl final {
     /// The value type, which is a variant that can store any of the
     /// <see cref="property_type" />s.
     /// </summary>
-    typedef property value_type;
+    typedef property_variant value_type;
 
     /// <summary>
     /// Stores the properties.
     /// </summary>
-    std::vector<value_type> values;
-
-    /// <summary>
-    /// Initialises a new instance.
-    /// </summary>
-    property_set_impl(void) = default;
-
-    property_set_impl(const property_set_impl&) = delete;
+    std::map<key_type, value_type> values;
 
     /// <summary>
     /// Convenience method for adding a new property to the set.
@@ -68,7 +61,7 @@ struct LYRA_TEST_API property_set_impl final {
             _In_ const TValue& value,
             const property_traits<std::decay_t<TValue>> *_ = nullptr) {
         assert(this->find(key) == nullptr);
-        this->values.emplace_back(std::move(key), value);
+        this->values.emplace(std::move(key), value);
     }
 
     /// <summary>
@@ -83,7 +76,7 @@ struct LYRA_TEST_API property_set_impl final {
             _In_ TValue&& value,
             const property_traits<std::decay_t<TValue>> *_ = nullptr) {
         assert(this->find(key) == nullptr);
-        this->values.emplace_back(std::move(key), std::forward<TValue>(value));
+        this->values.emplace(std::move(key), std::forward<TValue>(value));
     }
 
     /// <summary>
@@ -99,7 +92,7 @@ struct LYRA_TEST_API property_set_impl final {
             _In_ const TIterator end,
             const property_traits<iterated_type<TIterator>> *_ = nullptr) {
         assert(this->find(key) == nullptr);
-        this->values.emplace_back(std::move(key), begin, end);
+        this->values.emplace(std::move(key), begin, end);
     }
 
     /// <summary>
@@ -123,33 +116,17 @@ struct LYRA_TEST_API property_set_impl final {
     }
 
     /// <summary>
-    /// Convenience method for adding a new vector-valued property to the set.
+    /// Adds a string property if non-<see langword="nullptr" />.
     /// </summary>
-    template<class TIterator> inline void add(
-            _In_z_ const key_type::value_type *key,
-            _In_ TIterator&& begin,
-            _In_ TIterator&& end) {
-        assert(key != nullptr);
-        this->add(std::string(key),
-            std::forward<TIterator>(begin),
-            std::forward<TIterator>(end));
-    }
-
-        /// <summary>
-    /// Adds a string property in the form of a single multi-sz string.
-    /// </summary>
-    inline void add(_Inout_ key_type&& key,
-            _In_opt_z_ const char *value) {
-        this->add(std::move(key), multi_sz::for_string(value));
-    }
+    void add(_Inout_ key_type&& key, _In_opt_z_ const char *value);
 
     /// <summary>
-    /// Adds a string property in the form of a single multi-sz string.
+    /// Adds a string property.
     /// </summary>
     inline void add(_In_z_ const key_type::value_type *key,
             _In_opt_z_ const char *value) {
         assert(key != nullptr);
-        this->add(std::string(key), multi_sz::for_string(value));
+        this->add(std::string(key), value);
     }
 
     /// <summary>
@@ -190,8 +167,6 @@ struct LYRA_TEST_API property_set_impl final {
     /// </summary>
     _Ret_maybenull_ const value_type *find(
         _In_ const key_type& key) const noexcept;
-
-    property_set_impl& operator =(const property_set_impl&) = delete;
 };
 
 
