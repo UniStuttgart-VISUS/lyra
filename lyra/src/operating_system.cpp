@@ -81,7 +81,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::operating_system::get_version(
 
             ps.add(u8"ServicePack", LYRA_NAMESPACE::version::make(
                 static_cast<std::uint32_t>(vi.wServicePackMajor),
-                static_cast<std::uint32_t>(vi.wServicePackMinor));
+                static_cast<std::uint32_t>(vi.wServicePackMinor)));
 
             switch (vi.wProductType) {
                 case VER_NT_WORKSTATION:
