@@ -1137,7 +1137,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::smbios::get_memory_device(
 
         if (version_at_least(smbios_version, 2, 7)) {
             ps.add<installed_size>(info->extended_size);
-            //word_type configured_memory_clock_speed;
+            ps.add<current_speed>(info->configured_memory_clock_speed);
         }
 
         if (version_at_least(smbios_version, 2, 8)) {
