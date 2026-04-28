@@ -1103,10 +1103,15 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::smbios::get_processor_information(
             _LYRA_ADD_STRING_PROP(part_number, part_number);
         }
 
+        if (version_at_least(smbios_version, 2, 5)
+                && !version_at_least(smbios_version, 3, 0)) {
+            // If possible, use the better fields from SMBIOS 3.
+            ps.add<available_cores>(info->core_count);
+            ps.add<enabled_cores>(info->core_enabled);
+            ps.add<available_threads>(info->thread_count);
+        }
+
         if (version_at_least(smbios_version, 2, 5)) {
-            //ps.add<core_count>(info->core_count);
-            //ps.add<core_enabled>(info->core_enabled);
-            //ps.add<thread_count>(info->thread_count);
             //ps.add<characteristics>(info->characteristics);
         }
 
@@ -1115,9 +1120,9 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::smbios::get_processor_information(
         }
 
         if (version_at_least(smbios_version, 3, 0)) {
-            //ps.add<core_count2>(info->core_count2);
-            //ps.add<core_enabled2>(info->core_enabled2);
-            //ps.add<thread_count2>(info->thread_count2);
+            ps.add<available_cores>(info->core_count2);
+            ps.add<enabled_cores>(info->core_enabled2);
+            ps.add<available_threads>(info->thread_count2);
         }
     }
 

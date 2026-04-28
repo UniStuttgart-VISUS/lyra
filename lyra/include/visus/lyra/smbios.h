@@ -503,6 +503,23 @@ namespace smbios {
     };
 
     /// <summary>
+    /// Identifies the number of available cores of the CPU.
+    /// </summary>
+    struct available_cores final {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"AvailableCores";
+    };
+
+    /// <summary>
+    /// Identifies the number of available threads, which might be more than
+    /// <see cref="available_cores" /> if the CPU supports hyper-threading.
+    /// </summary>
+    struct available_threads final {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"AvailableThreads";
+    };
+
+    /// <summary>
     /// Identifies all mainboard-related information from SMBIOS. This property
     /// can be retrieved from the SMBIOS root property set obtained from
     /// <see cref="get_smbios" />.
@@ -551,6 +568,14 @@ namespace smbios {
     struct current_speed final {
         typedef std::uint32_t type;
         static constexpr auto name = u8"CurrentSpeed";
+    };
+
+    /// <summary>
+    /// Identifies the number of enables cores of the CPU.
+    /// </summary>
+    struct enabled_cores final {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"EnabledCores";
     };
 
     /// <summary>
