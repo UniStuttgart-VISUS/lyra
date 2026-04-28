@@ -52,6 +52,7 @@
 #include <memory>
 #include <numeric>
 #include <string>
+#include <vector>
 
 #include "visus/lyra/api.h"
 
@@ -628,6 +629,16 @@ public:
     inline _Ret_maybenull_z_ const value_type *operator [](
             _In_ const std::size_t idx) const noexcept {
         return detail::multi_sz_at(this->_value, idx);
+    }
+
+    /// <summary>
+    /// Convert the multi-sz to a vector of strings.
+    /// </summary>
+    /// <returns>A vector containing all strings in the multi-sz.</returns>
+    inline operator std::vector<std::string>(void) const {
+        std::vector<std::string> retval;
+        detail::multi_sz_copy(std::back_inserter(retval), this->_value);
+        return retval;
     }
 
 private:

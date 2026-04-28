@@ -499,7 +499,7 @@ namespace smbios {
     /// </summary>
     struct asset_tag final {
         typedef const char *type;
-        static constexpr auto name = u8"asset_tag";
+        static constexpr auto name = u8"AssetTag";
     };
 
     /// <summary>
@@ -509,7 +509,7 @@ namespace smbios {
     /// </summary>
     struct baseboard final {
         typedef property_set type;
-        static constexpr auto name = u8"baseboard";
+        static constexpr auto name = u8"Baseboard";
     };
 
     /// <summary>
@@ -519,7 +519,7 @@ namespace smbios {
     /// </summary>
     struct bios final {
         typedef property_set type;
-        static constexpr auto name = u8"bios";
+        static constexpr auto name = u8"BIOS";
     };
 
     /// <summary>
@@ -529,17 +529,53 @@ namespace smbios {
     /// </summary>
     struct cpu final {
         typedef property_set type;
-        static constexpr auto name = u8"cpu";
+        static constexpr auto name = u8"CPU";
     };
 
     struct cpuid final {
         typedef std::uint32_t type;
-        static constexpr auto name = u8"id";
+        static constexpr auto name = u8"ID";
     };
 
+    /// <summary>
+    /// The CPU version, which is basically its name.
+    /// </summary>
+    struct cpu_version final {
+        typedef const char *type;
+        static constexpr auto name = u8"Version";
+    };
+
+    /// <summary>
+    /// The current speed of the CPU.
+    /// </summary>
+    struct current_speed final {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"CurrentSpeed";
+    };
+
+    /// <summary>
+    /// The external clock of the CPU.
+    /// </summary>
+    struct external_clock final {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"ExternalClock";
+    };
+
+    /// <summary>
+    /// Identifies a firmware version property
+    /// </summary>
+    struct firmware_version final {
+        typedef property_set type;
+        static constexpr auto name = u8"FirmwareVersion";
+    };
+
+    /// <summary>
+    /// Identifies the location of a piece of hardware, for instance a rack
+    /// number.
+    /// </summary>
     struct location final {
         typedef const char *type;
-        static constexpr auto name = u8"location";
+        static constexpr auto name = u8"Location";
     };
 
     /// <summary>
@@ -547,7 +583,15 @@ namespace smbios {
     /// </summary>
     struct manufacturer final {
         typedef const char *type;
-        static constexpr auto name = u8"manufacturer";
+        static constexpr auto name = u8"Manufacturer";
+    };
+
+    /// <summary>
+    /// The maximum speed of the CPU.
+    /// </summary>
+    struct maximum_speed final {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"MaximumSpeed";
     };
 
     /// <summary>
@@ -555,7 +599,7 @@ namespace smbios {
     /// </summary>
     struct part_number final {
         typedef const char *type;
-        static constexpr auto name = u8"part_number";
+        static constexpr auto name = u8"PartNumber";
     };
 
     /// <summary>
@@ -564,42 +608,42 @@ namespace smbios {
     /// </summary>
     struct product final {
         typedef const char *type;
-        static constexpr auto name = u8"product";
+        static constexpr auto name = u8"Product";
     };
 
     struct release_date final {
         typedef const char *type;
-        static constexpr auto name = u8"release_date";
+        static constexpr auto name = u8"ReleaseDate";
     };
 
     struct rom_size final {
         typedef std::uint32_t type;
-        static constexpr auto name = u8"rom_size";
+        static constexpr auto name = u8"RomSize";
     };
 
     struct serial_number final {
         typedef const char *type;
-        static constexpr auto name = u8"serial_number";
+        static constexpr auto name = u8"SerialNumber";
     };
 
     struct socket final {
         typedef const char *type;
-        static constexpr auto name = u8"socket";
+        static constexpr auto name = u8"Socket";
     };
 
     struct vendor final {
         typedef const char *type;
-        static constexpr auto name = u8"vendor";
+        static constexpr auto name = u8"Vendor";
     };
 
     struct version final {
         typedef const char *type;
-        static constexpr auto name = u8"version";
+        static constexpr auto name = u8"BiosVersion";
     };
 
     struct voltage final {
         typedef std::uint32_t type;
-        static constexpr auto name = u8"voltage";
+        static constexpr auto name = u8"Voltage";
     };
 
     /// <summary>

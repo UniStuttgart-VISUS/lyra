@@ -798,6 +798,25 @@ static bool validate_checksum(_In_reads_bytes_(cnt) const std::uint8_t *buffer,
     return (sum == 0);
 }
 
+/// <summary>
+/// Check whether <paramref name="version" /> is at least
+/// <paramref name="major"/>.<paramref name="minor"/>.
+/// </summary>
+static bool version_at_least(
+        _In_ const LYRA_NAMESPACE::smbios::data::version_type version,
+        _In_ const LYRA_NAMESPACE::smbios::byte_type major,
+        _In_ const LYRA_NAMESPACE::smbios::byte_type minor) {
+    if (version.first > major) {
+        return true;
+    }
+
+    if (version.first == major) {
+        return (version.second >= minor);
+    }
+
+    return false;
+}
+
 
 /// <summary>
 /// Adds a string property from an SMBIOS structure named <c>info</c> to a
@@ -993,25 +1012,19 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::smbios::get_baseboard_information(
     detail::property_set_impl ps;
     property_set retval;
 
-    //string_type manufacturer;
-    //string_type product_name;
-    //string_type version;
-    //string_type serial_number;
-    //string_type asset_tag;
-    //byte_type feature_flags;
-    //string_type location_in_chassis;
-    //handle_type chassis_handle;
-    //byte_type board_type;
-    //byte_type number_of_contained_object_handles;
-    //handle_type contained_object_handles[255];
-
     if (info != nullptr) {
         _LYRA_ADD_STRING_PROP(manufacturer, manufacturer);
         _LYRA_ADD_STRING_PROP(product, product_name);
         _LYRA_ADD_STRING_PROP(version, version);
         _LYRA_ADD_STRING_PROP(serial_number, serial_number);
         _LYRA_ADD_STRING_PROP(asset_tag, asset_tag);
+        //byte_type feature_flags;
         _LYRA_ADD_STRING_PROP(location, location_in_chassis);
+        //handle_type chassis_handle;
+        //byte_type board_type;
+        //byte_type number_of_contained_object_handles;
+        //handle_type contained_object_handles[255];
+
     }
 
     realise(retval, std::move(ps));
@@ -1025,29 +1038,29 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::smbios::get_baseboard_information(
 LYRA_NAMESPACE::property_set LYRA_NAMESPACE::smbios::get_bios_information(
         _In_ const bios_information_type *info,
         _In_ const data::version_type smbios_version) {
+    typedef LYRA_NAMESPACE::version::version structured_version;
     detail::property_set_impl ps;
     property_set retval;
-
-    //string_type vendor;
-    //string_type version;
-    //word_type starting_address_segment;
-    //string_type release_date;
-    //byte_type rom_size;       // 64KB * (rom_size + 1) is actual size.
-    ///* SMBIOS 2.1+ */
-    //qword_type characteristics;
-    ///* SMBIOS 2.4+ */
-    //byte_type extension_bytes1;
-    //byte_type extension_bytes2;
-    //byte_type major_release;
-    //byte_type minor_release;
-    //byte_type firmware_major_release;
-    //byte_type firmware_minor_release;
 
     if (info != nullptr) {
         _LYRA_ADD_STRING_PROP(vendor, vendor);
         _LYRA_ADD_STRING_PROP(version, version);
+        //word_type starting_address_segment;
         _LYRA_ADD_STRING_PROP(release_date, release_date);
-        ps.add<rom_size>(64 * 1024 + info->rom_size);
+        ps.add<rom_size>(64 * 1024 * (info->rom_size + 1));
+
+        if (version_at_least(smbios_version, 2, 1)) {
+            //ps.add<characteristics>(info->characteristics);
+        }
+
+        if (version_at_least(smbios_version, 2, 4)) {
+            //ps.add<extension_bytes1>(info->extension_bytes1);
+            //ps.add<extension_bytes2>(info->extension_bytes2);
+            ps.add<structured_version>(LYRA_NAMESPACE::version::make(
+                info->major_release, info->minor_release));
+            ps.add<firmware_version>(LYRA_NAMESPACE::version::make(
+                info->firmware_major_release, info->firmware_minor_release));
+        }
     }
 
     realise(retval, std::move(ps));
@@ -1064,48 +1077,48 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::smbios::get_processor_information(
     detail::property_set_impl ps;
     property_set retval;
 
-    //header_type header;
-    //string_type socket_designation;
-    //byte_type type;
-    //byte_type family;
-    //string_type manufacturer;
-    //qword_type cpuid;
-    //string_type version;
-    //byte_type voltage;
-    //word_type external_clock;
-    //word_type max_speed;
-    //word_type current_speed;
-    //byte_type status;
-    //byte_type upgrade;
-    ///* SMBIOS 2.1+ */
-    //handle_type l1_cache_handle;
-    //handle_type l2_cache_handle;
-    //handle_type l3_cache_handle;
-    ///* SMBIOS 2.3+ */
-    //string_type serial_number;
-    //string_type asset_tag;
-    //string_type part_number;
-    ///* SMBIOS 2.5+ */
-    //byte_type core_count;
-    //byte_type core_enabled;
-    //byte_type thread_count;
-    //word_type characteristics;
-    ///* SMBIOS 2.6+ */
-    //word_type family2;
-    ///* SMBIOS 3.0+ */
-    //word_type core_count2;
-    //word_type core_enabled2;
-    //word_type thread_count2;
-
     if (info != nullptr) {
         _LYRA_ADD_STRING_PROP(socket, socket_designation);
+        //byte_type type;
+        //byte_type family;
         _LYRA_ADD_STRING_PROP(manufacturer, manufacturer);
         ps.add<cpuid>(info->cpuid);
-        _LYRA_ADD_STRING_PROP(version, version);
+        _LYRA_ADD_STRING_PROP(cpu_version, version);
         ps.add<voltage>(info->voltage);
-        _LYRA_ADD_STRING_PROP(serial_number, serial_number);
-        _LYRA_ADD_STRING_PROP(asset_tag, asset_tag);
-        _LYRA_ADD_STRING_PROP(part_number, part_number);
+        ps.add<external_clock>(info->external_clock);
+        ps.add<maximum_speed>(info->max_speed);
+        ps.add<current_speed>(info->current_speed);
+        //byte_type status;
+        //byte_type upgrade;
+
+        if (version_at_least(smbios_version, 2, 1)) {
+            //ps.add<l1_cache_handle>(info->l1_cache_handle);
+            //ps.add<l2_cache_handle>(info->l2_cache_handle);
+            //ps.add<l3_cache_handle>(info->l3_cache_handle);
+        }
+
+        if (version_at_least(smbios_version, 2, 3)) {
+            _LYRA_ADD_STRING_PROP(serial_number, serial_number);
+            _LYRA_ADD_STRING_PROP(asset_tag, asset_tag);
+            _LYRA_ADD_STRING_PROP(part_number, part_number);
+        }
+
+        if (version_at_least(smbios_version, 2, 5)) {
+            //ps.add<core_count>(info->core_count);
+            //ps.add<core_enabled>(info->core_enabled);
+            //ps.add<thread_count>(info->thread_count);
+            //ps.add<characteristics>(info->characteristics);
+        }
+
+        if (version_at_least(smbios_version, 2, 6)) {
+            //ps.add<family2>(info->family2);
+        }
+
+        if (version_at_least(smbios_version, 3, 0)) {
+            //ps.add<core_count2>(info->core_count2);
+            //ps.add<core_enabled2>(info->core_enabled2);
+            //ps.add<thread_count2>(info->thread_count2);
+        }
     }
 
     realise(retval, std::move(ps));

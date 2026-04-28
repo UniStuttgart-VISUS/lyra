@@ -11,6 +11,7 @@
 
 #include <nlohmann/json.hpp>
 
+#include "visus/lyra/multi_sz.h"
 #include "visus/lyra/property_traits.h"
 
 #include "property_set_impl.h"
@@ -31,6 +32,14 @@ static void to_json(nlohmann::json& j, const property_set& p) {
     //        j[property.first] = property.second;
     //    }
     //}
+}
+
+static void to_json(nlohmann::json& j, const multi_sz& v) {
+    if (v.count() <= 1) {
+        j = std::string(v.data());
+    } else {
+        j = static_cast<std::vector<std::string>>(v);
+    }
 }
 
 LYRA_NAMESPACE_END

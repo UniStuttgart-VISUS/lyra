@@ -20,7 +20,7 @@ namespace version {
     /// </summary>
     struct major final {
         typedef std::uint32_t type;
-        static constexpr auto name = u8"major";
+        static constexpr auto name = u8"Major";
     };
 
     /// <summary>
@@ -28,7 +28,7 @@ namespace version {
     /// </summary>
     struct minor final {
         typedef std::uint32_t type;
-        static constexpr auto name = u8"minor";
+        static constexpr auto name = u8"Minor";
     };
 
     /// <summary>
@@ -36,7 +36,7 @@ namespace version {
     /// </summary>
     struct patch final {
         typedef std::uint32_t type;
-        static constexpr auto name = u8"patch";
+        static constexpr auto name = u8"Patch";
     };
 
     /// <summary>
@@ -44,7 +44,7 @@ namespace version {
     /// </summary>
     struct prerelease final {
         typedef const char *type;
-        static constexpr auto name = u8"prerelease";
+        static constexpr auto name = u8"PreRelease";
     };
 
     /// <summary>
@@ -53,7 +53,7 @@ namespace version {
     /// </summary>
     struct version final {
         typedef property_set type;
-        static constexpr auto name = u8"version";
+        static constexpr auto name = u8"Version";
     };
 
     /// <summary>

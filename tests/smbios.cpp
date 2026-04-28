@@ -74,7 +74,7 @@ TEST(smbios, get_smbios) {
         std::size_t cnt;
         LYRA_NAMESPACE::property_type type;
         const void *value;
-        EXPECT_TRUE(properties.get(value, cnt, type, u8"version"));
+        EXPECT_TRUE(properties.get(value, cnt, type, u8"Version"));
         EXPECT_EQ(cnt, 1);
         EXPECT_NE(value, nullptr);
         EXPECT_EQ(type, LYRA_NAMESPACE::property_type::properties);
