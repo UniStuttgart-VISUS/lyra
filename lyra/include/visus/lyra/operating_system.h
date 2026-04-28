@@ -20,11 +20,6 @@ namespace operating_system {
         static constexpr auto name = u8"family";
     };
 
-    struct version final {
-        typedef property_set type;
-        static constexpr auto name = u8"version";
-    };
-
     /// <summary>
     /// Gets a <see cref="version::version" /> property set describing the
     /// version of the operating system the code is running on.
