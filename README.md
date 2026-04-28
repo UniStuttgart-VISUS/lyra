@@ -55,7 +55,7 @@ struct cpu final {
 Such properties can be used to obtain individual properties in a more convenient manner:
 ```cpp
 std::size_t cnt;
-auto cpu = properties.get<visus::lyra::smbios::baseboard>(cnt);
+auto cpu = properties.get<visus::lyra::smbios::cpu>(cnt);
 ```
 The method returns a pointer to an array of `cnt` values or `nullptr` if the property does not exist. There is a parameterless overload of the method which just returns the pointer, but no counter.
 
