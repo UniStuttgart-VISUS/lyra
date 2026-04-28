@@ -16,7 +16,7 @@ void LYRA_DETAIL_NAMESPACE::property_set_impl::add(
         _Inout_ std::string&& key,
         _In_opt_z_ const char *value) {
     if (value != nullptr) {
-        this->add(std::move(key), std::string(value));
+        this->add(std::move(key), multi_sz::for_string(value));
     }
 }
 

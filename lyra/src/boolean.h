@@ -4,7 +4,6 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
-
 #if !defined(_LYRA_BOOLEAN_H)
 #define _LYRA_BOOLEAN_H
 #pragma once
@@ -20,7 +19,7 @@ LYRA_DETAIL_NAMESPACE_BEGIN
 /// Stores a Boolean value while preventing the use of the specialised vector
 /// implementation that relies on bitfields.
 /// </summary>
-class LYRA_API boolean final {
+class LYRA_TEST_API boolean final {
 
 public:
 

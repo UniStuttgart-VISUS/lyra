@@ -35,6 +35,14 @@ if (LYRA_BuildTests)
     FetchContent_MakeAvailable(googletest)
 endif ()
 
+# JSON for Modern C++
+FetchContent_Declare(nlohmann_json
+    URL "https://github.com/nlohmann/json/archive/refs/tags/v3.12.0.zip"
+    DOWNLOAD_EXTRACT_TIMESTAMP ON
+)
+option(JSON_Install "" ON)
+FetchContent_MakeAvailable(nlohmann_json)
+
 # Signal that we need to access private APIs for testing.
 if (LYRA_BuildTests)
     add_compile_definitions(LYRA_EXPORT_TESTS)

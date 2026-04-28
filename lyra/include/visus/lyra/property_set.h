@@ -8,17 +8,20 @@
 #define _LYRA_PROPERTY_SET_H
 #pragma once
 
+#include <functional>
+#include <map>
+#include <utility>
+
 #include "visus/lyra/property_traits.h"
+
+// Forward declarations.
+LYRA_DETAIL_NAMESPACE_BEGIN
+struct property_set_impl;
+LYRA_TEST_API property_set& realise(property_set&, property_set_impl&&);
+LYRA_DETAIL_NAMESPACE_END
 
 
 LYRA_NAMESPACE_BEGIN
-
-// Forward declarations.
-namespace detail {
-    struct property_set_impl;
-    LYRA_TEST_API property_set& realise(property_set&, property_set_impl&&);
-}
-
 
 /// <summary>
 /// Represents a group of properties about the system.
@@ -31,6 +34,12 @@ public:
     /// The type-erased value type used to represent a property.
     /// </summary>
     typedef const void *value_type;
+
+    /// <summary>
+    /// The visitor callback that allows for enumerating all properties.
+    /// </summary>
+    typedef bool (*visitor_type)(const char *, value_type, std::size_t,
+        property_type, void *);
 
     /// <summary>
     /// Initialises a new instance.
@@ -110,6 +119,12 @@ public:
     }
 
     /// <summary>
+    /// Answer the JSON representation of the property set.
+    /// </summary>
+    /// <returns></returns>
+    _Ret_maybenull_z_ const char *json(void) const noexcept;
+
+    /// <summary>
     /// Answer the number (and names) of the properties in the set.
     /// </summary>
     /// <param name="dst">A buffer to receive pointers to at most
@@ -121,7 +136,7 @@ public:
         _In_ std::size_t cnt = 0) const noexcept;
 
     /// <summary>
-    /// Answer the siez of the property set.
+    /// Answer the size of the property set.
     /// </summary>
     /// <returns>The total number of properties in the set.</returns>
     std::size_t size(void) const noexcept;
@@ -140,12 +155,34 @@ public:
     /// <returns><c>*<see langword="this" /></c>.</returns>
     property_set& operator =(_Inout_ property_set&& rhs) noexcept;
 
+    /// <summary>
+    /// Invoke <paramref name="visitor" /> for each property in the set.
+    /// </summary>
+    /// <param name="visitor">A visitor that will be invoked for each property.
+    /// </param>
+    /// <param name="user_data">An optional pointer to user defined data passed
+    /// to the visitor.</param>
+    /// <returns>The number of properties visited.</returns>
+    std::size_t visit(_In_ const visitor_type visitor,
+        _In_opt_ void *user_data) const;
+
+    /// <summary>
+    /// Invoke <paramref name="visitor" /> for each property in the set.
+    /// </summary>
+    /// <typeparam name="TVisitor"></typeparam>
+    /// <param name="visitor"></param>
+    /// <returns></returns>
+    template<class TVisitor, std::size_t... Idx> std::size_t visit(
+        _In_ const TVisitor& visitor,
+        std::index_sequence<Idx...> = std::index_sequence<>()) const noexcept;
+
 private:
 
-    detail::property_set_impl *_impl;
+    typedef detail::property_set_impl impl;
 
-    friend property_set& detail::realise(property_set&,
-        detail::property_set_impl&&);
+    impl *_impl;
+
+    friend property_set& detail::realise(property_set&, impl&&);
 };
 
 LYRA_NAMESPACE_END

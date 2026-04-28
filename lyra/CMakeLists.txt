@@ -36,6 +36,7 @@ target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_EXTENSIONS OFF)
 
 # Configure the linker.
+target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
 if (WIN32)
     target_link_libraries(${PROJECT_NAME} PRIVATE icu)
     target_link_libraries(${PROJECT_NAME} PRIVATE WIL::WIL)

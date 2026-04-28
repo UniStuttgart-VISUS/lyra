@@ -57,7 +57,7 @@ template<> struct property_type_traits<property_type::v> final {\
     typedef t type;\
 }
 
-_LYRA_PROP_TRAITS(string, const char *);
+_LYRA_PROP_TRAITS(string, multi_sz);
 _LYRA_PROP_TRAITS(properties, property_set);
 _LYRA_PROP_TRAITS(boolean, bool);
 _LYRA_PROP_TRAITS(int32, std::int32_t);
@@ -92,6 +92,7 @@ template<> struct property_traits<t> final {\
 }
 
 _LYRA_PROP_TRAITS(boolean, bool);
+_LYRA_PROP_TRAITS(string, multi_sz);
 _LYRA_PROP_TRAITS(string, const char *);
 _LYRA_PROP_TRAITS(properties, property_set);
 _LYRA_PROP_TRAITS(int32, std::int32_t);
@@ -109,6 +110,25 @@ _LYRA_PROP_TRAITS(float64, double);
 /// <typeparam name="TType">The C/C++ type to reflect on.</typeparam>
 template<class TType>
 constexpr auto property_type_v = property_traits<TType>::value;
+
+
+/// <summary>
+/// Gets the <typeparamref name="Idx" />-th <see cref="property_type" /> in the
+/// <see cref="property_types" /> dispatch list.
+/// </summary>
+/// <typeparam name="Idx"></typeparam>
+template<std::size_t Idx>
+constexpr auto property_at = dispatch_list_at_v<Idx, property_types>;
+
+
+/// <summary>
+/// Gets the traits for the <typeparamref name="Idx" />-th
+/// <see cref="property_type" /> in the <see cref="property_types" /> dispatch
+/// list.
+/// </summary>
+/// <typeparam name="Idx"></typeparam>
+template<std::size_t Idx>
+using property_traits_at = property_traits<property_type_t<property_at<Idx>>>;
 
 LYRA_DETAIL_NAMESPACE_END
 

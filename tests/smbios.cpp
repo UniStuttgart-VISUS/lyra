@@ -7,6 +7,7 @@
 #include <gtest/gtest.h>
 
 #include "visus/lyra/smbios.h"
+#include "visus/lyra/version.h"
 
 
 TEST(smbios, read) {
@@ -65,6 +66,11 @@ TEST(smbios, get_smbios) {
     EXPECT_FALSE(properties.empty());
 
     {
+        auto json = properties.json();
+        EXPECT_NE(json, nullptr);
+    }
+
+    {
         std::size_t cnt;
         LYRA_NAMESPACE::property_type type;
         const void *value;
@@ -72,6 +78,10 @@ TEST(smbios, get_smbios) {
         EXPECT_EQ(cnt, 1);
         EXPECT_NE(value, nullptr);
         EXPECT_EQ(type, LYRA_NAMESPACE::property_type::properties);
+        auto version = static_cast<const LYRA_NAMESPACE::property_set *>(value);
+        EXPECT_FALSE(version->empty());
+        EXPECT_NE(version->get<LYRA_NAMESPACE::version::major>(), nullptr);
+        EXPECT_NE(version->get<LYRA_NAMESPACE::version::minor>(), nullptr);
     }
 
     {
@@ -79,6 +89,9 @@ TEST(smbios, get_smbios) {
         auto property = properties.get<LYRA_NAMESPACE::smbios::baseboard>(cnt);
         EXPECT_NE(property, nullptr);
         EXPECT_GT(cnt, 0U);
+        auto manufacturer = property->get<LYRA_NAMESPACE::smbios::manufacturer>(cnt);
+        EXPECT_NE(manufacturer, nullptr);
+        EXPECT_EQ(manufacturer->count(), 1);
     }
 
     {

@@ -44,6 +44,19 @@
 
 
 /*
+ * LYRA_NAMESPACE::multi_sz::iterator::operator =
+ */
+typename LYRA_NAMESPACE::multi_sz::iterator&
+LYRA_NAMESPACE::multi_sz::iterator::operator =(_In_ const iterator& rhs) {
+    if (this != std::addressof(rhs)) {
+        this->_current = rhs._current;
+    }
+
+    return *this;
+}
+
+
+/*
  * LYRA_NAMESPACE::multi_sz::iterator::operator ++
  */
 typename LYRA_NAMESPACE::multi_sz::iterator&
@@ -257,9 +270,9 @@ void LYRA_NAMESPACE::multi_sz::clear(void) noexcept {
 LYRA_NAMESPACE::multi_sz& LYRA_NAMESPACE::multi_sz::operator =(
         _In_ const multi_sz& rhs) {
     if (this != std::addressof(rhs)) {
-        auto value = detail::multi_sz_concat(this->_value, rhs._value);
         this->clear();
-        this->_value = value;
+        assert(this->_value == nullptr);
+        this->_value = detail::multi_sz_concat(this->_value, rhs._value);
     }
 
     return *this;

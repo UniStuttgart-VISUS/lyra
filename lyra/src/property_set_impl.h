@@ -45,6 +45,11 @@ struct LYRA_TEST_API property_set_impl final {
     typedef property_variant value_type;
 
     /// <summary>
+    /// Cache location for the JSON representation.
+    /// </summary>
+    std::string json;
+
+    /// <summary>
     /// Stores the properties.
     /// </summary>
     std::map<key_type, value_type> values;
@@ -127,6 +132,38 @@ struct LYRA_TEST_API property_set_impl final {
             _In_opt_z_ const char *value) {
         assert(key != nullptr);
         this->add(std::string(key), value);
+    }
+
+    /// <summary>
+    /// Adds a string property.
+    /// </summary>
+    inline void add(_Inout_ key_type&& key, _In_ const std::string& value) {
+        this->add(std::move(key), value.c_str());
+    }
+
+    /// <summary>
+    /// Adds a string property.
+    /// </summary>
+    inline void add(_In_z_ const key_type::value_type *key,
+            _In_ const std::string& value) {
+        assert(key != nullptr);
+        this->add(std::string(key), value);
+    }
+
+    /// <summary>
+    /// Adds a string property.
+    /// </summary>
+    inline void add(_Inout_ key_type&& key, _In_ std::string&& value) {
+        this->add(std::move(key), value.c_str());
+    }
+
+    /// <summary>
+    /// Adds a string property.
+    /// </summary>
+    inline void add(_In_z_ const key_type::value_type *key,
+            _In_ std::string&& value) {
+        assert(key != nullptr);
+        this->add(std::string(key), value.c_str());
     }
 
     /// <summary>

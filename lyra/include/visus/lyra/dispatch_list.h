@@ -19,7 +19,46 @@ LYRA_DETAIL_NAMESPACE_BEGIN
 /// </summary>
 /// <typeparam name="TType">The (enumeration) type.</typeparam>
 /// <typeparam name="Values">The values to dispatch.</typeparam>
-template<class TType, TType... Values> struct dispatch_list final { };
+template<class TType, TType... Values> struct dispatch_list final {
+    static constexpr std::size_t size = sizeof...(Values);
+};
+
+
+/// <summary>
+/// Selects the element at index <paramref name="Idx" /> from a
+/// <see cref="dispatch_list" />.
+/// </summary>
+/// <typeparam name="Idx">The index of the element to select.</typeparam>
+/// <typeparam name="TList">The list to select from.</typeparam>
+template<std::size_t Idx, class TList> struct dispatch_list_at;
+
+/// <summary>
+/// Specialisation for actual dispatch lists.
+/// </summary>
+template<std::size_t Idx, class TType, TType Head, TType... Tail>
+struct dispatch_list_at<Idx, dispatch_list<TType, Head, Tail...>> final {
+    typedef dispatch_list_at<Idx - 1, dispatch_list<TType, Tail...>> _tail;
+    static constexpr TType value = (Idx == 0) ? Head : _tail::value;
+};
+
+/// <summary>
+/// Recursion stop for dispatch list accessor.
+/// </summary>
+template<class TType, TType Head, TType... Tail>
+struct dispatch_list_at<0, dispatch_list<TType, Head, Tail...>> final {
+    static constexpr TType value = Head;
+};
+
+
+/// <summary>
+/// Selects the element at index <paramref name="Idx" /> from a
+/// <see cref="dispatch_list" />.
+/// </summary>
+/// <typeparam name="Idx">The index of the element to select.</typeparam>
+/// <typeparam name="TList">The list to select from.</typeparam>
+template<std::size_t Idx, class TList>
+constexpr auto dispatch_list_at_v = dispatch_list_at<Idx, TList>::value;
+
 
 LYRA_DETAIL_NAMESPACE_END
 

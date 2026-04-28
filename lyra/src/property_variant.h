@@ -14,6 +14,7 @@
 #include <variant>
 #include <vector>
 
+#include "visus/lyra/multi_sz.h"
 #include "visus/lyra/property_traits.h"
 
 #include "boolean.h"
@@ -30,10 +31,10 @@ template<property_type Type> struct make_scalar_storage final {
 };
 
 /// <summary>
-/// Store strings as STL strings rather than plain C stuff.
+/// Store strings as multi-sz strings rather than plain C stuff.
 /// </summary>
 template<> struct make_scalar_storage<property_type::string> final {
-    typedef std::string type;
+    typedef multi_sz type;
 };
 
 /// <summary>
@@ -54,8 +55,11 @@ template<> struct make_vector_storage<property_type::boolean> final {
     typedef std::vector<_scalar> type;
 };
 
+/// <summary>
+/// Disable vector specialisation for strings as <see cref="multi_sz" />s are
+/// already vector-like.
+/// </summary>
 template<> struct make_vector_storage<property_type::string> final {
-    // TODO
     typedef void type;
 };
 
@@ -111,21 +115,6 @@ template<> struct property_variant_access<std::monostate> final {
     }
     static inline constexpr std::size_t count(const storage&) noexcept {
         return 0;
-    }
-};
-
-/// <summary>
-/// Specialisation for strings, which need to be converted to pointers.
-/// </summary>
-template<> struct property_variant_access<std::string> final {
-    typedef const char *pointer;
-    typedef std::string storage;
-    static constexpr auto type = property_type::string;
-    static inline pointer get(_In_ const storage& v) noexcept {
-        return v.c_str();
-    }
-    static inline constexpr std::size_t count(const storage&) noexcept {
-        return 1;
     }
 };
 
