@@ -24,7 +24,43 @@ smbios.visit([](const char *name, const auto value, const std::size_t cnt) {
 });
 ```
 
+The number and names of the properties can be obtained via the `properties` method:
+```cpp
+// Note that the pointers returned are valid as long as the property set is alive.
+std::vector<const char *> names(smbios.properties());
+smbios.properties(names.data(), names.size());
+```
+
+Individual properties can be retrieved via the `get` method:
+```cpp
+const void *value;
+std::size_t cnt;
+visus::lyra::property_type type;
+
+if (smbios.get(value, cnt, type, "CPU")) {
+    // Do something with the information. The method will return false if the
+    // requested property does not exist. Note that the parameter must be encoded
+    // in UTF-8. Other encodings might spuriously fail.
+}
+```
+
+The library provides descriptors for well-known properties. These have a form like:
+```c++
+struct cpu final {
+    typedef property_set type;
+    static constexpr auto name = u8"CPU";
+};
+```
+
+Such properties can be used to obtain individual properties in a more convenient manner:
+```cpp
+std::size_t cnt;
+auto cpu = properties.get<visus::lyra::smbios::baseboard>(cnt);
+```
+The method returns a pointer to an array of `cnt` values or `nullptr` if the property does not exist. There is a parameterless overload of the method which just returns the pointer, but no counter.
+
 The data from a property set can be easily persisted in the form of JSON strings. Use the `json` method for that:
 ```cpp
 std::string smbios_string = smbios.json();
 ```
+The JSON string will be cached within the property set and remains valid as long as the object exists unless copied.
