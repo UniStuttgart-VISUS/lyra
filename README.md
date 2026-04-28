@@ -1,5 +1,5 @@
 ﻿# Project Lyra
-Project Lyra provides a self-contained library for obtaining a snapshot of the system a process is running on for the purpose of documenting the environment for reproducability of research.
+Project Lyra provides a self-contained library for obtaining a snapshot of properties of the system a process is running on for the purpose of documenting the environment for reproducability of research. The library is derived from the [TRRojan project](https://github.com/UniStuttgart-VISUS/trrojan), but intended for reuse in other projects without the rest of the project's features.
 
 ## Building
 The project is built using CMake. Configure and compile it to obtain a DLL that can be used in your project.
