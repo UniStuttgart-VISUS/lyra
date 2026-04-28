@@ -79,22 +79,21 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::operating_system::get_version(
                 ps.add<LYRA_NAMESPACE::version::patch>(vi.dwBuildNumber);
             }
 
-            ps.add(u8"service_pack_major", static_cast<std::uint32_t>(
-                vi.wServicePackMajor));
-            ps.add(u8"service_pack_minor", static_cast<std::uint32_t>(
-                vi.wServicePackMinor));
+            ps.add(u8"ServicePack", LYRA_NAMESPACE::version::make(
+                static_cast<std::uint32_t>(vi.wServicePackMajor),
+                static_cast<std::uint32_t>(vi.wServicePackMinor));
 
             switch (vi.wProductType) {
                 case VER_NT_WORKSTATION:
-                    ps.add(u8"product_type", u8"Workstation");
+                    ps.add(u8"ProductType", u8"Workstation");
                     break;
 
                 case VER_NT_DOMAIN_CONTROLLER:
-                    ps.add(u8"product_type", u8"Domain Controller");
+                    ps.add(u8"ProductType", u8"Domain Controller");
                     break;
 
                 case VER_NT_SERVER:
-                    ps.add(u8"product_type", u8"Server");
+                    ps.add(u8"ProductType", u8"Server");
                     break;
             }
         }
@@ -102,7 +101,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::operating_system::get_version(
     }
 
 #else /* defined(_WIN32) */
-    static const std::regex rx("(\\d+)\\.(\\d+)\\.(\\d+)");
+    static const std::regex rx("(\\d+)\\.(\\d+)\\.(\\d+).*");
     std::cmatch m;
     utsname vi;
 
@@ -114,8 +113,8 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::operating_system::get_version(
             ps.add<LYRA_NAMESPACE::version::patch>(std::stoul(m[3].str()));
         }
 
-        ps.add(u8"release", vi.release);
-        ps.add(u8"version", vi.version);
+        ps.add(u8"Release", vi.release);
+        ps.add(u8"Version", vi.version);
     }
 
     //this->name = vi.sysname;

@@ -135,6 +135,22 @@ struct LYRA_TEST_API property_set_impl final {
     }
 
     /// <summary>
+    /// Adds a string property if non-<see langword="nullptr" />.
+    /// </summary>
+    inline void add(_Inout_ key_type&& key, _In_opt_z_ char *value) {
+        this->add(std::move(key), const_cast<const char *>(value));
+    }
+
+    /// <summary>
+    /// Adds a string property.
+    /// </summary>
+    inline void add(_In_z_ const key_type::value_type *key,
+            _In_opt_z_ char *value) {
+        assert(key != nullptr);
+        this->add(std::string(key), value);
+    }
+
+    /// <summary>
     /// Adds a string property.
     /// </summary>
     inline void add(_Inout_ key_type&& key, _In_ const std::string& value) {
