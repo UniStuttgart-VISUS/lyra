@@ -16,7 +16,7 @@ auto smbios = visus::lyra::smbios::get_smbios();
 
 There are different ways of accessing the data stored in a property set. The most convenient one is probably the `visit` method:
 ```cpp
-smbios.visit([](const std::string& name, const auto value, const std::size_t cnt) {
+smbios.visit([](const char *name, const auto value, const std::size_t cnt) {
     // Do something with the information. The type of the 'value' is dependent
     // on the type of the property. However, it is always a pointer to 'cnt'
     // consecutive values. Usually, 'cnt' will be 1, but there might be
