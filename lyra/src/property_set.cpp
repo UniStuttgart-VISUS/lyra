@@ -19,21 +19,32 @@
 
 LYRA_NAMESPACE_BEGIN
 
+/// <summary>
+/// Converts a <see cref="property_set" /> to a JSON object.
+/// </summary>
 static void to_json(nlohmann::json& j, const property_set& p) {
     j = nlohmann::json::object();
 
-    p.visit([&j](const char *name, const auto value, std::size_t cnt) {
-        j[name] = value;
-        return true; // Continue visiting.
-    });
+    p.visit([&j](const char *name, const auto value, const std::size_t cnt) {
+        if (cnt == 1) {
+            j[name] = *value;
 
-    //if (p._impl != nullptr) {
-    //    for (auto& property : p._impl->values) {
-    //        j[property.first] = property.second;
-    //    }
-    //}
+        } else {
+            auto a = nlohmann::json::array();
+
+            // Note: std::copy_n does not work somehow at this point ...
+            for (std::size_t i = 0; i < cnt; ++i) {
+                a.push_back(value[i]);
+            }
+
+            j[name] = a;
+        }
+    });
 }
 
+/// <summary>
+/// Converts a <see cref="multi_sz" /> to a JSON value.
+/// </summary>
 static void to_json(nlohmann::json& j, const multi_sz& v) {
     if (v.count() <= 1) {
         j = std::string(v.data());

@@ -503,20 +503,11 @@ namespace smbios {
     };
 
     /// <summary>
-    /// Identifies the number of available cores of the CPU.
+    /// Identifies a memory bank.
     /// </summary>
-    struct available_cores final {
-        typedef std::uint32_t type;
-        static constexpr auto name = u8"AvailableCores";
-    };
-
-    /// <summary>
-    /// Identifies the number of available threads, which might be more than
-    /// <see cref="available_cores" /> if the CPU supports hyper-threading.
-    /// </summary>
-    struct available_threads final {
-        typedef std::uint32_t type;
-        static constexpr auto name = u8"AvailableThreads";
+    struct bank final {
+        typedef const char *type;
+        static constexpr auto name = u8"Bank";
     };
 
     /// <summary>
@@ -537,6 +528,22 @@ namespace smbios {
     struct bios final {
         typedef property_set type;
         static constexpr auto name = u8"BIOS";
+    };
+
+    /// <summary>
+    /// Identifies the version of the BIOS.
+    /// </summary>
+    struct bios_version final {
+        typedef const char *type;
+        static constexpr auto name = u8"BiosVersion";
+    };
+
+    /// <summary>
+    /// Identifies the type of a component.
+    /// </summary>
+    struct component_type final {
+        typedef const char *type;
+        static constexpr auto name = u8"Type";
     };
 
     /// <summary>
@@ -579,6 +586,14 @@ namespace smbios {
     };
 
     /// <summary>
+    /// Identifies the usable size of a memory module.
+    /// </summary>
+    struct enabled_size final {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"EnabledSize";
+    };
+
+    /// <summary>
     /// The external clock of the CPU.
     /// </summary>
     struct external_clock final {
@@ -592,6 +607,40 @@ namespace smbios {
     struct firmware_version final {
         typedef property_set type;
         static constexpr auto name = u8"FirmwareVersion";
+    };
+
+    /// <summary>
+    /// Identifies the form factor of a component, for instance the type of a
+    /// memory module.
+    /// </summary>
+    struct form_factor final {
+        typedef const char *type;
+        static constexpr auto name = u8"FormFactor";
+    };
+
+    /// <summary>
+    /// Identifies the number of available cores of the CPU.
+    /// </summary>
+    struct installed_cores final {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"InstalledCores";
+    };
+
+    /// <summary>
+    /// Identifies the size of an installed memory module.
+    /// </summary>
+    struct installed_size final {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"InstalledSize";
+    };
+
+    /// <summary>
+    /// Identifies the number of available threads, which might be more than
+    /// <see cref="installed_cores" /> if the CPU supports hyper-threading.
+    /// </summary>
+    struct installed_threads final {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"InstalledThreads";
     };
 
     /// <summary>
@@ -620,6 +669,38 @@ namespace smbios {
     };
 
     /// <summary>
+    /// The maximum allowed voltage, typically for a memory module.
+    /// </summary>
+    struct maximum_voltage final {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"MaximumVoltage";
+    };
+
+    /// <summary>
+    /// Groups all information about a single memory module.
+    /// </summary>
+    struct memory_device final {
+        typedef property_set type;
+        static constexpr auto name = u8"MemoryDevice";
+    };
+
+    /// <summary>
+    /// The minimum allowed voltage, typically for a memory module.
+    /// </summary>
+    struct minimum_voltage final {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"MinimumVoltage";
+    };
+
+    /// <summary>
+    /// Groups all information about a single memory module.
+    /// </summary>
+    struct memory_module final {
+        typedef property_set type;
+        static constexpr auto name = u8"MemoryModule";
+    };
+
+    /// <summary>
     /// Identifies a part number assigned to a component via SMBIOS.
     /// </summary>
     struct part_number final {
@@ -641,6 +722,14 @@ namespace smbios {
         static constexpr auto name = u8"ReleaseDate";
     };
 
+    /// <summary>
+    /// Identifies the revision of a piece of hardware or software.
+    /// </summary>
+    struct revision final {
+        typedef const char *type;
+        static constexpr auto name = u8"Revision";
+    };
+
     struct rom_size final {
         typedef std::uint32_t type;
         static constexpr auto name = u8"RomSize";
@@ -656,14 +745,12 @@ namespace smbios {
         static constexpr auto name = u8"Socket";
     };
 
+    /// <summary>
+    /// Identifies the vendor of a component.
+    /// </summary>
     struct vendor final {
         typedef const char *type;
         static constexpr auto name = u8"Vendor";
-    };
-
-    struct version final {
-        typedef const char *type;
-        static constexpr auto name = u8"BiosVersion";
     };
 
     struct voltage final {
@@ -683,6 +770,20 @@ namespace smbios {
     /// </summary>
     LYRA_API property_set get_bios_information(
         _In_ const bios_information_type *info,
+        _In_ const data::version_type smbios_version);
+
+    /// <summary>
+    /// Constructs a property set for the given memory-device information.
+    /// </summary>
+    LYRA_API property_set get_memory_device(
+        _In_ const memory_device_type *info,
+        _In_ const data::version_type smbios_version);
+
+    /// <summary>
+    /// Constructs a property set for the given memory-module information.
+    /// </summary>
+    LYRA_API property_set get_memory_module_information(
+        _In_ const memory_module_information_type *info,
         _In_ const data::version_type smbios_version);
 
     /// <summary>

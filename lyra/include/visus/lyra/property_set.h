@@ -180,6 +180,22 @@ private:
 
     typedef detail::property_set_impl impl;
 
+    template<class TVisitor, class TType>
+    static constexpr auto visit_array = std::is_invocable_v<TVisitor,
+        const char *, const TType *, std::size_t>;
+
+    template<class TVisitor, class TType>
+    static constexpr auto visit_array_r = std::is_invocable_r_v<bool, TVisitor,
+        const char *, const TType *, std::size_t>;
+
+    template<class TVisitor, class TType>
+    static constexpr auto visit_scalar = std::is_invocable_v<TVisitor,
+        const char *, const TType&>;
+
+    template<class TVisitor, class TType>
+    static constexpr auto visit_scalar_r = std::is_invocable_r_v<bool, TVisitor,
+        const char *, const TType&>;
+
     impl *_impl;
 
     friend property_set& detail::realise(property_set&, impl&&);

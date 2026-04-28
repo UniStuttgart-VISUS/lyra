@@ -59,8 +59,37 @@ std::size_t LYRA_NAMESPACE::property_set::visit(
             detail::property_at<Idx>,
             [&visitor](const char *n, value_type v, std::size_t c) {
                 typedef detail::property_traits_at<Idx> traits;
-                auto w = static_cast<typename traits::pointer>(v);
-                return visitor(n, *w, c);
+                typedef typename traits::pointer pointer_type;
+                const auto w = static_cast<typename traits::pointer>(v);
+                typedef std::decay_t<decltype(*w)> value_type;
+                assert(w != nullptr);
+                assert(c >= 1);
+
+                if constexpr (visit_array<TVisitor, value_type>) {
+                    // Visitor accepts an array and wants to see all elements.
+                    visitor(n, w, c);
+                    return true;
+                }
+
+                if constexpr (visit_array_r<TVisitor, value_type>) {
+                    // Visitor accepts an array and controls the iteration.
+                    return visitor(n, w, c);
+                }
+
+                if constexpr (visit_scalar<TVisitor, value_type>) {
+                    // Visitor accepts the first element and wants to see all
+                    // elements.
+                    visitor(n, *w);
+                    return true;
+                }
+
+                if constexpr (visit_scalar_r<TVisitor, value_type>) {
+                    // Visitor accepts the first element and controls the
+                    // iteration.
+                    return visitor(n, *w);
+                }
+
+                return false;
             }
         }...
     };
@@ -69,7 +98,8 @@ std::size_t LYRA_NAMESPACE::property_set::visit(
             property_type t, void *d) {
         auto& table = *static_cast<std::map<property_type, visitor_type>*>(d);
         auto it = table.find(t);
-        if (it == table.end()) {
+        if ((it == table.end()) || (v == nullptr) || (c < 1)) {
+            // Nothing to dispatch here.
             return true;
         }
         return it->second(n, v, c);
