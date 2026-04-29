@@ -36,6 +36,15 @@ namespace cpu {
     };
 
     /// <summary>
+    /// Identifies a property set that holds information about the SIMD
+    /// instruction sets that are available.
+    /// </summary>
+    struct simd_instructions final {
+        typedef property_set type;
+        static constexpr auto name = u8"SIMD";
+    };
+
+    /// <summary>
     /// Identifies the vendor of a CPU as reported by the CPUID instruction.
     /// </summary>
     struct vendor final {

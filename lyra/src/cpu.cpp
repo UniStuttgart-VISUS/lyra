@@ -14,9 +14,21 @@
 
 #include "visus/lyra/cpu_info.h"
 #include "visus/lyra/multi_sz.h"
+#include "visus/lyra/simd_detector.h"
 
 #include "property_set_impl.h"
 #include "is_sensitive.h"
+
+
+/// <summary>
+/// Tests whether <typeparamref name="I" /> is supported and adds the result to
+/// <paramref name="ps" />.
+/// </summary>
+template<LYRA_NAMESPACE::simd_instruction_set I>
+inline void add_simd(_Inout_ LYRA_DETAIL_NAMESPACE::property_set_impl& ps,
+        _In_z_ const char *name) {
+    ps.add(name, LYRA_NAMESPACE::simd_detector<I>());
+}
 
 
 /*
@@ -104,6 +116,37 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
                 ps.add<cpu::vendor>(vendor.data());
             }
         }
+    }
+
+    if (detail::check_sensitive<simd_instructions>(flags)) {
+        detail::property_set_impl simds;
+        ::add_simd<simd_instruction_set::mmx>(simds, u8"MMX");
+        ::add_simd<simd_instruction_set::sse>(simds, u8"SSE");
+        ::add_simd<simd_instruction_set::sse2>(simds, u8"SSE 2");
+        ::add_simd<simd_instruction_set::sse3>(simds, u8"SSE 3");
+        ::add_simd<simd_instruction_set::ssse3>(simds, u8"SSSE 3");
+        ::add_simd<simd_instruction_set::sse4_1>(simds, u8"SSE 4.1");
+        ::add_simd<simd_instruction_set::sse4_2>(simds, u8"SSE 4.2");
+        ::add_simd<simd_instruction_set::avx>(simds, u8"AVX");
+        ::add_simd<simd_instruction_set::avx2>(simds, u8"AVX 2");
+        ::add_simd<simd_instruction_set::avx512>(simds, u8"AVX 512");
+        ::add_simd<simd_instruction_set::avx512pf>(simds,
+            u8"AVX 512 Prefetch");
+        ::add_simd<simd_instruction_set::avx512er>(simds,
+            u8"AVX 512 Exponential Reciprocal");
+        ::add_simd<simd_instruction_set::avx512cd>(simds,
+            u8"AVX 512 Conflict Detection");
+        ::add_simd<simd_instruction_set::avx512dq>(simds,
+            u8"AVX 512 Double Quad Word");
+        ::add_simd<simd_instruction_set::avx512bw>(simds,
+            u8"AVX 512 Byte Word");
+        ::add_simd<simd_instruction_set::avx512vl>(simds,
+            u8"AVX 512 Vector Length");
+        ::add_simd<simd_instruction_set::avx512ifma>(simds,
+            u8"AVX 512 Integer Fused Multiply Add");
+
+        ps.add<cpu::simd_instructions>(detail::to_property_set(
+            std::move(simds)));
     }
 
     detail::realise(retval, std::move(ps));
