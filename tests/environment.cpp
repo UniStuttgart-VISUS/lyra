@@ -14,3 +14,14 @@ TEST(environment, cwd) {
     EXPECT_FALSE(env.empty());
     EXPECT_NE(env.get<LYRA_NAMESPACE::environment::current_directory>(), nullptr);
 }
+
+TEST(environment, variables) {
+    {
+        auto vars = LYRA_NAMESPACE::environment::get_variables();
+        EXPECT_FALSE(vars.empty());
+    }
+    {
+        auto vars = LYRA_NAMESPACE::environment::get_variables(LYRA_NAMESPACE::collection_flags::no_sensitive);
+        EXPECT_TRUE(vars.empty());
+    }
+}

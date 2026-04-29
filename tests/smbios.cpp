@@ -10,9 +10,11 @@
 #include "visus/lyra/version.h"
 
 
+#if defined(_WIN32)
 TEST(smbios, read) {
+    // Note: this test would require root on Linux.
     LYRA_NAMESPACE::smbios::data data;
-    EXPECT_NO_THROW(data = LYRA_NAMESPACE::smbios::read());
+    EXPECT_TRUE(LYRA_SUCCEEDED(LYRA_NAMESPACE::smbios::read(data)));
 
     std::vector<const LYRA_NAMESPACE::smbios::header_type *> entries;
     EXPECT_GT(data.entries(std::back_inserter(entries)), 0U);
@@ -20,14 +22,17 @@ TEST(smbios, read) {
     std::vector<const LYRA_NAMESPACE::smbios::baseboard_information_type *> baseboard;
     EXPECT_EQ(data.entries_of_type<LYRA_NAMESPACE::smbios::baseboard_information_type>(std::back_inserter(baseboard)), 1);
 
-    auto baseboard_manufacturer = LYRA_NAMESPACE::smbios::get_string(baseboard[0], baseboard[0]->manufacturer);
-    EXPECT_NE(baseboard_manufacturer, nullptr);
+    auto vendor = LYRA_NAMESPACE::smbios::get_string(baseboard[0], baseboard[0]->manufacturer);
+    EXPECT_NE(vendor, nullptr);
 }
+#endif /* defined(_WIN32) */
 
 
+#if defined(_WIN32)
 TEST(smbios, get_baseboard_information) {
+    // Note: this test would require root on Linux.
     LYRA_NAMESPACE::smbios::data data;
-    EXPECT_NO_THROW(data = LYRA_NAMESPACE::smbios::read());
+    EXPECT_TRUE(LYRA_SUCCEEDED(LYRA_NAMESPACE::smbios::read(data)));
 
     auto s = data.get<LYRA_NAMESPACE::smbios::baseboard_information_type>();
     EXPECT_NE(s, nullptr);
@@ -35,11 +40,14 @@ TEST(smbios, get_baseboard_information) {
     auto ps = LYRA_NAMESPACE::smbios::get_baseboard_information(s, data.version());
     EXPECT_FALSE(ps.empty());
 }
+#endif /* defined(_WIN32) */
 
 
+#if defined(_WIN32)
 TEST(smbios, get_bios_information) {
+    // Note: this test would require root on Linux.
     LYRA_NAMESPACE::smbios::data data;
-    EXPECT_NO_THROW(data = LYRA_NAMESPACE::smbios::read());
+    EXPECT_TRUE(LYRA_SUCCEEDED(LYRA_NAMESPACE::smbios::read(data)));
 
     auto s = data.get<LYRA_NAMESPACE::smbios::bios_information_type>();
     EXPECT_NE(s, nullptr);
@@ -47,11 +55,14 @@ TEST(smbios, get_bios_information) {
     auto ps = LYRA_NAMESPACE::smbios::get_bios_information(s, data.version());
     EXPECT_FALSE(ps.empty());
 }
+#endif /* defined(_WIN32) */
 
 
+#if defined(_WIN32)
 TEST(smbios, get_processor_information) {
+    // Note: this test would require root on Linux.
     LYRA_NAMESPACE::smbios::data data;
-    EXPECT_NO_THROW(data = LYRA_NAMESPACE::smbios::read());
+    EXPECT_TRUE(LYRA_SUCCEEDED(LYRA_NAMESPACE::smbios::read(data)));
 
     auto s = data.get<LYRA_NAMESPACE::smbios::processor_information_type>();
     EXPECT_NE(s, nullptr);
@@ -59,10 +70,10 @@ TEST(smbios, get_processor_information) {
     auto ps = LYRA_NAMESPACE::smbios::get_processor_information(s, data.version());
     EXPECT_FALSE(ps.empty());
 }
+#endif /* defined(_WIN32) */
 
-
-TEST(smbios, get_smbios) {
-    auto properties = LYRA_NAMESPACE::smbios::get_smbios();
+TEST(smbios, get) {
+    auto properties = LYRA_NAMESPACE::smbios::get();
     EXPECT_FALSE(properties.empty());
 
     {
@@ -78,10 +89,12 @@ TEST(smbios, get_smbios) {
         EXPECT_EQ(cnt, 1);
         EXPECT_NE(value, nullptr);
         EXPECT_EQ(type, LYRA_NAMESPACE::property_type::properties);
-        auto version = static_cast<const LYRA_NAMESPACE::property_set *>(value);
-        EXPECT_FALSE(version->empty());
-        EXPECT_NE(version->get<LYRA_NAMESPACE::version::major>(), nullptr);
-        EXPECT_NE(version->get<LYRA_NAMESPACE::version::minor>(), nullptr);
+        if (value != nullptr) {
+            auto version = static_cast<const LYRA_NAMESPACE::property_set *>(value);
+            EXPECT_FALSE(version->empty());
+            EXPECT_NE(version->get<LYRA_NAMESPACE::version::major>(), nullptr);
+            EXPECT_NE(version->get<LYRA_NAMESPACE::version::minor>(), nullptr);
+        }
     }
 
     {
@@ -89,9 +102,11 @@ TEST(smbios, get_smbios) {
         auto property = properties.get<LYRA_NAMESPACE::smbios::baseboard>(cnt);
         EXPECT_NE(property, nullptr);
         EXPECT_GT(cnt, 0U);
-        auto manufacturer = property->get<LYRA_NAMESPACE::smbios::manufacturer>(cnt);
-        EXPECT_NE(manufacturer, nullptr);
-        EXPECT_EQ(manufacturer->count(), 1);
+        if (property != nullptr) {
+            auto vendor = property->get<LYRA_NAMESPACE::smbios::baseboard_vendor>(cnt);
+            EXPECT_NE(vendor, nullptr);
+            EXPECT_EQ(vendor->count(), 1);
+        }
     }
 
     {

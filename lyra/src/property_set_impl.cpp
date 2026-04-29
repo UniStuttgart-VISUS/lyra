@@ -67,3 +67,14 @@ LYRA_NAMESPACE::property_set& LYRA_DETAIL_NAMESPACE::realise(
     dst._impl->values = std::move(src.values);
     return dst;
 }
+
+
+/*
+ * LYRA_DETAIL_NAMESPACE::to_property_set
+ */
+LYRA_NAMESPACE::property_set LYRA_DETAIL_NAMESPACE::to_property_set(
+        _Inout_ property_set_impl&& src) {
+    property_set retval;
+    realise(retval, std::move(src));
+    return retval;
+}

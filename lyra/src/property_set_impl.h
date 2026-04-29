@@ -236,6 +236,13 @@ struct LYRA_TEST_API property_set_impl final {
 LYRA_TEST_API property_set& realise(_In_ property_set& dst,
     _Inout_ property_set_impl&& src);
 
+/// <summary>
+/// Moves the implementation into a new <see cref="property_set" />.
+/// </summary>
+/// <param name="src"></param>
+/// <returns></returns>
+LYRA_TEST_API property_set to_property_set(_Inout_ property_set_impl&& src);
+
 LYRA_DETAIL_NAMESPACE_END
 
 #endif /* !defined(_LYRA_PROPERTY_SET_IMPL_H) */

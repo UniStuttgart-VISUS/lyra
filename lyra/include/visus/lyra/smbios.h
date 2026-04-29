@@ -14,7 +14,9 @@
 #include <cstdlib>
 #include <utility>
 
+#include "visus/lyra/collection_flags.h"
 #include "visus/lyra/property_set.h"
+#include "visus/lyra/result_type.h"
 #include "visus/lyra/trace.h"
 
 
@@ -56,6 +58,9 @@ namespace smbios {
 #pragma pack(push)
 #pragma pack(1)
 
+    /// <summary>
+    /// The most basic DMI entry point structure we support.
+    /// </summary>
     struct LYRA_API dmi_entry_point_type {
         byte_type anchor[5];
         byte_type checksum;
@@ -151,6 +156,9 @@ namespace smbios {
         byte_type family;
     };
 
+    /// <summary>
+    /// Information about the mainboard (type 2).
+    /// </summary>
     struct LYRA_API baseboard_information_type {
         static constexpr smbios::byte_type id = 2;
         header_type header;
@@ -167,6 +175,9 @@ namespace smbios {
         handle_type contained_object_handles[255];
     };
 
+    /// <summary>
+    /// Information about the chassis (type 3).
+    /// </summary>
     struct LYRA_API chassis_information_type {
         static constexpr smbios::byte_type id = 3;
         header_type header;
@@ -245,6 +256,9 @@ namespace smbios {
         //byte_type enabled_error_correcting_capabilities;
     };
 
+    /// <summary>
+    /// Information about a memory module (type 6).
+    /// </summary>
     struct LYRA_API memory_module_information_type {
         static const smbios::byte_type id = 6;
         header_type header;
@@ -292,7 +306,7 @@ namespace smbios {
     /// <summary>
     /// The required memory device structure (type 17).
     /// </summary>
-    struct LYRA_API  memory_device_type {
+    struct LYRA_API memory_device_type {
         static const smbios::byte_type id = 17;
         header_type header;
         /* SMBIOS 2.1+ */
@@ -484,23 +498,18 @@ namespace smbios {
         std::size_t _size;
         version_type _version;
 
-        friend LYRA_API data read(void);
+        friend LYRA_API result_type read(data& data);
     };
 
     /// <summary>
     /// Reads the SMBIOS information of the local system and returns the
     /// whole block in a <see cref="data" /> structure.
     /// </summary>
-    /// <returns>The SMBIOS data of the system.</returns>
-    LYRA_API data read(void);
-
-    /// <summary>
-    /// Identifies an asset tag assigned to a component via SMBIOS.
-    /// </summary>
-    struct asset_tag final {
-        typedef const char *type;
-        static constexpr auto name = u8"AssetTag";
-    };
+    /// <param name="data">An empty <see cref="data" /> structure to receive the
+    /// SMBIOS data..</param>
+    /// <returns>Zero in case of success, a system error code otherwise.
+    /// </returns>
+    LYRA_API result_type read(_Out_ data& data);
 
     /// <summary>
     /// Identifies a memory bank.
@@ -521,6 +530,61 @@ namespace smbios {
     };
 
     /// <summary>
+    /// Identifies an asset tag assigned to the mainboard.
+    /// </summary>
+    struct baseboard_asset_tag final {
+        typedef const char *type;
+        static constexpr auto dmi_id = u8"board_asset_tag";
+        static constexpr auto is_sensitive = true;
+        static constexpr auto name = u8"AssetTag";
+    };
+
+    /// <summary>
+    /// Identifies where the baseboard is located in the chassis.
+    /// </summary>
+    struct baseboard_location final {
+        typedef const char *type;
+        static constexpr auto name = u8"Location";
+    };
+
+    /// <summary>
+    /// Identifies the name of the baseboard.
+    /// </summary>
+    struct baseboard_product final {
+        typedef const char *type;
+        static constexpr auto dmi_id = u8"board_name";
+        static constexpr auto name = u8"Product";
+    };
+
+    /// <summary>
+    /// Identifies the serial number of the baseboard.
+    /// </summary>
+    struct baseboard_serial final {
+        typedef const char *type;
+        static constexpr auto dmi_id = u8"board_serial";
+        static constexpr auto is_sensitive = true;
+        static constexpr auto name = u8"SerialNumber";
+    };
+
+    /// <summary>
+    /// Identifies the vendor of the baseboard.
+    /// </summary>
+    struct baseboard_vendor final {
+        typedef const char *type;
+        static constexpr auto dmi_id = u8"board_vendor";
+        static constexpr auto name = u8"Vendor";
+    };
+
+    /// <summary>
+    /// Identifies the version of the baseboard.
+    /// </summary>
+    struct baseboard_version final {
+        typedef const char *type;
+        static constexpr auto dmi_id = u8"board_version";
+        static constexpr auto name = u8"Version";
+    };
+
+    /// <summary>
     /// Identifies all BIOS-related information from SMBIOS. This property can
     /// be retrieved from the SMBIOS root property set obtained from
     /// <see cref="get_smbios" />.
@@ -531,19 +595,110 @@ namespace smbios {
     };
 
     /// <summary>
+    /// Identifies the release date of the BIOS.
+    /// </summary>
+    struct bios_date final {
+        typedef const char *type;
+        static constexpr auto dmi_id = u8"bios_date";
+        static constexpr auto name = u8"ReleaseDate";
+    };
+
+    /// <summary>
+    /// Identifies a firmware version property.
+    /// </summary>
+    struct bios_firmware_version final {
+        typedef property_set type;
+        static constexpr auto name = u8"FirmwareVersion";
+    };
+
+    /// <summary>
+    /// Identifies the version of the BIOS.
+    /// </summary>
+    struct bios_release final {
+        typedef const char *type;
+        static constexpr auto dmi_id = u8"bios_release";
+        static constexpr auto name = u8"Release";
+    };
+
+    /// <summary>
+    /// Identifies the size of the BIOS ROM in bytes.
+    /// </summary>
+    struct bios_rom_size final {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"RomSize";
+    };
+
+    /// <summary>
+    /// Identifies the vendor of the BIOS.
+    /// </summary>
+    struct bios_vendor final {
+        typedef const char *type;
+        static constexpr auto dmi_id = u8"bios_vendor";
+        static constexpr auto name = baseboard_vendor::name;
+    };
+
+    /// <summary>
     /// Identifies the version of the BIOS.
     /// </summary>
     struct bios_version final {
         typedef const char *type;
-        static constexpr auto name = u8"BiosVersion";
+        static constexpr auto dmi_id = u8"bios_version";
+        static constexpr auto name = baseboard_version::name;
     };
 
     /// <summary>
-    /// Identifies the type of a component.
+    /// Groups all information about the chassis.
     /// </summary>
-    struct component_type final {
+    struct chassis final {
+        typedef property_set type;
+        static constexpr auto name = u8"Chassis";
+    };
+
+    /// <summary>
+    /// Identifies an asset tag assigned to the chassis.
+    /// </summary>
+    struct chassis_asset_tag final {
         typedef const char *type;
+        static constexpr auto dmi_id = u8"board_asset_tag";
+        static constexpr auto is_sensitive = true;
+        static constexpr auto name = baseboard_asset_tag::name;
+    };
+
+    /// <summary>
+    /// Identifies the serial number of the chassis.
+    /// </summary>
+    struct chassis_serial final {
+        typedef const char *type;
+        static constexpr auto dmi_id = u8"chassis_serial";
+        static constexpr auto is_sensitive = true;
+        static constexpr auto name = baseboard_serial::name;
+    };
+
+    /// <summary>
+    /// Identifies the type of the chassis.
+    /// </summary>
+    struct chassis_type final {
+        typedef const char *type;
+        static constexpr auto dmi_id = u8"chassis_type";
         static constexpr auto name = u8"Type";
+    };
+
+    /// <summary>
+    /// Identifies the vendor of the chassis.
+    /// </summary>
+    struct chassis_vendor final {
+        typedef const char *type;
+        static constexpr auto dmi_id = u8"chassis_vendor";
+        static constexpr auto name = baseboard_vendor::name;
+    };
+
+    /// <summary>
+    /// Identifies the version of the chassis.
+    /// </summary>
+    struct chassis_version final {
+        typedef const char *type;
+        static constexpr auto dmi_id = u8"chassis_version";
+        static constexpr auto name = baseboard_version::name;
     };
 
     /// <summary>
@@ -556,9 +711,119 @@ namespace smbios {
         static constexpr auto name = u8"CPU";
     };
 
-    struct cpuid final {
+    /// <summary>
+    /// Identifies an asset tag assigned to the CPU.
+    /// </summary>
+    struct cpu_asset_tag final {
+        typedef const char *type;
+        static constexpr auto is_sensitive = true;
+        static constexpr auto name = baseboard_asset_tag::name;
+    };
+
+    /// <summary>
+    /// Identifies the CPU characteristics.
+    /// </summary>
+    struct cpu_characteristics final {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"Characteristics";
+    };
+
+    /// <summary>
+    /// Identifies the number of available cores of the CPU.
+    /// </summary>
+    struct cpu_cores final {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"Cores";
+    };
+
+    /// <summary>
+    /// Identifies the number of enables cores of the CPU.
+    /// </summary>
+    struct cpu_enabled_cores final {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"EnabledCores";
+    };
+
+    /// <summary>
+    /// The external clock of the CPU.
+    /// </summary>
+    struct cpu_external_clock final {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"ExternalClock";
+    };
+
+    /// <summary>
+    /// Identifies the unique ID of the CPU.
+    /// </summary>
+    struct cpu_id final {
         typedef std::uint32_t type;
         static constexpr auto name = u8"ID";
+    };
+
+    /// <summary>
+    /// The maximum speed of the CPU.
+    /// </summary>
+    struct cpu_maximum_speed final {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"MaximumSpeed";
+    };
+
+    /// <summary>
+    /// Identifies the part number of the CPU.
+    /// </summary>
+    struct cpu_part_number final {
+        typedef const char *type;
+        static constexpr auto name = u8"PartNumber";
+    };
+
+    /// <summary>
+    /// Identifies the serial number of the CPU.
+    /// </summary>
+    struct cpu_serial final {
+        typedef const char *type;
+        static constexpr auto is_sensitive = true;
+        static constexpr auto name = baseboard_serial::name;
+    };
+
+    /// <summary>
+    /// Identifies the socket designation of the CPU.
+    /// </summary>
+    struct cpu_socket final {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"Socket";
+    };
+
+    /// <summary>
+    /// The current speed of the CPU.
+    /// </summary>
+    struct cpu_speed final {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"CurrentSpeed";
+    };
+
+    /// <summary>
+    /// Identifies the number of available threads, which might be more than
+    /// <see cref="cpu_cores" /> if the CPU supports hyper-threading.
+    /// </summary>
+    struct cpu_threads final {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"Threads";
+    };
+
+    /// <summary>
+    /// Identifies a CPU upgrade description.
+    /// </summary>
+    struct cpu_upgrade final {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"Upgrade";
+    };
+
+    /// <summary>
+    /// The vendor of the CPU.
+    /// </summary>
+    struct cpu_vendor final {
+        typedef const char *type;
+        static constexpr auto name = baseboard_vendor::name;
     };
 
     /// <summary>
@@ -566,114 +831,32 @@ namespace smbios {
     /// </summary>
     struct cpu_version final {
         typedef const char *type;
-        static constexpr auto name = u8"Version";
+        static constexpr auto name = baseboard_version::name;
     };
 
     /// <summary>
-    /// The current speed of the CPU.
+    /// Identifies a CPU's voltage.
     /// </summary>
-    struct current_speed final {
+    struct cpu_voltage final {
         typedef std::uint32_t type;
-        static constexpr auto name = u8"CurrentSpeed";
+        static constexpr auto name = u8"Voltage";
     };
 
     /// <summary>
-    /// Identifies the number of enables cores of the CPU.
+    /// Identifies an asset tag assigned to a memory module.
     /// </summary>
-    struct enabled_cores final {
-        typedef std::uint32_t type;
-        static constexpr auto name = u8"EnabledCores";
-    };
-
-    /// <summary>
-    /// Identifies the usable size of a memory module.
-    /// </summary>
-    struct enabled_size final {
-        typedef std::uint32_t type;
-        static constexpr auto name = u8"EnabledSize";
-    };
-
-    /// <summary>
-    /// The external clock of the CPU.
-    /// </summary>
-    struct external_clock final {
-        typedef std::uint32_t type;
-        static constexpr auto name = u8"ExternalClock";
-    };
-
-    /// <summary>
-    /// Identifies a firmware version property
-    /// </summary>
-    struct firmware_version final {
-        typedef property_set type;
-        static constexpr auto name = u8"FirmwareVersion";
-    };
-
-    /// <summary>
-    /// Identifies the form factor of a component, for instance the type of a
-    /// memory module.
-    /// </summary>
-    struct form_factor final {
+    struct memory_asset_tag final {
         typedef const char *type;
-        static constexpr auto name = u8"FormFactor";
+        static constexpr auto is_sensitive = true;
+        static constexpr auto name = baseboard_asset_tag::name;
     };
 
     /// <summary>
-    /// Identifies the number of available cores of the CPU.
+    /// Identifies the bank locator of a memory module.
     /// </summary>
-    struct installed_cores final {
-        typedef std::uint32_t type;
-        static constexpr auto name = u8"InstalledCores";
-    };
-
-    /// <summary>
-    /// Identifies the size of an installed memory module.
-    /// </summary>
-    struct installed_size final {
-        typedef std::uint32_t type;
-        static constexpr auto name = u8"InstalledSize";
-    };
-
-    /// <summary>
-    /// Identifies the number of available threads, which might be more than
-    /// <see cref="installed_cores" /> if the CPU supports hyper-threading.
-    /// </summary>
-    struct installed_threads final {
-        typedef std::uint32_t type;
-        static constexpr auto name = u8"InstalledThreads";
-    };
-
-    /// <summary>
-    /// Identifies the location of a piece of hardware, for instance a rack
-    /// number.
-    /// </summary>
-    struct location final {
+    struct memory_bank_locator final {
         typedef const char *type;
-        static constexpr auto name = u8"Location";
-    };
-
-    /// <summary>
-    /// Identifies a manufacturer of a component via SMBIOS.
-    /// </summary>
-    struct manufacturer final {
-        typedef const char *type;
-        static constexpr auto name = u8"Manufacturer";
-    };
-
-    /// <summary>
-    /// The maximum speed of the CPU.
-    /// </summary>
-    struct maximum_speed final {
-        typedef std::uint32_t type;
-        static constexpr auto name = u8"MaximumSpeed";
-    };
-
-    /// <summary>
-    /// The maximum allowed voltage, typically for a memory module.
-    /// </summary>
-    struct maximum_voltage final {
-        typedef std::uint32_t type;
-        static constexpr auto name = u8"MaximumVoltage";
+        static constexpr auto name = u8"BankLocator";
     };
 
     /// <summary>
@@ -685,9 +868,42 @@ namespace smbios {
     };
 
     /// <summary>
+    /// Identifies the device locator of a memory module.
+    /// </summary>
+    struct memory_device_locator final {
+        typedef const char *type;
+        static constexpr auto name = u8"DeviceLocator";
+    };
+
+    /// <summary>
+    /// Identifies the usable size of a memory module.
+    /// </summary>
+    struct memory_enabled_size final {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"EnabledSize";
+    };
+
+    /// <summary>
+    /// Identifies the form factor of a component, for instance the type of a
+    /// memory module.
+    /// </summary>
+    struct memory_form_factor final {
+        typedef const char *type;
+        static constexpr auto name = u8"FormFactor";
+    };
+
+    /// <summary>
+    /// The maximum allowed voltage, typically for a memory module.
+    /// </summary>
+    struct memory_maximum_voltage final {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"MaximumVoltage";
+    };
+
+    /// <summary>
     /// The minimum allowed voltage, typically for a memory module.
     /// </summary>
-    struct minimum_voltage final {
+    struct memory_minimum_voltage final {
         typedef std::uint32_t type;
         static constexpr auto name = u8"MinimumVoltage";
     };
@@ -701,105 +917,128 @@ namespace smbios {
     };
 
     /// <summary>
-    /// Identifies a part number assigned to a component via SMBIOS.
+    /// Identifies the part number of a memory module.
     /// </summary>
-    struct part_number final {
+    struct memory_part_number final {
         typedef const char *type;
-        static constexpr auto name = u8"PartNumber";
+        static constexpr auto name = cpu_part_number::name;
     };
 
     /// <summary>
-    /// Identifies a product name, for instance the name of the CPU, mainboard,
-    /// etc.
+    /// Identifies the serial number of the CPU.
     /// </summary>
-    struct product final {
+    struct memory_serial final {
         typedef const char *type;
-        static constexpr auto name = u8"Product";
-    };
-
-    struct release_date final {
-        typedef const char *type;
-        static constexpr auto name = u8"ReleaseDate";
+        static constexpr auto is_sensitive = true;
+        static constexpr auto name = baseboard_serial::name;
     };
 
     /// <summary>
-    /// Identifies the revision of a piece of hardware or software.
+    /// Identifies the size of an installed memory module.
     /// </summary>
-    struct revision final {
-        typedef const char *type;
-        static constexpr auto name = u8"Revision";
-    };
-
-    struct rom_size final {
+    struct memory_size final {
         typedef std::uint32_t type;
-        static constexpr auto name = u8"RomSize";
+        static constexpr auto name = u8"Size";
     };
 
-    struct serial_number final {
-        typedef const char *type;
-        static constexpr auto name = u8"SerialNumber";
-    };
-
-    struct socket final {
+    /// <summary>
+    /// Identifies the socket designation of a memory module.
+    /// </summary>
+    struct memory_socket final {
         typedef const char *type;
         static constexpr auto name = u8"Socket";
     };
 
     /// <summary>
-    /// Identifies the vendor of a component.
+    /// Identifies the current speed of a memory module.
     /// </summary>
-    struct vendor final {
+    struct memory_speed final {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"Speed";
+    };
+
+    /// <summary>
+    /// Identifies the type of a memory module.
+    /// </summary>
+    struct memory_type final {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"Type";
+    };
+
+    /// <summary>
+    /// Identifies the vendor of a memory module.
+    /// </summary>
+    struct memory_vendor final {
         typedef const char *type;
         static constexpr auto name = u8"Vendor";
     };
 
-    struct voltage final {
+    /// <summary>
+    /// Identifies the memory voltage.
+    /// </summary>
+    struct memory_voltage final {
         typedef std::uint32_t type;
-        static constexpr auto name = u8"Voltage";
+        static constexpr auto name = cpu_voltage::name;
     };
+
+    /// <summary>
+    /// Retrieves all SMBIOS information and fills a property set with the
+    /// available data.
+    /// </summary>
+    /// <param name="flags">Allows for in-depth control of how the information
+    /// is collected.</param>
+    /// <returns>A property set containing all available SMBIOS
+    /// information.</returns>
+    LYRA_API property_set get(_In_ const collection_flags flags
+        = collection_flags::none);
 
     /// <summary>
     /// Constructs a property set for the given mainboard information.
     /// </summary>
     LYRA_API property_set get_baseboard_information(
         _In_ const baseboard_information_type *info,
-        _In_ const data::version_type smbios_version);
+        _In_ const data::version_type smbios_version,
+        _In_ const collection_flags flags = collection_flags::none);
 
     /// <summary>
     /// Constructs a property set for the given BIOS information.
     /// </summary>
     LYRA_API property_set get_bios_information(
         _In_ const bios_information_type *info,
-        _In_ const data::version_type smbios_version);
+        _In_ const data::version_type smbios_version,
+        _In_ const collection_flags flags = collection_flags::none);
+
+    /// <summary>
+    /// Constructs a property set for the given chassis information.
+    /// </summary>
+    LYRA_API property_set get_chassis_information(
+        _In_ const chassis_information_type *info,
+        _In_ const data::version_type smbios_version,
+        _In_ const collection_flags flags = collection_flags::none);
 
     /// <summary>
     /// Constructs a property set for the given memory-device information.
     /// </summary>
     LYRA_API property_set get_memory_device(
         _In_ const memory_device_type *info,
-        _In_ const data::version_type smbios_version);
+        _In_ const data::version_type smbios_version,
+        _In_ const collection_flags flags = collection_flags::none);
 
     /// <summary>
     /// Constructs a property set for the given memory-module information.
     /// </summary>
     LYRA_API property_set get_memory_module_information(
         _In_ const memory_module_information_type *info,
-        _In_ const data::version_type smbios_version);
+        _In_ const data::version_type smbios_version,
+        _In_ const collection_flags flags = collection_flags::none);
 
     /// <summary>
     /// Constructs a property set for the given processor information.
     /// </summary>
     LYRA_API property_set get_processor_information(
         _In_ const processor_information_type *info,
-        _In_ const data::version_type smbios_version);
-
-    /// <summary>
-    /// Retrieves all SMBIOS information and fills a property set with the
-    /// available data.
-    /// </summary>
-    /// <returns>A property set containing all available SMBIOS
-    /// information.</returns>
-    LYRA_API property_set get_smbios(void);
+        _In_ const data::version_type smbios_version,
+        _In_ const collection_flags flags = collection_flags::none);
 
     /// <summary>
     /// Gets a string resource from an SMBIOS structure.

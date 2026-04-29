@@ -22,6 +22,7 @@
 #include "visus/lyra/trace.h"
 
 #include "property_set_impl.h"
+#include "is_sensitive.h"
 
 
 /// <summary>
@@ -56,10 +57,20 @@ static std::string get_current_directory(void) {
 }
 
 
+#if !defined(_WIN32)
+/// <summary>
+/// This should give us access to the environment on Linux according to
+/// https://stackoverflow.com/questions/2085302/printing-all-environment-variables-in-c-c.
+/// </summary>
+extern char **environ;
+#endif /* defined(_WIN32) */
+
+
 /*
  * LYRA_NAMESPACE::environment::get
  */
-LYRA_NAMESPACE::property_set LYRA_NAMESPACE::environment::get(void) {
+LYRA_NAMESPACE::property_set LYRA_NAMESPACE::environment::get(
+        _In_ const collection_flags flags) {
     detail::property_set_impl ps;
     property_set retval;
 
@@ -70,6 +81,8 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::environment::get(void) {
         LYRA_TRACE(_T("Failed to obtain the current directory: %s"), ex.what());
     }
 
+    ps.add<LYRA_NAMESPACE::environment::variables>(get_variables(flags));
+
     realise(retval, std::move(ps));
     return retval;
 }
@@ -79,6 +92,44 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::environment::get(void) {
  * LYRA_NAMESPACE::environment::get_variables
  */
 LYRA_NAMESPACE::property_set LYRA_NAMESPACE::environment::get_variables(
-        void) {
-    throw "TODO";
+        _In_ const collection_flags flags) {
+    property_set retval;
+
+    if (detail::check_sensitive<variables>(flags)) {
+        detail::property_set_impl ps;
+
+#if defined(_WIN32)
+        auto strings = ::GetEnvironmentStringsW();
+        if (strings != nullptr) {
+            std::vector<std::wstring> pairs;
+            detail::multi_sz_copy(std::back_inserter(pairs), strings);
+
+            for (auto& p : pairs) {
+                auto sep = p.find(L'=');
+                if (sep != std::wstring::npos) {
+                    auto name = p.substr(0, sep);
+                    auto value = p.substr(sep + 1);
+                    ps.add(to_utf8(name), to_utf8(value));
+                }
+            }
+        }
+
+#else /* defined(_WIN32) */
+        for (auto p = environ; *p != nullptr; ++p) {
+            std::string pair(*p);
+
+            auto sep = pair.find('=');
+            if (sep != std::string::npos) {
+                auto name = pair.substr(0, sep);
+                auto value = pair.substr(sep + 1);
+                ps.add(std::move(name), std::move(value));
+            }
+        }
+
+#endif /* defined(_WIN32) */
+
+        realise(retval, std::move(ps));
+    }
+
+    return retval;
 }

@@ -14,7 +14,9 @@
 #include "visus/lyra/version.h"
 
 #include "file.h"
+#include "is_sensitive.h"
 #include "property_set_impl.h"
+#include "results.h"
 
 
 /// <summary>
@@ -787,7 +789,7 @@ static const char *memory_error_operations[] = {
 /// Lookup a string value from one of the static tables above.
 /// </summary>
 template<class TChar, std::size_t N>
-static std::string lookup_string(
+std::string lookup_string(
         _In_ const std::size_t index,
         _In_reads_(N) const TChar(&values)[N]) {
     if (index < N) {
@@ -803,6 +805,21 @@ static std::string lookup_string(
 
     } else {
         return std::to_string(index);
+    }
+}
+
+
+/// <summary>
+/// Searches the DMI device file for the given <typeparamref name="TProp" /> and
+/// returns its content.
+/// </summary>
+template<class TProp> std::vector<std::uint8_t> read_dmi_file(void) {
+    try {
+        auto path = std::string("/sys/devices/virtual/dmi/id/") + TProp::dmi_id;
+        LYRA_TRACE("Attempting to read DMI file %s", path.c_str());
+        return LYRA_DETAIL_NAMESPACE::read_all_bytes(path.c_str());
+    } catch (...) {
+        return std::vector<std::uint8_t>();
     }
 }
 
@@ -841,26 +858,55 @@ static bool version_at_least(
     return false;
 }
 
+/// <summary>
+/// Check whether <paramref name="version" /> is less than
+/// <paramref name="major"/>.<paramref name="minor"/>.
+/// </summary>
+static bool version_less(
+        _In_ const LYRA_NAMESPACE::smbios::data::version_type version,
+        _In_ const LYRA_NAMESPACE::smbios::byte_type major,
+        _In_ const LYRA_NAMESPACE::smbios::byte_type minor) {
+    if (version.first < major) {
+        return true;
+    }
+
+    if (version.first == major) {
+        return (version.second < minor);
+    }
+
+    return false;
+}
+
 
 /// <summary>
-/// Adds a string property from an SMBIOS structure named <c>info</c> to a
-/// property set named <c>ps</c>.
+/// Adds a property from a DMI file to the local property set <c>ps</c>.
 /// </summary>
-#define _LYRA_ADD_STRING_PROP(n, f)\
-    {\
-        auto v = get_string(info, info->f);\
-        if (v != nullptr) {\
-            ps.add(n::name, v);\
+#define _LYRA_ADD_DMI_FILE_PROP(n) do {\
+    if (detail::check_sensitive<n>(flags)) {\
+        auto v = ::read_dmi_file<n>();\
+        if (!v.empty()) {\
+            ps.add(n::name, std::string(v.begin(), v.end()));\
         }\
     }\
+} while (false)
+
+
+/// <summary>
+/// Adds a generic property to the local property set <c>ps</c>
+/// </summary>
+#define _LYRA_ADD_GENERIC_PROP(n, v) do {\
+    if (detail::check_sensitive<n>(flags)) {\
+        ps.add(n::name, v);\
+    }\
+} while (false)
 
 
 /// <summary>
 /// Constructs a set of SMBIOS information for the specified entry type from a
 /// local <c>data</c> variable.
 /// </summary>
-#define _LYRA_ADD_SMBIOS_PROP(n, e)\
-    {\
+#define _LYRA_ADD_SMBIOS_PROP(n, e) do {\
+    if (detail::check_sensitive<n>(flags)) {\
         std::vector<property_set> sets;\
         std::vector<const e##_type *> values;\
         data.entries_of_type<e##_type>(std::back_inserter(values));\
@@ -868,7 +914,33 @@ static bool version_at_least(
             sets.push_back(get_##e(v, data.version()));\
         }\
         ps.add(n::name, std::move(sets));\
-    }
+    }\
+} while (false)
+
+
+/// <summary>
+/// Adds a string property from an SMBIOS structure named <c>info</c> to a
+/// property set named <c>ps</c>.
+/// </summary>
+#define _LYRA_ADD_STRING_PROP(n, f) do {\
+    if (detail::check_sensitive<n>(flags)) {\
+        auto v = get_string(info, info->f);\
+        if (v != nullptr) {\
+            ps.add(n::name, v);\
+        }\
+    }\
+} while (false)
+
+
+/// <summary>
+/// Adds a string property by performing an index-based lookup in one of the
+/// local tables in this file.
+/// </summary>
+#define _LYRA_ADD_STRING_LUT_PROP(n, f, l) do {\
+    if (detail::check_sensitive<n>(flags)) {\
+        ps.add(n::name, ::lookup_string(info->f, (l)));\
+    }\
+} while (false)
 
 
 /*
@@ -902,9 +974,10 @@ LYRA_NAMESPACE::smbios::data& LYRA_NAMESPACE::smbios::data::operator =(
 /*
  * LYRA_NAMESPACE::smbios::read
  */
-LYRA_NAMESPACE::smbios::data LYRA_NAMESPACE::smbios::read(void) {
-    data retval;
-    assert(retval._flags == 0);
+LYRA_NAMESPACE::result_type LYRA_NAMESPACE::smbios::read(_Out_ data& data) {
+    delete[] data._data;
+    data._data = nullptr;
+    data._flags = 0;
 
 #if defined(_WIN32)
 #pragma pack(push)
@@ -924,331 +997,140 @@ LYRA_NAMESPACE::smbios::data LYRA_NAMESPACE::smbios::read(void) {
     {
         auto status = ::GetSystemFirmwareTable('RSMB', 0, nullptr, 0);
         if (status == 0) {
-            const auto error = ::GetLastError();
+            const auto retval = ::GetLastError();
             LYRA_TRACE(_T("GetSystemFirmwareTable failed with error code %d."),
-                error);
-            throw std::system_error(error, std::system_category());
+                retval);
+            return retval;
         }
-        assert(retval._data== nullptr);
-        retval._size = status;
-        retval._data = new std::uint8_t[retval._size];
+        assert(data._data == nullptr);
+        data._size = status;
+        data._data = new std::uint8_t[data._size];
     }
 
     // Read the data.
     {
-        auto status = ::GetSystemFirmwareTable('RSMB', 0, retval._data,
-            static_cast<DWORD>(retval._size));
-        if (status != retval._size) {
-            const auto error = ::GetLastError();
+        auto status = ::GetSystemFirmwareTable('RSMB', 0, data._data,
+            static_cast<DWORD>(data._size));
+        if (status != data._size) {
+            const auto retval = ::GetLastError();
             LYRA_TRACE(_T("GetSystemFirmwareTable failed with error code %d."),
-                error);
-            throw std::system_error(error, std::system_category());
+                retval);
+            return retval;
         }
     }
 
     // Determine the bounds of the structures.
-    retval._begin = sizeof(RawSMBIOSData);
-    retval._end = retval._size;
+    data._begin = sizeof(RawSMBIOSData);
+    data._end = data._size;
 
     // Process the header.
     {
-        auto header = reinterpret_cast<RawSMBIOSData *>(retval._data);
-        retval._version = std::make_pair(header->SMBIOSMajorVersion,
+        auto header = reinterpret_cast<RawSMBIOSData *>(data._data);
+        data._version = std::make_pair(header->SMBIOSMajorVersion,
             header->SMBIOSMinorVersion);
 
         if (header->SMBIOSMajorVersion >= 3) {
-            retval._flags |= data::flag_stop_at_eot;
+            data._flags |= data::flag_stop_at_eot;
         }
     }
 
 #else /* defined(_WIN32) */
-    // https://github.com/lyonel/lshw/blob/master/src/core/dmi.cc
-    // Cf. http://git.savannah.gnu.org/cgit/dmidecode.git/tree/dmidecode.c
-    std::uint16_t version = 0;
+    try {
+        // https://github.com/lyonel/lshw/blob/master/src/core/dmi.cc
+        // Cf. http://git.savannah.gnu.org/cgit/dmidecode.git/tree/dmidecode.c
+        std::uint16_t version = 0;
 
-    /* Determine how to handle the data by parsing the entry point. */
-    auto ef = detail::read_all_bytes("/sys/firmware/dmi/tables/"
-        "smbios_entry_point");
+        // Determine how to handle the data by parsing the entry point.
+        auto ef = detail::read_all_bytes("/sys/firmware/dmi/tables/"
+            "smbios_entry_point");
+        auto ef_starts = [&ef](const char *sig, std::size_t off = 0) {
+            const auto s = ef.data() + off;
+            const auto l = ::strlen(sig);
+            return (ef.size() >=  l + off) && (::memcmp(s, sig, l) == 0);
+        };
 
-    if ((ef.size() >= 24) && (::memcmp(ef.data(), "_SM3_", 5) == 0)) {
-        // SMBIOS 3
-        if (!validate_checksum(ef.data(), ef[0x06])) {
-            throw std::runtime_error("Checksum error in SMBIOS 3 entry point.");
+        if ((ef.size() >= 24) && ef_starts("_SM3_")) {
+            LYRA_TRACE("Found SMBIOS 3 entry point.");
+            if (!validate_checksum(ef.data(), ef[0x06])) {
+                LYRA_TRACE("Checksum error in SMBIOS 3 entry point.");
+                return detail::results::invalid_state;
+            }
+
+            data._version = std::make_pair(ef[0x07], ef[0x08]);
+            version = (ef[0x07] << 8) + ef[0x08];
+            data._begin = *reinterpret_cast<uint64_t *>(ef.data() + 0x10);
+            data._end = data._begin + ef[0x0C];
+            data._flags |= data::flag_stop_at_eot;
+
+        } else if ((ef.size() >= 31) && ef_starts("_SM_")) {
+            LYRA_TRACE("Found SMBIOS entry point.");
+
+            if (!validate_checksum(ef.data(), ef[0x5])
+                    || !ef_starts("_DMI_", 0x10)
+                    || !validate_checksum(ef.data() + 0x10, 0x0F)) {
+                LYRA_TRACE("Checksum error in SMBIOS entry point.");
+                return detail::results::invalid_state;
+            }
+
+            data._version = std::make_pair(ef[0x06], ef[0x07]);
+            version = (ef[0x06] << 8) + ef[0x07];
+
+            // Fix version like GNU dmidecode:
+            switch (version) {
+                case 0x021F:
+                case 0x0221:
+                    version = 0x0203;
+                    break;
+
+                case 0x0233:
+                    version = 0x0206;
+            }
+
+            data._begin = ef[0x18];
+            data._end = data._begin + ef[0x16];
+            //auto num = ef[0x1c];
+
+        } else if ((ef.size() >= 15) && ef_starts("_DMI_")) {
+            LYRA_TRACE("Found DMI entry point.");
+
+            data._version = std::make_pair(ef[0x0e] & 0xf0, ef[0x0e] & 0x0f);
+            version = ((ef[0x0e] & 0xf0) << 4) + (ef[0x0e] & 0x0f);
+            data._begin = ef[0x08];
+            data._end = data._begin + ef[0x06];
+            //auto num = ef[0x0c];
+
+        } else {
+            LYRA_TRACE("SMBIOS entry point is defective.");
+            return detail::results::invalid_state;
         }
-        retval._version = std::make_pair(ef[0x07], ef[0x08]);
-        version = (ef[0x07] << 8) + ef[0x08];
-        retval._begin = *reinterpret_cast<uint64_t *>(ef.data() + 0x10);
-        retval._end = retval._begin + ef[0x0C];
-        retval._flags |= data::flag_stop_at_eot;
 
-    } else if ((ef.size() >= 31) && (::memcmp(ef.data(), "_SM_", 4) == 0)) {
-        if (!validate_checksum(ef.data(), ef[0x5])
-                || (::memcmp(ef.data() + 0x10, "_DMI_", 5) != 0)
-                || !validate_checksum(ef.data() + 0x10, 0x0F)) {
-            throw std::runtime_error("Checksum error in SMBIOS entry point.");
-        }
-        retval._version = std::make_pair(ef[0x06], ef[0x07]);
-        version = (ef[0x06] << 8) + ef[0x07];
+        // Read the table.
+        auto table = detail::read_all_bytes("/sys/firmware/dmi/tables/DMI");
+        data._size = table.size();
+        data._data = new std::uint8_t[data._size];
+        std::copy(table.data(), table.data() + table.size(), data._data);
 
-        // Fix version like GNU dmidecode:
-        switch (version) {
-            case 0x021F:
-            case 0x0221:
-                version = 0x0203;
-                break;
-
-            case 0x0233:
-                version = 0x0206;
-        }
-
-        retval._begin = ef[0x18];
-        retval._end = retval._begin + ef[0x16];
-        auto num = ef[0x1c];
-
-    } else if ((ef.size() >= 15) && (::memcmp(ef.data(), "_DMI_", 5) == 0)) {
-        retval._version = std::make_pair(ef[0x0e] & 0xf0, ef[0x0e] & 0x0f);
-        version = ((ef[0x0e] & 0xf0) << 4) + (ef[0x0e] & 0x0f);
-        retval._begin = ef[0x08];
-        retval._end = retval._begin + ef[0x06];
-        auto num = ef[0x0c];
-
-    } else {
-        throw std::runtime_error("SMBIOS entry point is defective.");
+    } catch (const std::system_error& ex) {
+        LYRA_TRACE(_T("Failed to read SMBIOS data: %s"), ex.what());
+        return ex.code().value();
     }
-
-    // Read the table.
-    auto table = detail::read_all_bytes("/sys/firmware/dmi/tables/DMI");
-    retval._size = table.size();
-    retval._data = new std::uint8_t[retval._size];
-    std::copy(table.data(), table.data() + table.size(), retval._data);
 #endif /* defined(_WIN32) */
 
-    return retval;
+    return detail::results::success;
 }
 
 
 /*
- * LYRA_NAMESPACE::smbios::get_baseboard_information
+ * LYRA_NAMESPACE::smbios::get
  */
-LYRA_NAMESPACE::property_set LYRA_NAMESPACE::smbios::get_baseboard_information(
-        _In_ const baseboard_information_type *info,
-        _In_ const data::version_type smbios_version) {
-    detail::property_set_impl ps;
+LYRA_NAMESPACE::property_set LYRA_NAMESPACE::smbios::get(
+        _In_ const collection_flags flags) {
+    data data;
     property_set retval;
 
-    if (info != nullptr) {
-        _LYRA_ADD_STRING_PROP(manufacturer, manufacturer);
-        _LYRA_ADD_STRING_PROP(product, product_name);
-        _LYRA_ADD_STRING_PROP(revision, version);
-        _LYRA_ADD_STRING_PROP(serial_number, serial_number);
-        _LYRA_ADD_STRING_PROP(asset_tag, asset_tag);
-        //byte_type feature_flags;
-        _LYRA_ADD_STRING_PROP(location, location_in_chassis);
-        //handle_type chassis_handle;
-        //byte_type board_type;
-        //byte_type number_of_contained_object_handles;
-        //handle_type contained_object_handles[255];
-
-    }
-
-    realise(retval, std::move(ps));
-    return retval;
-}
-
-
-/*
- * LYRA_NAMESPACE::smbios::get_bios_information
- */
-LYRA_NAMESPACE::property_set LYRA_NAMESPACE::smbios::get_bios_information(
-        _In_ const bios_information_type *info,
-        _In_ const data::version_type smbios_version) {
-    typedef LYRA_NAMESPACE::version::version structured_version;
-    detail::property_set_impl ps;
-    property_set retval;
-
-    if (info != nullptr) {
-        _LYRA_ADD_STRING_PROP(vendor, vendor);
-        _LYRA_ADD_STRING_PROP(bios_version, version);
-        //word_type starting_address_segment;
-        _LYRA_ADD_STRING_PROP(release_date, release_date);
-        ps.add<rom_size>(64 * 1024 * (info->rom_size + 1));
-
-        if (version_at_least(smbios_version, 2, 1)) {
-            //ps.add<characteristics>(info->characteristics);
-        }
-
-        if (version_at_least(smbios_version, 2, 4)) {
-            //ps.add<extension_bytes1>(info->extension_bytes1);
-            //ps.add<extension_bytes2>(info->extension_bytes2);
-            ps.add<structured_version>(LYRA_NAMESPACE::version::make(
-                info->major_release, info->minor_release));
-            ps.add<firmware_version>(LYRA_NAMESPACE::version::make(
-                info->firmware_major_release, info->firmware_minor_release));
-        }
-    }
-
-    realise(retval, std::move(ps));
-    return retval;
-}
-
-
-/*
- * LYRA_NAMESPACE::smbios::get_memory_device
- */
-LYRA_NAMESPACE::property_set LYRA_NAMESPACE::smbios::get_memory_device(
-        _In_ const memory_device_type *info,
-        _In_ const data::version_type smbios_version) {
-    detail::property_set_impl ps;
-    property_set retval;
-
-    if (info != nullptr) {
-        if (version_at_least(smbios_version, 2, 1)) {
-            //handle_type physical_memory_array_handle;
-            //handle_type memory_error_information_handle;
-            //word_type total_width;
-            //word_type data_width;
-            if ((info->size != 0x7fff)
-                    && !version_at_least(smbios_version, 2, 7)) {
-                ps.add<installed_size>(info->size);
-            }
-            ps.add(form_factor::name, lookup_string(
-                static_cast<std::size_t>(info->type),
-                memory_device_form_factors));
-            //byte_type device_set;
-            _LYRA_ADD_STRING_PROP(socket, device_locator);
-            _LYRA_ADD_STRING_PROP(bank, bank_locator);
-            ps.add(component_type::name, lookup_string(
-                static_cast<std::size_t>(info->type),
-                memory_device_types));
-            //word_type type_detail;
-        }
-
-        if (version_at_least(smbios_version, 2, 3)) {
-            //word_type speed;
-            _LYRA_ADD_STRING_PROP(manufacturer, manufacturer);
-            _LYRA_ADD_STRING_PROP(serial_number, serial_number);
-            _LYRA_ADD_STRING_PROP(asset_tag, asset_tag);
-            _LYRA_ADD_STRING_PROP(part_number, part_number);
-        }
-
-        if (version_at_least(smbios_version, 2, 6)) {
-            //word_type attributes;
-        }
-
-        if (version_at_least(smbios_version, 2, 7)) {
-            ps.add<installed_size>(info->extended_size);
-            ps.add<current_speed>(info->configured_memory_clock_speed);
-        }
-
-        if (version_at_least(smbios_version, 2, 8)) {
-            ps.add<minimum_voltage>(info->minimum_voltage);
-            ps.add<maximum_voltage>(info->maximum_voltage);
-            ps.add<voltage>(info->configured_voltage);
-        }
-    }
-
-    realise(retval, std::move(ps));
-    return retval;
-}
-
-
-/*
- * LYRA_NAMESPACE::smbios::get_memory_module_information
- */
-LYRA_NAMESPACE::property_set
-LYRA_NAMESPACE::smbios::get_memory_module_information(
-        _In_ const memory_module_information_type *info,
-        _In_ const data::version_type smbios_version) {
-    detail::property_set_impl ps;
-    property_set retval;
-
-    if (info != nullptr) {
-        _LYRA_ADD_STRING_PROP(socket, socket_designation);
-        //byte_type bank_connections;
-        ps.add<current_speed>(info->current_speed);
-        //word_type type;
-        ps.add<installed_size>(info->installed_size);
-        ps.add<enabled_size>(info->enabled_size);
-        //byte_type error_status;
-    }
-
-    realise(retval, std::move(ps));
-    return retval;
-}
-
-
-/*
- * LYRA_NAMESPACE::smbios::get_processor_information
- */
-LYRA_NAMESPACE::property_set LYRA_NAMESPACE::smbios::get_processor_information(
-        _In_ const processor_information_type *info,
-        _In_ const data::version_type smbios_version) {
-    detail::property_set_impl ps;
-    property_set retval;
-
-    if (info != nullptr) {
-        _LYRA_ADD_STRING_PROP(socket, socket_designation);
-        //byte_type type;
-        //byte_type family;
-        _LYRA_ADD_STRING_PROP(manufacturer, manufacturer);
-        ps.add<cpuid>(info->cpuid);
-        _LYRA_ADD_STRING_PROP(cpu_version, version);
-        ps.add<voltage>(info->voltage);
-        ps.add<external_clock>(info->external_clock);
-        ps.add<maximum_speed>(info->max_speed);
-        ps.add<current_speed>(info->current_speed);
-        //byte_type status;
-        //byte_type upgrade;
-
-        if (version_at_least(smbios_version, 2, 1)) {
-            //ps.add<l1_cache_handle>(info->l1_cache_handle);
-            //ps.add<l2_cache_handle>(info->l2_cache_handle);
-            //ps.add<l3_cache_handle>(info->l3_cache_handle);
-        }
-
-        if (version_at_least(smbios_version, 2, 3)) {
-            _LYRA_ADD_STRING_PROP(serial_number, serial_number);
-            _LYRA_ADD_STRING_PROP(asset_tag, asset_tag);
-            _LYRA_ADD_STRING_PROP(part_number, part_number);
-        }
-
-        if (version_at_least(smbios_version, 2, 5)
-                && !version_at_least(smbios_version, 3, 0)) {
-            // If possible, use the better fields from SMBIOS 3.
-            ps.add<installed_cores>(info->core_count);
-            ps.add<enabled_cores>(info->core_enabled);
-            ps.add<installed_threads>(info->thread_count);
-        }
-
-        if (version_at_least(smbios_version, 2, 5)) {
-            //ps.add<characteristics>(info->characteristics);
-        }
-
-        if (version_at_least(smbios_version, 2, 6)) {
-            //ps.add<family2>(info->family2);
-        }
-
-        if (version_at_least(smbios_version, 3, 0)) {
-            ps.add<installed_cores>(info->core_count2);
-            ps.add<enabled_cores>(info->core_enabled2);
-            ps.add<installed_threads>(info->thread_count2);
-        }
-    }
-
-    realise(retval, std::move(ps));
-    return retval;
-}
-
-
-/*
- * LYRA_NAMESPACE::smbios::get_smbios
- */
-LYRA_NAMESPACE::property_set LYRA_NAMESPACE::smbios::get_smbios(void) {
-    detail::property_set_impl ps;
-    property_set retval;
-
-    try {
-        const auto data = read();
+    const auto status = read(data);
+    if (LYRA_SUCCEEDED(status)) {
+        detail::property_set_impl ps;
 
         // Add the SMBIOS version.
         ps.add<LYRA_NAMESPACE::version::version>(LYRA_NAMESPACE::version::make(
@@ -1268,15 +1150,328 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::smbios::get_smbios(void) {
 
         _LYRA_ADD_SMBIOS_PROP(bios, bios_information);
         _LYRA_ADD_SMBIOS_PROP(baseboard, baseboard_information);
+        _LYRA_ADD_SMBIOS_PROP(chassis, chassis_information);
         _LYRA_ADD_SMBIOS_PROP(cpu, processor_information);
         _LYRA_ADD_SMBIOS_PROP(memory_device, memory_device);
         _LYRA_ADD_SMBIOS_PROP(memory_module, memory_module_information);
 
-    } catch (... ) {
-        LYRA_TRACE(_T("An error occurred while retrieving SMBIOS ")
-            _T("information."));
+        realise(retval, std::move(ps));
+
+#if !defined(_WIN32)
+    } else {
+        // On Linux, access to SMBIOS is restricted to root by default. If we
+        // cannot read it, fall back to what we can find in
+        // /sys/devices/virtual/dmi.
+        detail::property_set_impl pss;
+
+        {
+            detail::property_set_impl ps;
+            _LYRA_ADD_DMI_FILE_PROP(bios_date);
+            _LYRA_ADD_DMI_FILE_PROP(bios_release);
+            _LYRA_ADD_DMI_FILE_PROP(bios_vendor);
+            _LYRA_ADD_DMI_FILE_PROP(bios_version);
+            pss.add<bios>(detail::to_property_set(std::move(ps)));
+        }
+
+        {
+            detail::property_set_impl ps;
+            _LYRA_ADD_DMI_FILE_PROP(baseboard_asset_tag);
+            _LYRA_ADD_DMI_FILE_PROP(baseboard_product);
+            _LYRA_ADD_DMI_FILE_PROP(baseboard_serial);
+            _LYRA_ADD_DMI_FILE_PROP(baseboard_vendor);
+            _LYRA_ADD_DMI_FILE_PROP(baseboard_version);
+            pss.add<baseboard>(detail::to_property_set(std::move(ps)));
+        }
+
+        {
+            detail::property_set_impl ps;
+            _LYRA_ADD_DMI_FILE_PROP(chassis_asset_tag);
+            _LYRA_ADD_DMI_FILE_PROP(chassis_serial);
+            _LYRA_ADD_DMI_FILE_PROP(chassis_type);
+            _LYRA_ADD_DMI_FILE_PROP(chassis_vendor);
+            _LYRA_ADD_DMI_FILE_PROP(chassis_version);
+            pss.add<chassis>(detail::to_property_set(std::move(ps)));
+        }
+
+        realise(retval, std::move(pss));
+#endif /* !defined(_WIN32) */
     }
 
-    realise(retval, std::move(ps));
+    return retval;
+}
+
+
+/*
+ * LYRA_NAMESPACE::smbios::get_baseboard_information
+ */
+LYRA_NAMESPACE::property_set LYRA_NAMESPACE::smbios::get_baseboard_information(
+        _In_ const baseboard_information_type *info,
+        _In_ const data::version_type smbios_version,
+        _In_ const collection_flags flags) {
+    property_set retval;
+
+    if (info != nullptr) {
+        detail::property_set_impl ps;
+
+        _LYRA_ADD_STRING_PROP(baseboard_vendor, manufacturer);
+        _LYRA_ADD_STRING_PROP(baseboard_product, product_name);
+        _LYRA_ADD_STRING_PROP(baseboard_version, version);
+        _LYRA_ADD_STRING_PROP(baseboard_serial, serial_number);
+        _LYRA_ADD_STRING_PROP(baseboard_asset_tag, asset_tag);
+        //byte_type feature_flags;
+        _LYRA_ADD_STRING_PROP(baseboard_location, location_in_chassis);
+        //handle_type chassis_handle;
+        //byte_type board_type;
+        //byte_type number_of_contained_object_handles;
+        //handle_type contained_object_handles[255];
+
+        realise(retval, std::move(ps));
+    }
+
+    return retval;
+}
+
+
+/*
+ * LYRA_NAMESPACE::smbios::get_bios_information
+ */
+LYRA_NAMESPACE::property_set LYRA_NAMESPACE::smbios::get_bios_information(
+        _In_ const bios_information_type *info,
+        _In_ const data::version_type smbios_version,
+        _In_ const collection_flags flags) {
+    typedef LYRA_NAMESPACE::version::version structured_version;
+    property_set retval;
+
+    if (info != nullptr) {
+        detail::property_set_impl ps;
+
+        _LYRA_ADD_STRING_PROP(bios_vendor, vendor);
+        _LYRA_ADD_STRING_PROP(bios_version, version);
+        //word_type starting_address_segment;
+        _LYRA_ADD_STRING_PROP(bios_date, release_date);
+        _LYRA_ADD_GENERIC_PROP(bios_rom_size, 64 * 1024 * (info->rom_size + 1));
+
+        if (version_at_least(smbios_version, 2, 1)) {
+            //ps.add<characteristics>(info->characteristics);
+        }
+
+        if (version_at_least(smbios_version, 2, 4)) {
+            //ps.add<extension_bytes1>(info->extension_bytes1);
+            //ps.add<extension_bytes2>(info->extension_bytes2);
+            _LYRA_ADD_GENERIC_PROP(bios_release, LYRA_NAMESPACE::version::make(
+                info->major_release, info->minor_release));
+            _LYRA_ADD_GENERIC_PROP(bios_firmware_version,
+                LYRA_NAMESPACE::version::make(info->firmware_major_release,
+                info->firmware_minor_release));
+        }
+
+        realise(retval, std::move(ps));
+    }
+
+    return retval;
+}
+
+
+/*
+ * LYRA_NAMESPACE::smbios::get_chassis_information
+ */
+LYRA_NAMESPACE::property_set LYRA_NAMESPACE::smbios::get_chassis_information(
+        _In_ const chassis_information_type *info,
+        _In_ const data::version_type smbios_version,
+        _In_ const collection_flags flags) {
+    property_set retval;
+
+    if (info != nullptr) {
+        detail::property_set_impl ps;
+
+        _LYRA_ADD_STRING_PROP(chassis_vendor, manufacturer);
+        _LYRA_ADD_STRING_PROP(chassis_type, type);
+        _LYRA_ADD_STRING_PROP(chassis_version, version);
+        _LYRA_ADD_STRING_PROP(chassis_serial, serial_number);
+        _LYRA_ADD_STRING_PROP(chassis_asset_tag, asset_tag);
+
+        if (version_at_least(smbios_version, 2, 1)) {
+            //byte_type bootup_state;
+            //byte_type power_supply_state;
+            //byte_type thermal_state;
+            //byte_type security_status;
+        }
+
+        if (version_at_least(smbios_version, 2, 3)) {
+            //dword_type oem_defined;
+            //byte_type height;
+            //byte_type number_of_power_cords;
+            //byte_type contained_element_count;
+            //byte_type contained_element_record_length;
+            //byte_type contained_elements[255 * 255];
+        }
+
+        realise(retval, std::move(ps));
+    }
+
+    return retval;
+}
+
+
+/*
+ * LYRA_NAMESPACE::smbios::get_memory_device
+ */
+LYRA_NAMESPACE::property_set LYRA_NAMESPACE::smbios::get_memory_device(
+        _In_ const memory_device_type *info,
+        _In_ const data::version_type smbios_version,
+        _In_ const collection_flags flags) {
+    property_set retval;
+
+    if (info != nullptr) {
+        detail::property_set_impl ps;
+
+        if (version_at_least(smbios_version, 2, 1)) {
+            //handle_type physical_memory_array_handle;
+            //handle_type memory_error_information_handle;
+            //word_type total_width;
+            //word_type data_width;
+            if ((info->size != 0x7fff) && version_less(smbios_version, 2, 7)) {
+                _LYRA_ADD_GENERIC_PROP(memory_size, info->size);
+            }
+
+            //ps.add(form_factor::name, lookup_string(
+            //    static_cast<std::size_t>(info->type),
+            //    memory_device_form_factors));
+            _LYRA_ADD_STRING_LUT_PROP(memory_form_factor,
+                form_factor,
+                ::memory_device_form_factors);
+            //byte_type device_set;
+            _LYRA_ADD_STRING_PROP(memory_device_locator, device_locator);
+            _LYRA_ADD_STRING_PROP(memory_bank_locator, bank_locator);
+            _LYRA_ADD_STRING_LUT_PROP(memory_type, type, ::memory_device_types);
+
+            //word_type type_detail;
+        }
+
+        if (version_at_least(smbios_version, 2, 3)) {
+            //word_type speed;
+            _LYRA_ADD_STRING_PROP(memory_vendor, manufacturer);
+            _LYRA_ADD_STRING_PROP(memory_serial, serial_number);
+            _LYRA_ADD_STRING_PROP(memory_asset_tag, asset_tag);
+            _LYRA_ADD_STRING_PROP(memory_part_number, part_number);
+        }
+
+        if (version_at_least(smbios_version, 2, 6)) {
+            //word_type attributes;
+        }
+
+        if (version_at_least(smbios_version, 2, 7)) {
+            _LYRA_ADD_GENERIC_PROP(memory_size,
+                info->extended_size);
+            _LYRA_ADD_GENERIC_PROP(memory_speed,
+                info->configured_memory_clock_speed);
+        }
+
+        if (version_at_least(smbios_version, 2, 8)) {
+            _LYRA_ADD_GENERIC_PROP(memory_minimum_voltage,
+                info->minimum_voltage);
+            _LYRA_ADD_GENERIC_PROP(memory_maximum_voltage,
+                info->maximum_voltage);
+            _LYRA_ADD_GENERIC_PROP(memory_voltage,
+                info->configured_voltage);
+        }
+
+        realise(retval, std::move(ps));
+    }
+
+    return retval;
+}
+
+
+/*
+ * LYRA_NAMESPACE::smbios::get_memory_module_information
+ */
+LYRA_NAMESPACE::property_set
+LYRA_NAMESPACE::smbios::get_memory_module_information(
+        _In_ const memory_module_information_type *info,
+        _In_ const data::version_type smbios_version,
+        _In_ const collection_flags flags) {
+    property_set retval;
+
+    if (info != nullptr) {
+        detail::property_set_impl ps;
+
+        _LYRA_ADD_STRING_PROP(memory_socket, socket_designation);
+        //byte_type bank_connections;
+        _LYRA_ADD_GENERIC_PROP(memory_speed, info->current_speed);
+        _LYRA_ADD_STRING_LUT_PROP(memory_type, type, ::memory_module_types);
+        _LYRA_ADD_GENERIC_PROP(memory_size, info->installed_size);
+        _LYRA_ADD_GENERIC_PROP(memory_enabled_size, info->enabled_size);
+        //byte_type error_status;
+
+        realise(retval, std::move(ps));
+    }
+
+    return retval;
+}
+
+
+/*
+ * LYRA_NAMESPACE::smbios::get_processor_information
+ */
+LYRA_NAMESPACE::property_set LYRA_NAMESPACE::smbios::get_processor_information(
+        _In_ const processor_information_type *info,
+        _In_ const data::version_type smbios_version,
+        _In_ const collection_flags flags) {
+    property_set retval;
+
+    if (info != nullptr) {
+        detail::property_set_impl ps;
+        _LYRA_ADD_STRING_PROP(cpu_socket, socket_designation);
+        //byte_type type;
+        //byte_type family;
+        _LYRA_ADD_STRING_PROP(cpu_vendor, manufacturer);
+        _LYRA_ADD_GENERIC_PROP(cpu_id, info->cpuid);
+        _LYRA_ADD_STRING_PROP(cpu_version, version);
+        _LYRA_ADD_GENERIC_PROP(cpu_voltage, info->voltage);
+        _LYRA_ADD_GENERIC_PROP(cpu_external_clock, info->external_clock);
+        _LYRA_ADD_GENERIC_PROP(cpu_maximum_speed, info->max_speed);
+        _LYRA_ADD_GENERIC_PROP(cpu_speed, info->current_speed);
+        //byte_type status;
+        _LYRA_ADD_STRING_LUT_PROP(cpu_upgrade, upgrade, ::processor_upgrades);
+
+        if (version_at_least(smbios_version, 2, 1)) {
+            //ps.add<l1_cache_handle>(info->l1_cache_handle);
+            //ps.add<l2_cache_handle>(info->l2_cache_handle);
+            //ps.add<l3_cache_handle>(info->l3_cache_handle);
+        }
+
+        if (version_at_least(smbios_version, 2, 3)) {
+            _LYRA_ADD_STRING_PROP(cpu_serial, serial_number);
+            _LYRA_ADD_STRING_PROP(cpu_asset_tag, asset_tag);
+            _LYRA_ADD_STRING_PROP(cpu_part_number, part_number);
+        }
+
+        if (version_at_least(smbios_version, 2, 5)
+                && version_less(smbios_version, 3, 0)) {
+            // If possible, use the better fields from SMBIOS 3.
+            ps.add<cpu_cores>(info->core_count);
+            ps.add<cpu_enabled_cores>(info->core_enabled);
+            ps.add<cpu_threads>(info->thread_count);
+        }
+
+        if (version_at_least(smbios_version, 2, 5)) {
+            _LYRA_ADD_STRING_LUT_PROP(cpu_characteristics, characteristics,
+                ::processor_characteristics);
+        }
+
+        if (version_at_least(smbios_version, 2, 6)) {
+            //ps.add<family2>(info->family2);
+        }
+
+        if (version_at_least(smbios_version, 3, 0)) {
+            ps.add<cpu_cores>(info->core_count2);
+            ps.add<cpu_enabled_cores>(info->core_enabled2);
+            ps.add<cpu_threads>(info->thread_count2);
+        }
+
+        realise(retval, std::move(ps));
+    }
+
     return retval;
 }

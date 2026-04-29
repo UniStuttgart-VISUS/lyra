@@ -8,7 +8,9 @@
 #define _LYRA_OPERATING_SYSTEM_H
 #pragma once
 
+#include "visus/lyra/collection_flags.h"
 #include "visus/lyra/property_set.h"
+#include "visus/lyra/version.h"
 
 
 LYRA_NAMESPACE_BEGIN
@@ -24,8 +26,12 @@ namespace operating_system {
     /// Gets a <see cref="version::version" /> property set describing the
     /// version of the operating system the code is running on.
     /// </summary>
-    /// <returns></returns>
-    LYRA_API property_set get_version(void);
+    /// <param name="flags">Allows for customising the collection
+    /// behaviour.</param>
+    /// <returns>A property set describing the version of the operating
+    /// system as detailed as possible.</returns>
+    LYRA_API property_set get_version(_In_ const collection_flags flags
+        = collection_flags::none);
 
 } /* namespace operating_system */
 

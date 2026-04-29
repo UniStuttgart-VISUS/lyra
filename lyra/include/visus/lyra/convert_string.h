@@ -130,6 +130,20 @@ template<class TChar> inline std::string to_utf8(
     return retval;
 }
 
+/// <summary>
+/// Converts UTF-16 or UTF-32 strings to UTF-8.
+/// </summary>
+/// <typeparam name="TChar"></typeparam>
+/// <typeparam name="TTraits"></typeparam>
+/// <typeparam name="TAlloc"></typeparam>
+/// <param name="src"></param>
+/// <returns></returns>
+template<class TChar, class TTraits, class TAlloc> inline
+std::enable_if_t<(sizeof(TChar) > 1), std::string> to_utf8(
+        _In_ const std::basic_string<TChar, TTraits, TAlloc>& src) {
+    return to_utf8(src.c_str(), static_cast<int>(src.size()));
+}
+
 LYRA_NAMESPACE_END
 
 #endif /* !defined(_LYRA_CONVERT_STRING_H) */

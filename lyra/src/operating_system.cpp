@@ -33,7 +33,7 @@
  * LYRA_NAMESPACE::operating_system::get_version
  */
 LYRA_NAMESPACE::property_set LYRA_NAMESPACE::operating_system::get_version(
-        void) {
+        _In_ const collection_flags flags) {
     detail::property_set_impl ps;
     property_set retval;
 
@@ -79,24 +79,26 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::operating_system::get_version(
                 ps.add<LYRA_NAMESPACE::version::patch>(vi.dwBuildNumber);
             }
 
-            ps.add(u8"ServicePack", LYRA_NAMESPACE::version::make(
-                static_cast<std::uint32_t>(vi.wServicePackMajor),
-                static_cast<std::uint32_t>(vi.wServicePackMinor)));
+            if (!has_flag(flags, collection_flags::no_undeclared)) {
+                ps.add(u8"ServicePack", LYRA_NAMESPACE::version::make(
+                    static_cast<std::uint32_t>(vi.wServicePackMajor),
+                    static_cast<std::uint32_t>(vi.wServicePackMinor)));
 
-            switch (vi.wProductType) {
-                case VER_NT_WORKSTATION:
-                    ps.add(u8"ProductType", u8"Workstation");
-                    break;
+                switch (vi.wProductType) {
+                    case VER_NT_WORKSTATION:
+                        ps.add(u8"ProductType", u8"Workstation");
+                        break;
 
-                case VER_NT_DOMAIN_CONTROLLER:
-                    ps.add(u8"ProductType", u8"Domain Controller");
-                    break;
+                    case VER_NT_DOMAIN_CONTROLLER:
+                        ps.add(u8"ProductType", u8"Domain Controller");
+                        break;
 
-                case VER_NT_SERVER:
-                    ps.add(u8"ProductType", u8"Server");
-                    break;
-            }
-        }
+                    case VER_NT_SERVER:
+                        ps.add(u8"ProductType", u8"Server");
+                        break;
+                }
+            } /* if (!has_flag(flags, collection_flags::no_undeclared)) */
+        } /* if (::GetVersionExW(reinterpret_cast<LPOSVERSIONINFOW>(&vi))) */
 #pragma warning(pop)
     }
 
@@ -113,14 +115,12 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::operating_system::get_version(
             ps.add<LYRA_NAMESPACE::version::patch>(std::stoul(m[3].str()));
         }
 
-        ps.add(u8"Release", vi.release);
-        ps.add(u8"Version", vi.version);
+        if (!has_flag(flags, collection_flags::no_undeclared)) {
+            ps.add(u8"Release", vi.release);
+            ps.add(u8"SystemName", vi.sysname);
+            ps.add(u8"Version", vi.version);
+        }
     }
-
-    //this->name = vi.sysname;
-    //this->version = vi.release;
-    //this->word_size = (::strstr(vi.machine, "64") == nullptr) ? 32 : 64;
-
 #endif /* defined(_WIN32) */
 
     detail::realise(retval, std::move(ps));
