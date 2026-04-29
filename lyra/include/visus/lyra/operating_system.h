@@ -19,7 +19,7 @@ namespace operating_system {
 
     struct family final {
         typedef const char *type;
-        static constexpr auto name = u8"family";
+        static constexpr auto name = u8"Family";
     };
 
     /// <summary>
