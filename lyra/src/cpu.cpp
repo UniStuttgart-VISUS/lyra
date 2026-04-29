@@ -62,20 +62,22 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
         const auto add_infos = [&](const std::vector<cpu_info>& infos,
                 const std::uint32_t base) {
             for (auto it = infos.begin(); it != infos.end(); ++it) {
-                const auto fun = base + std::distance(infos.begin(), it);
+                std::uint32_t fun = base + std::distance(infos.begin(), it);
                 std::stringstream ss;
                 ss << "0x"
+                    << std::setw(2 * sizeof(fun))
+                    << std::setfill('0')
                     << std::hex
-                    << std::setfill('0') << std::setw(2 * sizeof(fun))
                     << fun;
 
                 multi_sz values;
                 for (auto val : it->values) {
                     std::stringstream ss;
                     ss << "0x"
+                        << std::setw(2 * sizeof(val))
+                        << std::setfill('0')
                         << std::hex
-                        << std::setfill('0') << std::setw(2 * sizeof(val))
-                        << val;
+                        << static_cast<std::uint32_t>(val);
                     const auto s = ss.str();
                     values.add(s.c_str());
                 }
