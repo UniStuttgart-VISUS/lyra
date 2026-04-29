@@ -74,7 +74,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
                     std::stringstream ss;
                     ss << "0x"
                         << std::hex
-                        << std::setfill('0') << std::setw(2 * sizeof(fun))
+                        << std::setfill('0') << std::setw(2 * sizeof(val))
                         << val;
                     const auto s = ss.str();
                     values.add(s.c_str());
