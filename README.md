@@ -11,7 +11,7 @@ Property sets can be obtained by calling the appropriate factory functions. For 
 ```cpp
 #include "visus/lyra/smbios.h"
 
-auto smbios = visus::lyra::smbios::get_smbios();
+auto smbios = visus::lyra::smbios::get();
 ```
 
 There are different ways of accessing the data stored in a property set. The most convenient one is probably the `visit` method:
