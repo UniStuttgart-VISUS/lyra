@@ -17,6 +17,7 @@
 #include "visus/lyra/property_set.h"
 #include "visus/lyra/property_traits.h"
 
+#include "is_sensitive.h"
 #include "property_variant.h"
 
 
@@ -247,6 +248,40 @@ struct LYRA_TEST_API property_set_impl final {
         _In_ const key_type& key) const noexcept;
 };
 
+
+/// <summary>
+/// Checks whether adding the property <typeparamref name="TProp" /> is allowed
+/// based on the given <paramref name="flags" /> and adds it
+/// <paramref name="ps" /> if this is the case.
+/// </summary>
+template<class TProp, class... TArgs> bool checked_add(
+        _Inout_ property_set_impl& ps,
+        _In_ const collection_flags flags,
+        _In_ TArgs&&... args) {
+    const auto retval = check_sensitive<TProp>(flags);
+    if (retval) {
+        ps.add<TProp>(std::forward<TArgs>(args)...);
+    }
+    return retval;
+}
+
+
+/// <summary>
+/// Checks whether adding the (undeclared) property <paramref name="prop" /> is
+/// allowed based on the given <paramref name="flags" /> and adds it
+/// <paramref name="ps" /> if this is the case.
+/// </summary>
+template<class TName, class... TArgs> bool checked_add(
+        _In_ TName&& prop,
+        _Inout_ property_set_impl& ps,
+        _In_ const collection_flags flags,
+        _In_ TArgs&&... args) {
+    const auto retval = !has_flag(flags, collection_flags::no_undeclared);
+    if (retval) {
+        ps.add(std::forward<TName>(prop), std::forward<TArgs>(args)...);
+    }
+    return retval;
+}
 
 /// <summary>
 /// Merges a <see cref="property_set" /> into <paramref name="dst" />

@@ -9,6 +9,7 @@
 #include "visus/lyra/graphics.h"
 
 
+#if defined(_WIN32)
 TEST(graphics, dxgi_adapters) {
     auto props = LYRA_NAMESPACE::graphics::get_dxgi_adapters();
     EXPECT_FALSE(props.empty());
@@ -16,3 +17,4 @@ TEST(graphics, dxgi_adapters) {
     auto json = props.json();
     EXPECT_NE(json, nullptr);
 }
+#endif /* defined(_WIN32) */

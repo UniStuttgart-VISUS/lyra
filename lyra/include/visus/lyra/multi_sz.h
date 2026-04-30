@@ -257,7 +257,7 @@ public:
     /// <summary>
     /// An iterator over the strings in a <see cref="multi_sz" />.
     /// </summary>
-    class iterator final {
+    class LYRA_API iterator final {
 
     public:
 

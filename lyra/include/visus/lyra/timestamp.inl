@@ -14,7 +14,7 @@ LYRA_NAMESPACE::timestamp::timestamp(
     using namespace std::chrono;
     typedef duration<value_type, std::ratio<1, tick_rate>> duration_type;
 
-    const auto dz = duration_type(timestamp::unix_offset);
+    constexpr auto dz = duration_type(timestamp::unix_offset);
 
     // Find out what the difference between the time point 't' and the UNIX
     // epoch is. Because we cannot rely on the epoch of the STL clock being the
@@ -22,7 +22,7 @@ LYRA_NAMESPACE::timestamp::timestamp(
     // represent the UNIX epoch.
     const auto st = time_point_cast<system_clock::duration>(t);
     const auto uz = system_clock::from_time_t(0);
-    const auto dt = st - uz;
+    const auto dt = duration_cast<duration_type>(st - uz);
 
     // Transform the origin of the timestamp clock to the origin of FILETIME.
     this->_value = timestamp::to_ticks(dt + dz);
@@ -51,13 +51,14 @@ typename TClock::time_point LYRA_NAMESPACE::timestamp::to_time_point(
     using namespace std::chrono;
     typedef duration<value_type, std::ratio<1, tick_rate>> duration_type;
 
-    const auto dz = duration_type(timestamp::unix_offset);
+    constexpr auto dz = duration_type(timestamp::unix_offset);
 
     // Find out what the difference between the time point 't' and the UNIX
     // epoch is. Because we cannot rely on the epoch of the STL clock being the
     // UNIX epoch (until C++ 20), we use time_t, which is guaranteed to
     // represent the UNIX epoch.
-    const auto uz = system_clock::from_time_t(0).time_since_epoch();
+    const auto uz_ = system_clock::from_time_t(0).time_since_epoch();
+    const auto uz = duration_cast<duration_type>(uz_);
     const auto d = duration_type(this->_value);
     const auto dt = d + uz - dz;
 

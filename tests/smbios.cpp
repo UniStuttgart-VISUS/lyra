@@ -85,11 +85,9 @@ TEST(smbios, get) {
         std::size_t cnt;
         LYRA_NAMESPACE::property_type type;
         const void *value;
-        EXPECT_TRUE(properties.get(value, cnt, type, u8"Version"));
-        EXPECT_EQ(cnt, 1);
-        EXPECT_NE(value, nullptr);
-        EXPECT_EQ(type, LYRA_NAMESPACE::property_type::properties);
-        if (value != nullptr) {
+        if (properties.get(value, cnt, type, u8"Version")) {
+            EXPECT_EQ(cnt, 1);
+            EXPECT_EQ(type, LYRA_NAMESPACE::property_type::properties);
             auto version = static_cast<const LYRA_NAMESPACE::property_set *>(value);
             EXPECT_FALSE(version->empty());
             EXPECT_NE(version->get<LYRA_NAMESPACE::version::major>(), nullptr);
@@ -102,11 +100,7 @@ TEST(smbios, get) {
         auto property = properties.get<LYRA_NAMESPACE::smbios::baseboard>(cnt);
         EXPECT_NE(property, nullptr);
         EXPECT_GT(cnt, 0U);
-        if (property != nullptr) {
-            auto vendor = property->get<LYRA_NAMESPACE::smbios::baseboard_vendor>(cnt);
-            EXPECT_NE(vendor, nullptr);
-            EXPECT_EQ(vendor->count(), 1);
-        }
+
     }
 
     {

@@ -22,7 +22,6 @@
 #include "visus/lyra/trace.h"
 
 #include "property_set_impl.h"
-#include "is_sensitive.h"
 
 
 /// <summary>
@@ -71,20 +70,21 @@ extern char **environ;
  */
 LYRA_NAMESPACE::property_set LYRA_NAMESPACE::environment::get(
         _In_ const collection_flags flags) {
+    typedef LYRA_NAMESPACE::environment::current_directory cwd;
+    typedef LYRA_NAMESPACE::environment::variables vars;
+
     detail::property_set_impl ps;
-    property_set retval;
 
     try {
         auto path = get_current_directory();
-        ps.add<LYRA_NAMESPACE::environment::current_directory>(path.data());
+        detail::checked_add<cwd>(ps, flags, path.data());
     } catch (std::exception& ex) {
         LYRA_TRACE(_T("Failed to obtain the current directory: %s"), ex.what());
     }
 
-    ps.add<LYRA_NAMESPACE::environment::variables>(get_variables(flags));
+    detail::checked_add<vars>(ps, flags, get_variables(flags));
 
-    realise(retval, std::move(ps));
-    return retval;
+    return detail::to_property_set(std::move(ps));
 }
 
 

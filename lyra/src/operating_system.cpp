@@ -26,7 +26,6 @@
 #include "visus/lyra/trace.h"
 #include "visus/lyra/version.h"
 
-#include "is_sensitive.h"
 #include "property_set_impl.h"
 
 
@@ -113,15 +112,18 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::operating_system::get_version(
 
                 switch (vi.wProductType) {
                     case VER_NT_WORKSTATION:
-                        ps.add(u8"Product Type", u8"Workstation");
+                        detail::checked_add(u8"Product Type", ps, flags,
+                            u8"Workstation");
                         break;
 
                     case VER_NT_DOMAIN_CONTROLLER:
-                        ps.add(u8"Product Type", u8"Domain Controller");
+                        detail::checked_add(u8"Product Type", ps, flags,
+                            u8"Domain Controller");
                         break;
 
                     case VER_NT_SERVER:
-                        ps.add(u8"Product Type", u8"Server");
+                        detail::checked_add(u8"Product Type", ps, flags,
+                            u8"Server");
                         break;
                 }
             } /* if (!has_flag(flags, collection_flags::no_undeclared)) */
@@ -143,9 +145,9 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::operating_system::get_version(
         }
 
         if (!has_flag(flags, collection_flags::no_undeclared)) {
-            ps.add(u8"Release", vi.release);
-            ps.add(u8"System Name", vi.sysname);
-            ps.add(u8"Version", vi.version);
+            detail::checked_add(u8"Release", ps, flags, vi.release);
+            detail::checked_add(u8"System Name", ps, flags, vi.sysname);
+            detail::checked_add(u8"Version", ps, flags, vi.version);
         }
     }
 #endif /* defined(_WIN32) */

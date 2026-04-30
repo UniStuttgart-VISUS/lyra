@@ -97,6 +97,9 @@ bool LYRA_NAMESPACE::property_set::get(
         _Out_ std::size_t& cnt,
         _Out_ property_type& type,
         _In_z_ const char *name) const noexcept {
+    cnt = 0;
+    type = property_type::none;
+
     if ((this->_impl == nullptr) || (name == nullptr)) {
         return false;
     }

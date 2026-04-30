@@ -26,6 +26,14 @@ namespace raw {
     };
 
     /// <summary>
+    /// Identifies a block containing information about the RAM.
+    /// </summary>
+    struct memory final {
+        typedef property_set type;
+        static constexpr auto name = u8"Memory";
+    };
+
+    /// <summary>
     /// Identifies a block containing information about the operating system.
     /// </summary>
     struct operating_system final {

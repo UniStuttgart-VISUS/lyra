@@ -14,6 +14,7 @@
 
 #include "visus/lyra/property_traits.h"
 
+
 // Forward declarations.
 LYRA_DETAIL_NAMESPACE_BEGIN
 struct property_set_impl;
