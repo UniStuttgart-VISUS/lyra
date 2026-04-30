@@ -65,7 +65,9 @@ constexpr auto share_info_level_v = share_info_level<TShareInfo>::level;
 /// <see cref=share_info_level" /> specialisation is in place.</typeparam>
 /// <param name="server">The name of the server to enumerate the shares on.
 /// If <see langword="nullptr" />, the local machine will be used.</param>
-/// <param name="callback">The callback to be invoked for each share.</param>
+/// <param name="callback">The callback to be invoked for each share. Note that
+/// the data pass ised to the callback are only valid as long as the callback
+/// is executing. Any string that is to be used later must be copied.</param>
 /// <returns>The number of callback invocations.</returns>
 template<class TCallback> std::size_t enumerate_shares(
     _In_opt_z_ const wchar_t *server, _In_ TCallback callback);
