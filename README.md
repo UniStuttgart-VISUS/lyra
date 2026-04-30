@@ -72,6 +72,6 @@ auto ts = data.get<visus::lyra::raw::timestamp>();
 
 The data from a property set can be easily persisted in the form of JSON strings. Use the `json` method for that:
 ```cpp
-std::string smbios_string = data.json();
+std::string snapshot = data.json();
 ```
 The JSON string will be cached within the property set and remains valid as long as the object exists unless copied.
