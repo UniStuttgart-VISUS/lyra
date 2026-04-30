@@ -563,7 +563,7 @@ namespace smbios {
         typedef const char *type;
         static constexpr auto dmi_id = u8"board_serial";
         static constexpr auto is_sensitive = true;
-        static constexpr auto name = u8"SerialNumber";
+        static constexpr auto name = u8"Serial Number";
     };
 
     /// <summary>
@@ -600,7 +600,7 @@ namespace smbios {
     struct bios_date final {
         typedef const char *type;
         static constexpr auto dmi_id = u8"bios_date";
-        static constexpr auto name = u8"ReleaseDate";
+        static constexpr auto name = u8"Release Date";
     };
 
     /// <summary>
@@ -608,7 +608,7 @@ namespace smbios {
     /// </summary>
     struct bios_firmware_version final {
         typedef property_set type;
-        static constexpr auto name = u8"FirmwareVersion";
+        static constexpr auto name = u8"Firmware Version";
     };
 
     /// <summary>
@@ -625,7 +625,7 @@ namespace smbios {
     /// </summary>
     struct bios_rom_size final {
         typedef std::uint32_t type;
-        static constexpr auto name = u8"RomSize";
+        static constexpr auto name = u8"ROM Size";
     };
 
     /// <summary>
@@ -741,7 +741,7 @@ namespace smbios {
     /// </summary>
     struct cpu_enabled_cores final {
         typedef std::uint32_t type;
-        static constexpr auto name = u8"EnabledCores";
+        static constexpr auto name = u8"Enabled Cores";
     };
 
     /// <summary>
@@ -749,7 +749,7 @@ namespace smbios {
     /// </summary>
     struct cpu_external_clock final {
         typedef std::uint32_t type;
-        static constexpr auto name = u8"ExternalClock";
+        static constexpr auto name = u8"External Clock";
     };
 
     /// <summary>
@@ -765,7 +765,7 @@ namespace smbios {
     /// </summary>
     struct cpu_maximum_speed final {
         typedef std::uint32_t type;
-        static constexpr auto name = u8"MaximumSpeed";
+        static constexpr auto name = u8"Maximum Speed";
     };
 
     /// <summary>
@@ -773,7 +773,7 @@ namespace smbios {
     /// </summary>
     struct cpu_part_number final {
         typedef const char *type;
-        static constexpr auto name = u8"PartNumber";
+        static constexpr auto name = u8"Part Number";
     };
 
     /// <summary>
@@ -798,7 +798,7 @@ namespace smbios {
     /// </summary>
     struct cpu_speed final {
         typedef std::uint32_t type;
-        static constexpr auto name = u8"CurrentSpeed";
+        static constexpr auto name = u8"Current Speed";
     };
 
     /// <summary>
@@ -856,7 +856,7 @@ namespace smbios {
     /// </summary>
     struct memory_bank_locator final {
         typedef const char *type;
-        static constexpr auto name = u8"BankLocator";
+        static constexpr auto name = u8"Bank Locator";
     };
 
     /// <summary>
@@ -864,7 +864,7 @@ namespace smbios {
     /// </summary>
     struct memory_device final {
         typedef property_set type;
-        static constexpr auto name = u8"MemoryDevice";
+        static constexpr auto name = u8"Memory Device";
     };
 
     /// <summary>
@@ -872,7 +872,7 @@ namespace smbios {
     /// </summary>
     struct memory_device_locator final {
         typedef const char *type;
-        static constexpr auto name = u8"DeviceLocator";
+        static constexpr auto name = u8"Device Locator";
     };
 
     /// <summary>
@@ -880,7 +880,7 @@ namespace smbios {
     /// </summary>
     struct memory_enabled_size final {
         typedef std::uint32_t type;
-        static constexpr auto name = u8"EnabledSize";
+        static constexpr auto name = u8"Enabled Size";
     };
 
     /// <summary>
@@ -889,7 +889,7 @@ namespace smbios {
     /// </summary>
     struct memory_form_factor final {
         typedef const char *type;
-        static constexpr auto name = u8"FormFactor";
+        static constexpr auto name = u8"Form Factor";
     };
 
     /// <summary>
@@ -897,7 +897,7 @@ namespace smbios {
     /// </summary>
     struct memory_maximum_voltage final {
         typedef std::uint32_t type;
-        static constexpr auto name = u8"MaximumVoltage";
+        static constexpr auto name = u8"Maximum Voltage";
     };
 
     /// <summary>
@@ -905,7 +905,7 @@ namespace smbios {
     /// </summary>
     struct memory_minimum_voltage final {
         typedef std::uint32_t type;
-        static constexpr auto name = u8"MinimumVoltage";
+        static constexpr auto name = u8"Minimum Voltage";
     };
 
     /// <summary>
@@ -913,7 +913,7 @@ namespace smbios {
     /// </summary>
     struct memory_module final {
         typedef property_set type;
-        static constexpr auto name = u8"MemoryModule";
+        static constexpr auto name = u8"Memory Module";
     };
 
     /// <summary>

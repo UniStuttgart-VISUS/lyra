@@ -105,26 +105,6 @@ enum class simd_instruction_set {
     avx512pf = avx512_prefetch,
 
     /// <summary>
-    /// AVX-512ER is supported.
-    /// </summary>
-    avx512_exponential_reciprocal,
-
-    /// <summary>
-    /// AVX-512ER is supported.
-    /// </summary>
-    avx512er = avx512_exponential_reciprocal,
-
-    /// <summary>
-    /// AVX-512CD is supported.
-    /// </summary>
-    avx512_conflict_detection,
-
-    /// <summary>
-    /// AVX-512CD is supported.
-    /// </summary>
-    avx512cd = avx512_conflict_detection,
-
-    /// <summary>
     /// AVX-512DQ is supported.
     /// </summary>
     avx512_double_quad_word,
@@ -155,6 +135,26 @@ enum class simd_instruction_set {
     avx512vl = avx512_vector_length,
 
     /// <summary>
+    /// AVX-512CD is supported.
+    /// </summary>
+    avx512_conflict_detection,
+
+    /// <summary>
+    /// AVX-512CD is supported.
+    /// </summary>
+    avx512cd = avx512_conflict_detection,
+
+    /// <summary>
+    /// AVX-512ER is supported.
+    /// </summary>
+    avx512_exponential_reciprocal,
+
+    /// <summary>
+    /// AVX-512ER is supported.
+    /// </summary>
+    avx512er = avx512_exponential_reciprocal,
+
+    /// <summary>
     /// AVX-512IFMA is supported.
     /// </summary>
     avx512_integer_fused_multiply_add,
@@ -173,6 +173,121 @@ enum class simd_instruction_set {
     /// AVX-512IFMA is supported.
     /// </summary>
     avx512ifma = avx512_integer_fused_multiply_add,
+
+    /// <summary>
+    /// AVX-512VBMI is supported.
+    /// </summary>
+    avx512_vector_bit_manipulation,
+
+    /// <summary>
+    /// AVX-512VBMI is supported.
+    /// </summary>
+    avx512vbmi = avx512_vector_bit_manipulation,
+
+    /// <summary>
+    /// AVX-512VBMI2 is supported.
+    /// </summary>
+    avx512_vector_bit_manipulation2,
+
+    /// <summary>
+    /// AVX-512VBMI is supported.
+    /// </summary>
+    avx512vbmi2 = avx512_vector_bit_manipulation2,
+
+    /// <summary>
+    /// AVX-512 4FMAPS is supported.
+    /// </summary>
+    avx512_vector_fused_multiply_accumulate_single,
+
+    /// <summary>
+    /// AVX-512 4FMAPS is supported.
+    /// </summary>
+    avx5124fmaps = avx512_vector_fused_multiply_accumulate_single,
+
+    /// <summary>
+    /// AVX-512 4VNNIW is supported.
+    /// </summary>
+    avx512_vector_neural_network_instructions_word,
+
+    /// <summary>
+    /// AVX-512 4VNNIW is supported.
+    /// </summary>
+    avx5124vnniw = avx512_vector_neural_network_instructions_word,
+
+    /// <summary>
+    /// AVX-512 VPOPCNTDQ is supported.
+    /// </summary>
+    avx512_vector_popcount_dword_qword,
+
+    /// <summary>
+    /// AVX-512 VPOPCNTDQ is supported.
+    /// </summary>
+    avx512_vector_popcount = avx512_vector_popcount_dword_qword,
+
+    /// <summary>
+    /// AVX-512 VPOPCNTDQ is supported.
+    /// </summary>
+    avx512vpopcntdq = avx512_vector_popcount_dword_qword,
+
+    /// <summary>
+    /// AVX-512 VNNI is supported.
+    /// </summary>
+    avx512_vector_neural_network_instructions,
+
+    /// <summary>
+    /// AVX-512 4VNNIW is supported.
+    /// </summary>
+    avx512vnni = avx512_vector_neural_network_instructions,
+
+    /// <summary>
+    /// AVX-512 BITALG is supported.
+    /// </summary>
+    avx512_bit_algorithms,
+
+    /// <summary>
+    /// AVX-512 BITALG is supported.
+    /// </summary>
+    avx512bitalg = avx512_bit_algorithms,
+
+    /// <summary>
+    /// AVX-512 GFNI is supported.
+    /// </summary>
+    avx512_galois_field_new_instructions,
+
+    /// <summary>
+    /// AVX-512 GFNI is supported.
+    /// </summary>
+    avx512gfni = avx512_galois_field_new_instructions,
+
+    /// <summary>
+    /// AVX-512 VPCLMULQDQ is supported.
+    /// </summary>
+    avx512_carry_less_multiply_quad_word,
+
+    /// <summary>
+    /// AVX-512 VPCLMULQDQ is supported.
+    /// </summary>
+    avx512vpclmulqdq = avx512_carry_less_multiply_quad_word,
+
+    /// <summary>
+    /// AVX-512 VAES is supported.
+    /// </summary>
+    avx512_vector_aes,
+
+    /// <summary>
+    /// AVX-512 VAES is supported.
+    /// </summary>
+    avx512vaes = avx512_vector_aes,
+
+    /// <summary>
+    /// AVX-512 BF16 is supported.
+    /// </summary>
+    avx512_bfloat16,
+
+    /// <summary>
+    /// AVX-512 BF16 is supported.
+    /// </summary>
+    avx512bf16,
 };
 
 LYRA_NAMESPACE_END

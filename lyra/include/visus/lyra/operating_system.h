@@ -17,10 +17,23 @@ LYRA_NAMESPACE_BEGIN
 
 namespace operating_system {
 
+    /// <summary>
+    /// Denotes a property identifying the OS family.
+    /// </summary>
     struct family final {
         typedef const char *type;
         static constexpr auto name = u8"Family";
     };
+
+    /// <summary>
+    /// Gets all we know about the operating system.
+    /// </summary>
+    /// <param name="flags">Allows for customising the collection
+    /// behaviour.</param>
+    /// <returns>A property set describing the version of the operating
+    /// system as detailed as possible.</returns>
+    LYRA_API property_set get(_In_ const collection_flags flags
+        = collection_flags::none);
 
     /// <summary>
     /// Gets a <see cref="version::version" /> property set describing the

@@ -26,7 +26,34 @@
 #include "visus/lyra/trace.h"
 #include "visus/lyra/version.h"
 
+#include "is_sensitive.h"
 #include "property_set_impl.h"
+
+
+/*
+ * LYRA_NAMESPACE::get
+ */
+LYRA_NAMESPACE::property_set LYRA_NAMESPACE::operating_system::get(
+        _In_ const collection_flags flags) {
+    detail::property_set_impl ps;
+
+    if (detail::check_sensitive<family>(flags)) {
+#if defined(_WIN32)
+        ps.add<family>(u8"Windows");
+#else /* defined(_WIN32) */
+        utsname vi;
+        if (::uname(&vi) >= 0) {
+            ps.add<family>(vi.sysname);
+        }
+#endif /* defined(_WIN32) */
+    }
+
+    if (detail::check_sensitive<version::version>(flags)) {
+        ps.add<version::version>(get_version(flags));
+    }
+
+    return detail::to_property_set(std::move(ps));
+}
 
 
 /*
@@ -80,21 +107,21 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::operating_system::get_version(
             }
 
             if (!has_flag(flags, collection_flags::no_undeclared)) {
-                ps.add(u8"ServicePack", LYRA_NAMESPACE::version::make(
+                ps.add(u8"Service Pack", LYRA_NAMESPACE::version::make(
                     static_cast<std::uint32_t>(vi.wServicePackMajor),
                     static_cast<std::uint32_t>(vi.wServicePackMinor)));
 
                 switch (vi.wProductType) {
                     case VER_NT_WORKSTATION:
-                        ps.add(u8"ProductType", u8"Workstation");
+                        ps.add(u8"Product Type", u8"Workstation");
                         break;
 
                     case VER_NT_DOMAIN_CONTROLLER:
-                        ps.add(u8"ProductType", u8"Domain Controller");
+                        ps.add(u8"Product Type", u8"Domain Controller");
                         break;
 
                     case VER_NT_SERVER:
-                        ps.add(u8"ProductType", u8"Server");
+                        ps.add(u8"Product Type", u8"Server");
                         break;
                 }
             } /* if (!has_flag(flags, collection_flags::no_undeclared)) */
@@ -117,7 +144,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::operating_system::get_version(
 
         if (!has_flag(flags, collection_flags::no_undeclared)) {
             ps.add(u8"Release", vi.release);
-            ps.add(u8"SystemName", vi.sysname);
+            ps.add(u8"System Name", vi.sysname);
             ps.add(u8"Version", vi.version);
         }
     }

@@ -22,7 +22,7 @@ namespace cpu {
     /// </summary>
     struct brand_string final {
         typedef const char *type;
-        static constexpr auto name = u8"BrandString";
+        static constexpr auto name = u8"Brand String";
     };
 
     /// <summary>
@@ -33,6 +33,15 @@ namespace cpu {
         typedef property_set type;
         static constexpr auto is_sensitive = true;
         static constexpr auto name = u8"CPUID";
+    };
+
+    /// <summary>
+    /// Identifies a property set that holds information about specific
+    /// instruction sets the CPU might support.
+    /// </summary>
+    struct instructions final {
+        typedef property_set type;
+        static constexpr auto name = u8"Instructions";
     };
 
     /// <summary>

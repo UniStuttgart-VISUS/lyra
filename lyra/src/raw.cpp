@@ -9,6 +9,7 @@
 #include "visus/lyra/cpu.h"
 #include "visus/lyra/environment.h"
 #include "visus/lyra/graphics.h"
+#include "visus/lyra/operating_system.h"
 #include "visus/lyra/smbios.h"
 #include "visus/lyra/timestamp.h"
 
@@ -36,6 +37,11 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::raw::get(
 
     if (detail::check_sensitive<environment>(flags)) {
         ps.add<environment>(LYRA_NAMESPACE::environment::get(flags));
+    }
+
+    if (detail::check_sensitive<operating_system>(flags)) {
+        ps.add<operating_system>(LYRA_NAMESPACE::operating_system::get(
+            flags));
     }
 
     if (detail::check_sensitive<graphics::dxgi_adapter>(flags)) {

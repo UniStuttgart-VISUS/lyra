@@ -21,7 +21,7 @@ namespace environment {
     /// </summary>
     struct current_directory final {
         typedef const char *type;
-        static constexpr auto name = u8"CurrentDirectory";
+        static constexpr auto name = u8"Current Directory";
     };
 
     /// <summary>

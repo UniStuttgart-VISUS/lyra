@@ -111,7 +111,7 @@ struct LYRA_TEST_API property_set_impl final {
             _In_ const TIterator begin,
             _In_ const TIterator end,
             const property_traits<iterated_type<TIterator>> *_ = nullptr) {
-        asssert(key != nullptr);
+        assert(key != nullptr);
         this->values.emplace(std::string(key), begin, end);
     }
 

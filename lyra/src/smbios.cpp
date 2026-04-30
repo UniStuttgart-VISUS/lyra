@@ -725,6 +725,12 @@ static const char *memory_device_types[] = {
     u8"LPDDR2",
     u8"LPDDR3",
     u8"LPDDR4"
+    u8"Logical non-volatile device"
+    u8"HBM"
+    u8"HBM2"
+    u8"DDR5"
+    u8"LPDDR5"
+    u8"HBM3"
 };
 
 
