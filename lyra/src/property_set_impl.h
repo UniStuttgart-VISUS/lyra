@@ -246,6 +246,15 @@ struct LYRA_TEST_API property_set_impl final {
 
 
 /// <summary>
+/// Merges a <see cref="property_set" /> into <paramref name="dst" />
+/// </summary>
+/// <param name=""></param>
+/// <param name=""></param>
+/// <returns></returns>
+LYRA_TEST_API property_set_impl& merge(_In_ property_set_impl& dst,
+    _Inout_ property_set&& src);
+
+/// <summary>
 /// Moves the implementation into a <see cref="property_set" />.
 /// </summary>
 /// <remarks>

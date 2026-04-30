@@ -57,6 +57,24 @@ LYRA_DETAIL_NAMESPACE::property_set_impl::find(
 
 
 /*
+ * LYRA_DETAIL_NAMESPACE::merge
+ */
+LYRA_DETAIL_NAMESPACE::property_set_impl& LYRA_DETAIL_NAMESPACE::merge(
+        _In_ property_set_impl& dst,
+        _Inout_ property_set&& src) {
+    if (src._impl != nullptr) {
+        for (auto& s : src._impl->values) {
+            assert(dst.find(s.first) == nullptr);
+            dst.values.emplace(std::move(s.first), std::move(s.second));
+        }
+        src._impl->values.clear();
+    }
+
+    return dst;
+}
+
+
+/*
  * LYRA_DETAIL_NAMESPACE::realise
  */
 LYRA_NAMESPACE::property_set& LYRA_DETAIL_NAMESPACE::realise(

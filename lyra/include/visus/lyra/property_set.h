@@ -17,6 +17,7 @@
 // Forward declarations.
 LYRA_DETAIL_NAMESPACE_BEGIN
 struct property_set_impl;
+LYRA_TEST_API property_set_impl& merge(property_set_impl&, property_set&&);
 LYRA_TEST_API property_set& realise(property_set&, property_set_impl&&);
 LYRA_DETAIL_NAMESPACE_END
 
@@ -198,6 +199,7 @@ private:
 
     impl *_impl;
 
+    friend impl& detail::merge(impl&, property_set&&);
     friend property_set& detail::realise(property_set&, impl&&);
 };
 
