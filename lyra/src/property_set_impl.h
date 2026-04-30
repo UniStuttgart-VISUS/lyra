@@ -101,6 +101,18 @@ struct LYRA_TEST_API property_set_impl final {
     }
 
     /// <summary>
+    /// Convenience method for adding a new vector-valued property to the set.
+    /// </summary>
+    template<class TIterator> inline void add(
+            _In_z_ const char *key,
+            _In_ const TIterator begin,
+            _In_ const TIterator end,
+            const property_traits<iterated_type<TIterator>> *_ = nullptr) {
+        asssert(key != nullptr);
+        this->values.emplace(std::string(key), begin, end);
+    }
+
+    /// <summary>
     /// Convenience method for adding a new property to the set.
     /// </summary>
     template<class TValue> inline void add(
@@ -212,6 +224,16 @@ struct LYRA_TEST_API property_set_impl final {
     template<class TProp>
     inline void add(_In_ typename TProp::type&& value) {
         this->add(TProp::name, std::forward<typename TProp::type>(value));
+    }
+
+    template<class TProp>
+    inline void add(_In_ const std::vector<typename TProp::type>& value) {
+        this->add(TProp::name, value.begin(), value.end());
+    }
+
+    template<class TProp>
+    inline void add(_Inout_ std::vector<typename TProp::type>&& value) {
+        this->values.emplace(TProp::name, std::move(value));
     }
 
     /// <summary>
