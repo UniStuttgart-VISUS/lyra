@@ -30,6 +30,14 @@ namespace memory {
     };
 
     /// <summary>
+    /// Identifies a property holding the available physical pages.
+    /// </summary>
+    struct available_physical_pages final {
+        typedef std::uint64_t type;
+        static constexpr auto name = u8"Available Physical Pages";
+    };
+
+    /// <summary>
     /// Identifies the amount of unreserved and uncommitted memory currently in
     /// the user-mode portion of the virtual address space of the calling 
     /// process.
@@ -37,6 +45,24 @@ namespace memory {
     struct available_virtual_memory final {
         typedef std::uint64_t type;
         static constexpr auto name = u8"Available Virtual Memory";
+    };
+
+    /// <summary>
+    /// Identifies a property holding the maximum number of pages that can be
+    /// committed without extending the page file.
+    /// </summary>
+    struct committed_pages_limit final {
+        typedef std::uint64_t type;
+        static constexpr auto name = u8"Committed Pages Limit";
+    };
+
+    /// <summary>
+    /// Identifies a property holding the maximum amount of memory in bytes that
+    /// can be committed without extending the page file.
+    /// </summary>
+    struct committed_memory_limit final {
+        typedef std::uint64_t type;
+        static constexpr auto name = u8"Committed Memory Limit";
     };
 
     /// <summary>
@@ -48,6 +74,24 @@ namespace memory {
     };
 
     /// <summary>
+    /// Identifies a property holding the number of pages currently used by
+    /// the kernel in non-paged memory.
+    /// </summary>
+    struct non_paged_kernel_pages final {
+        typedef std::uint64_t type;
+        static constexpr auto name = u8"Non-Paged Kernel Pages";
+    };
+
+    /// <summary>
+    /// Identifies a property holding the number of pages currently used by
+    /// the kernel in paged memory.
+    /// </summary>
+    struct paged_kernel_pages final {
+        typedef std::uint64_t type;
+        static constexpr auto name = u8"Paged Kernel Pages";
+    };
+
+    /// <summary>
     /// Identifies a property holding the page size in bytes.
     /// </summary>
     struct page_size final {
@@ -56,11 +100,12 @@ namespace memory {
     };
 
     /// <summary>
-    /// Identifies a property holding the number of pages.
+    /// Identifies a property holding the memory information obtained from the
+    /// performance information API on Windows.
     /// </summary>
-    struct pages final {
-        typedef std::uint64_t type;
-        static constexpr auto name = u8"Pages";
+    struct performance_info final {
+        typedef property_set type;
+        static constexpr auto name = u8"Performance Info";
     };
 
     /// <summary>
@@ -73,11 +118,58 @@ namespace memory {
     };
 
     /// <summary>
+    /// Identifies a property holding the number of pages used for system cache,
+    /// which is the standby list plus the system working set on Windows.
+    /// </summary>
+    struct system_cache_pages final {
+        typedef std::uint64_t type;
+        static constexpr auto name = u8"System Cache Pages";
+    };
+
+    /// <summary>
+    /// Identifies a property holding the total amount of committed memory.
+    /// </summary>
+    struct total_committed_memory final {
+        typedef std::uint64_t type;
+        static constexpr auto name = u8"Total Committed Memory";
+    };
+
+    /// <summary>
+    /// Identifies a property holding the number of pages committed by the
+    /// system.
+    /// </summary>
+    /// <remarks>
+    /// On windows, committing pages using <see cref="VirtualAlloc" /> with
+    /// <c>MEM_COMMIT</c> increases this value immediately. However, the
+    /// pyhsical memory is not changed until the pages are accessed.
+    /// </remarks>
+    struct total_committed_pages final {
+        typedef std::uint64_t type;
+        static constexpr auto name = u8"Total Committed Pages";
+    };
+
+    /// <summary>
+    /// The total number of pages currently used by the kernel.
+    /// </summary>
+    struct total_kernel_pages final {
+        typedef std::uint64_t type;
+        static constexpr auto name = u8"Total Kernel Pages";
+    };
+
+    /// <summary>
     /// Identifies a property holding the total physical memory.
     /// </summary>
     struct total_physical_memory final {
         typedef std::uint64_t type;
         static constexpr auto name = u8"Total Physical Memory";
+    };
+
+    /// <summary>
+    /// Identifies a property holding the total number of physical memory pages.
+    /// </summary>
+    struct total_physical_pages final {
+        typedef std::uint64_t type;
+        static constexpr auto name = u8"Total Physical Pages";
     };
 
     /// <summary>
@@ -105,6 +197,17 @@ namespace memory {
     /// <returns>A property set describing the memory as reported by Win32 API.
     /// </returns>
     LYRA_API property_set get_memory_status(_In_ const collection_flags flags
+        = collection_flags::none);
+
+    /// <summary>
+    /// Gets the current memory information via the performance information API
+    /// on Windows.
+    /// </summary>
+    /// <param name="flags">Allows for customising the collection
+    /// behaviour.</param>
+    /// <returns>A property set describing the memory as reported by Win32 API.
+    /// </returns>
+    LYRA_API property_set get_performance_info(_In_ const collection_flags flags
         = collection_flags::none);
 
     /// <summary>

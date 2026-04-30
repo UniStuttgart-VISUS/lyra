@@ -8,6 +8,7 @@
 
 #if defined(_WIN32)
 #include <Windows.h>
+#include <Psapi.h>
 #else /* !defined(_WIN32) */
 #include <unistd.h>
 #endif /* !defined(_WIN32) */
@@ -24,6 +25,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::memory::get(
 
 #if defined(_WIN32)
     ps.add<memory_status>(get_memory_status(flags));
+    ps.add<performance_info>(get_performance_info(flags));
 #endif /* defined(_WIN32) */
 
 #if !defined(_WIN32)
@@ -64,7 +66,54 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::memory::get_memory_status(
 #endif /* defined(_WIN32) */
 
     return detail::to_property_set(std::move(ps));
+}
 
+
+/*
+ * LYRA_NAMESPACE::memory::get_performance_info
+ */
+LYRA_NAMESPACE::property_set LYRA_NAMESPACE::memory::get_performance_info(
+        _In_ const collection_flags flags) {
+    detail::property_set_impl ps;
+
+#if defined(_WIN32)
+    PERFORMANCE_INFORMATION info;
+    info.cb = sizeof(info);
+
+    if (::GetPerformanceInfo(&info, sizeof(info))) {
+        detail::checked_add<total_committed_pages>(ps, flags,
+            info.CommitTotal);
+        detail::checked_add<total_committed_memory>(ps, flags,
+            info.CommitTotal * info.PageSize);
+        detail::checked_add<committed_pages_limit>(ps, flags,
+            info.CommitLimit);
+        detail::checked_add<committed_memory_limit>(ps, flags,
+            info.CommitLimit * info.PageSize);
+        detail::checked_add(u8"Peak Committed Pages", ps, flags,
+            info.CommitPeak);
+        detail::checked_add(u8"Peak Committed Memory", ps, flags,
+            info.CommitPeak * info.PageSize);
+        detail::checked_add<total_physical_pages>(ps, flags,
+            info.PhysicalTotal);
+        detail::checked_add<total_physical_memory>(ps, flags,
+            info.PhysicalTotal * info.PageSize);
+        detail::checked_add<available_physical_pages>(ps, flags,
+            info.PhysicalAvailable);
+        detail::checked_add<available_physical_memory>(ps, flags,
+            info.PhysicalAvailable * info.PageSize);
+        detail::checked_add<system_cache_pages>(ps, flags,
+            info.SystemCache);
+        detail::checked_add<total_kernel_pages>(ps, flags,
+            info.KernelTotal);
+        detail::checked_add<paged_kernel_pages>(ps, flags,
+            info.KernelTotal * info.PageSize);
+        detail::checked_add<non_paged_kernel_pages>(ps, flags,
+            info.KernelNonpaged);
+        detail::checked_add<page_size>(ps, flags, info.PageSize);
+    }
+#endif /* defined(_WIN32) */
+
+    return detail::to_property_set(std::move(ps));
 }
 
 
@@ -79,7 +128,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::memory::get_sysconf(
     const auto cnt = static_cast<std::uint64_t>(::sysconf(_SC_PHYS_PAGES));
     const auto size = static_cast<std::uint64_t>(::sysconf(_SC_PAGESIZE));
 
-    detail::checked_add<pages>(ps, flags, cnt);
+    detail::checked_add<total_physical_pages>(ps, flags, cnt);
     detail::checked_add<page_size>(ps, flags, size);
     detail::checked_add<total_physical_memory>(ps, flags, cnt * size);
 #endif /* !defined(_WIN32) */
