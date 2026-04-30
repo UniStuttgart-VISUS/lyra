@@ -34,6 +34,9 @@ target_include_directories(${PROJECT_NAME}
 target_compile_definitions(${PROJECT_NAME} PRIVATE LYRA_EXPORTS)
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_EXTENSIONS OFF)
+if (WIN32)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE UNICODE _UNICODE)
+endif ()
 
 # Configure the linker.
 target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)

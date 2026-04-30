@@ -45,7 +45,7 @@ LYRA_NAMESPACE::result_type LYRA_NAMESPACE::to_utf8(
         for (auto s = src; *s != 0; ++s, ++cnt_src);
     }
     assert(src != nullptr);
-    assert(cnt_src > 0);
+    assert(cnt_src >= 0);
 
     // Perform a stream conversion, possibly into an intermediate buffer just
     // for measuring.

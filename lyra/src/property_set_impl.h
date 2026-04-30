@@ -65,6 +65,7 @@ struct LYRA_TEST_API property_set_impl final {
             _Inout_ key_type&& key,
             _In_ const TValue& value,
             const property_traits<std::decay_t<TValue>> *_ = nullptr) {
+        assert(!key.empty());
         assert(this->find(key) == nullptr);
         this->values.emplace(std::move(key), value);
     }
@@ -80,6 +81,7 @@ struct LYRA_TEST_API property_set_impl final {
             _Inout_ key_type&& key,
             _In_ TValue&& value,
             const property_traits<std::decay_t<TValue>> *_ = nullptr) {
+        assert(!key.empty());
         assert(this->find(key) == nullptr);
         this->values.emplace(std::move(key), std::forward<TValue>(value));
     }
@@ -96,6 +98,7 @@ struct LYRA_TEST_API property_set_impl final {
             _In_ const TIterator begin,
             _In_ const TIterator end,
             const property_traits<iterated_type<TIterator>> *_ = nullptr) {
+        assert(!key.empty());
         assert(this->find(key) == nullptr);
         this->values.emplace(std::move(key), begin, end);
     }

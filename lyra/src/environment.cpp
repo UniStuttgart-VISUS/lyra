@@ -108,6 +108,10 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::environment::get_variables(
                 auto sep = p.find(L'=');
                 if (sep != std::wstring::npos) {
                     auto name = p.substr(0, sep);
+                    if (name.empty()) {
+                        continue;
+                    }
+
                     auto value = p.substr(sep + 1);
                     ps.add(to_utf8(name), to_utf8(value));
                 }
@@ -121,6 +125,10 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::environment::get_variables(
             auto sep = pair.find('=');
             if (sep != std::string::npos) {
                 auto name = pair.substr(0, sep);
+                if (name.empty()) {
+                    continue;
+                }
+
                 auto value = pair.substr(sep + 1);
                 ps.add(std::move(name), std::move(value));
             }
