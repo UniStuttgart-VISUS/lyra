@@ -28,25 +28,27 @@ LYRA_DETAIL_NAMESPACE_BEGIN
 /// </summary>
 template<class TShareInfo, bool Invoke = false> struct share_info_level;
 
-template<> struct share_info_level<SHARE_INFO_0, false> final {
+template<> struct share_info_level<SHARE_INFO_0, true> final {
     static constexpr DWORD level = 0;
 };
 
-template<> struct share_info_level<SHARE_INFO_1, false> final {
+template<> struct share_info_level<SHARE_INFO_1, true> final {
     static constexpr DWORD level = 1;
 };
 
-template<> struct share_info_level<SHARE_INFO_2, false> final {
+template<> struct share_info_level<SHARE_INFO_2, true> final {
     static constexpr DWORD level = 2;
 };
 
-template<> struct share_info_level<SHARE_INFO_502, false> final {
+template<> struct share_info_level<SHARE_INFO_502, true> final {
     static constexpr DWORD level = 502;
 };
 
-template<> struct share_info_level<SHARE_INFO_503, false> final {
+template<> struct share_info_level<SHARE_INFO_503, true> final {
     static constexpr DWORD level = 503;
 };
+
+
 
 
 /// <summary>

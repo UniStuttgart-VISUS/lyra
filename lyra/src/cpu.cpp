@@ -18,7 +18,6 @@
 #include "visus/lyra/simd_detector.h"
 
 #include "property_set_impl.h"
-#include "is_sensitive.h"
 
 
 /// <summary>

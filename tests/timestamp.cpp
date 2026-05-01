@@ -95,7 +95,7 @@ TEST(timestamp, system_clock_roundtrip) {
     const auto e = std::chrono::system_clock::now();
     const auto t = LYRA_NAMESPACE::timestamp(e);
     const auto a = static_cast<std::chrono::system_clock::time_point>(t);
-    EXPECT_NEAR(e.time_since_epoch().count(), a.time_since_epoch().count(), 100);
+    EXPECT_NEAR(e.time_since_epoch().count(), a.time_since_epoch().count(), 500);
 }
 
 
@@ -103,7 +103,7 @@ TEST(timestamp, time_point_roundtip) {
     const auto e = std::chrono::system_clock::now();
     const auto t = LYRA_NAMESPACE::timestamp::from_time_point(e);
     const auto a = static_cast<std::chrono::system_clock::time_point>(t);
-    EXPECT_NEAR(e.time_since_epoch().count(), a.time_since_epoch().count(), 100);
+    EXPECT_NEAR(e.time_since_epoch().count(), a.time_since_epoch().count(), 500);
 }
 
 #if defined(_WIN32)

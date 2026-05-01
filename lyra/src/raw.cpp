@@ -6,6 +6,7 @@
 
 #include "visus/lyra/raw.h"
 
+#include "visus/lyra/application.h"
 #include "visus/lyra/cpu.h"
 #include "visus/lyra/environment.h"
 #include "visus/lyra/graphics.h"
@@ -31,6 +32,10 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::raw::get(
     }
 
     // Add all the actual information.
+    if (detail::check_sensitive<application>(flags)) {
+        ps.add<application>(LYRA_NAMESPACE::application::get(flags));
+    }
+
     if (detail::check_sensitive<cpu::cpuid>(flags)) {
         ps.add<cpu::cpuid>(cpu::get_cpuid(flags));
     }

@@ -18,6 +18,14 @@ LYRA_NAMESPACE_BEGIN
 namespace raw {
 
     /// <summary>
+    /// Identifies the block of meta data about the calling application.
+    /// </summary>
+    struct application final {
+        typedef property_set type;
+        static constexpr auto name = u8"Application";
+    };
+
+    /// <summary>
     /// Identifies a block containing the environment.
     /// </summary>
     struct environment final {

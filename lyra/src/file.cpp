@@ -8,6 +8,9 @@
 
 #include <algorithm>
 #include <cerrno>
+#include <climits>
+#include <cstdlib>
+#include <cstring>
 #include <system_error>
 
 #if defined(_WIN32)
@@ -21,6 +24,7 @@
 #endif /* defined(_WIN32) */
 
 #include "visus/lyra/convert_string.h"
+#include "visus/lyra/on_exit.h"
 
 
 #if defined(_WIN32)
@@ -80,6 +84,38 @@ std::size_t LYRA_DETAIL_NAMESPACE::file_size(_In_z_ const wchar_t *path) {
 #else /* defined(_WIN32) */
     auto p = to_utf8(path);
     return file_size(p.c_str());
+#endif /* defined(_WIN32) */
+}
+
+
+/*
+ * LYRA_DETAIL_NAMESPACE::final_path
+ */
+std::string LYRA_DETAIL_NAMESPACE::final_path(_In_z_ const char *path) {
+#if defined(_WIN32)
+    auto handle = open_read(path);
+
+    auto len = ::GetFinalPathNameByHandleW(handle.get(), nullptr, 0,
+        VOLUME_NAME_NT);
+    if (len > 0) {
+        std::vector<wchar_t> p(len + 1);
+        len = ::GetFinalPathNameByHandleW(handle.get(), p.data(),
+            static_cast<DWORD>(p.size()), VOLUME_NAME_NT);
+        return to_utf8(p.data(), len);
+
+    } else {
+        return "";
+    }
+
+#else /* defined(_WIN32) */
+    auto p = ::realpath(path, nullptr);
+    if (p != nullptr) {
+        LYRA_ON_EXIT([p](void) { ::free(p); });
+        std::string retval(p);
+        return retval;
+    } else {
+        return "";
+    }
 #endif /* defined(_WIN32) */
 }
 
