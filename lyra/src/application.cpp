@@ -6,6 +6,7 @@
 
 #include "visus/lyra/application.h"
 
+#include "file.h"
 #include "property_set_impl.h"
 #include "processes.h"
 
@@ -21,6 +22,8 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::application::get(
     detail::checked_add<command_line>(ps, flags, cmd_line.c_str());
     const auto exe = detail::get_executable_path();
     detail::checked_add<executable>(ps, flags, exe.c_str());
+    const auto exe_hash = detail::file_hash(exe.c_str());
+    detail::checked_add<hash>(ps, flags, exe_hash.c_str());
     detail::checked_add<process_id>(ps, flags, detail::get_process_id());
 
     return detail::to_property_set(std::move(ps));

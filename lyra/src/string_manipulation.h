@@ -75,7 +75,7 @@ std::vector<TChar>& remove_trailing_nulls(_In_ std::vector<TChar>& str) {
 /// <param name="data"></param>
 /// <param name="cnt"></param>
 /// <returns></returns>
-std::string to_hex_string(_In_reads_bytes_(cnt) const void *data,
+LYRA_TEST_API std::string to_hex_string(_In_reads_bytes_(cnt) const void *data,
     _In_ std::size_t cnt);
 
 LYRA_DETAIL_NAMESPACE_END

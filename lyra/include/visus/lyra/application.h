@@ -33,6 +33,14 @@ namespace application {
     };
 
     /// <summary>
+    /// Identifies the property holding a hash of the executable.
+    /// </summary>
+    struct hash final {
+        typedef const char *type;
+        static constexpr auto name = u8"Hash";
+    };
+
+    /// <summary>
     /// Identifies the property holding the process ID.
     /// </summary>
     struct process_id final {

@@ -24,7 +24,22 @@
 #endif /* defined(_WIN32) */
 
 #include "visus/lyra/convert_string.h"
+#include "visus/lyra/hash.h"
 #include "visus/lyra/on_exit.h"
+
+#include "string_manipulation.h"
+
+
+/*
+ * LYRA_DETAIL_NAMESPACE::file_hash
+ */
+std::string LYRA_DETAIL_NAMESPACE::file_hash(_In_ const unique_file& file) {
+    hash hash(sha256);
+    // TODO: stream the contents instead of reading everything into ram.
+    auto data = read_all_bytes(file);
+    hash.append(data.data(), data.size());
+    return to_hex_string(hash.finish(), hash.length());
+}
 
 
 #if defined(_WIN32)

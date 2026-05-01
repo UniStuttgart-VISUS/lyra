@@ -36,6 +36,23 @@ typedef wil::unique_hfile unique_file;
 typedef unique_fd unique_file;
 #endif /* defined(_WIN32) */
 
+/// <summary>
+/// Computes a hash of a file's contents.
+/// </summary>
+/// <param name="file"></param>
+/// <returns></returns>
+LYRA_TEST_API std::string file_hash(_In_ const unique_file& file);
+
+/// <summary>
+/// Computes a hash of a file's contents.
+/// </summary>
+/// <typeparam name="TChar"></typeparam>
+/// <param name="path"></param>
+/// <returns></returns>
+template<class TChar>
+inline std::string file_hash(_In_z_ const TChar *path) {
+    return file_hash(open_read(path));
+}
 
 #if defined(_WIN32)
 /// <summary>
