@@ -9,6 +9,7 @@
 #pragma once
 
 #include <algorithm>
+#include <cinttypes>
 #include <iterator>
 #include <string>
 #include <vector>
@@ -66,6 +67,16 @@ std::vector<TChar>& remove_trailing_nulls(_In_ std::vector<TChar>& str) {
     str.erase(end, str.end());
     return str;
 }
+
+/// <summary>
+/// Converts a string of bytes to a string of hexadecimal characters
+/// representing the individual bytes.
+/// </summary>
+/// <param name="data"></param>
+/// <param name="cnt"></param>
+/// <returns></returns>
+std::string to_hex_string(_In_reads_bytes_(cnt) const void *data,
+    _In_ std::size_t cnt);
 
 LYRA_DETAIL_NAMESPACE_END
 

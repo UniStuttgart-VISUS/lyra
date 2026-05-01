@@ -16,17 +16,6 @@ option(LYRA_BuildTests "Build unit tests." OFF)
 cmake_dependent_option(LYRA_Profile "Build with profiling information." OFF WIN32 OFF)
 
 # Dependencies
-if (WIN32)
-    FetchContent_Declare(wil
-        URL "https://github.com/microsoft/wil/archive/refs/tags/v1.0.250325.1.zip"
-        DOWNLOAD_EXTRACT_TIMESTAMP ON
-    )
-    option(FAST_BUILD "" OFF)
-    option(WIL_BUILD_PACKAGING "" OFF)
-    option(WIL_BUILD_TESTS "" OFF)
-    FetchContent_MakeAvailable(wil)
-endif ()
-
 if (LYRA_BuildTests)
     FetchContent_Declare(googletest
         URL https://github.com/google/googletest/archive/refs/tags/v1.17.0.zip
@@ -43,6 +32,21 @@ FetchContent_Declare(nlohmann_json
 )
 option(JSON_Install "" ON)
 FetchContent_MakeAvailable(nlohmann_json)
+
+if (NOT WIN32)
+    find_package(OpenSSL)
+endif ()
+
+if (WIN32)
+    FetchContent_Declare(wil
+        URL "https://github.com/microsoft/wil/archive/refs/tags/v1.0.250325.1.zip"
+        DOWNLOAD_EXTRACT_TIMESTAMP ON
+    )
+    option(FAST_BUILD "" OFF)
+    option(WIL_BUILD_PACKAGING "" OFF)
+    option(WIL_BUILD_TESTS "" OFF)
+    FetchContent_MakeAvailable(wil)
+endif ()
 
 # Signal that we need to access private APIs for testing.
 if (LYRA_BuildTests)

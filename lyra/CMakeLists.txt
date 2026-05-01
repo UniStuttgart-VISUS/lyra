@@ -42,11 +42,17 @@ endif ()
 target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
 if (WIN32)
     target_link_libraries(${PROJECT_NAME} PRIVATE dxgi windowscodecs)
+    target_link_libraries(${PROJECT_NAME} PRIVATE bcrypt)
     target_link_libraries(${PROJECT_NAME} PRIVATE icu)
     target_link_libraries(${PROJECT_NAME} PRIVATE SetupAPI)
     target_link_libraries(${PROJECT_NAME} PRIVATE WIL::WIL)
 else ()
     target_link_libraries(${PROJECT_NAME} PRIVATE ICU::uc ICU::data)
+endif ()
+
+if (OpenSSL_FOUND)
+    target_link_libraries(${PROJECT_NAME} PRIVATE OpenSSL::SSL)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE LYRA_USE_OPENSSL)
 endif ()
 
 # Publish the private headers for testing.
