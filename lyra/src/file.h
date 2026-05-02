@@ -40,7 +40,8 @@ typedef unique_fd unique_file;
 /// Computes a hash of a file's contents.
 /// </summary>
 /// <param name="file"></param>
-/// <returns></returns>
+/// <returns>The hexadecimal string representation of the hash.
+/// </returns>
 LYRA_TEST_API std::string file_hash(_In_ const unique_file& file);
 
 /// <summary>
@@ -48,11 +49,9 @@ LYRA_TEST_API std::string file_hash(_In_ const unique_file& file);
 /// </summary>
 /// <typeparam name="TChar"></typeparam>
 /// <param name="path"></param>
-/// <returns></returns>
-template<class TChar>
-inline std::string file_hash(_In_z_ const TChar *path) {
-    return file_hash(open_read(path));
-}
+/// <returns>The hexadecimal string representation of the hash.
+/// </returns>
+template<class TChar> std::string file_hash(_In_z_ const TChar *path);
 
 #if defined(_WIN32)
 /// <summary>
@@ -146,5 +145,7 @@ inline  std::vector<std::uint8_t> read_all_bytes(_In_z_ const wchar_t *path) {
 //#endif /* defined (_WIN32) */
 
 LYRA_DETAIL_NAMESPACE_END
+
+#include "file.inl"
 
 #endif /* !defined(_LYRA_FILE_H) */

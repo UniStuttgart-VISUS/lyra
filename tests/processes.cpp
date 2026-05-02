@@ -13,6 +13,12 @@ TEST(processes, command_line) {
     const auto cmdline = LYRA_DETAIL_NAMESPACE::get_command_line();
     EXPECT_FALSE(cmdline.empty());
 }
+
+TEST(processes, dlls) {
+    const auto dlls = LYRA_DETAIL_NAMESPACE::get_loaded_library_paths();
+    EXPECT_FALSE(dlls.empty()); 
+}
+
 TEST(processes, own_path) {
     const auto path = LYRA_DETAIL_NAMESPACE::get_executable_path();
     EXPECT_FALSE(path.empty());

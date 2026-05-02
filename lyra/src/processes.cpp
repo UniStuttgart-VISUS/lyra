@@ -9,12 +9,20 @@
 #include <memory>
 
 #if defined(_WIN32)
+#include <Psapi.h>
+#include <TlHelp32.h>
+
+#include <wil/resource.h>
 #include <wil/result.h>
 #else /* defined(_WIN32) */
+#include <dlfcn.h>
+#include <link.h>
 #include <unistd.h>
 #endif /* defined(_WIN32) */
 
 #include "visus/lyra/convert_string.h"
+#include "visus/lyra/on_exit.h"
+#include "visus/lyra/trace.h"
 
 #include "file.h"
 #include "string_manipulation.h"
@@ -95,6 +103,62 @@ std::string LYRA_DETAIL_NAMESPACE::get_executable_path(void) {
 #else /* defined(_WIN32) */
     return final_path("/proc/self/exe");
 #endif /* defined(_WIN32) */
+}
+
+
+/*
+ * LYRA_DETAIL_NAMESPACE::get_loaded_library_paths
+ */
+std::vector<std::string> LYRA_DETAIL_NAMESPACE::get_loaded_library_paths(void) {
+    std::vector<std::string> retval;
+
+#if defined(_WIN32)
+    MODULEENTRY32W module { };
+    module.dwSize = sizeof(module);
+
+    wil::unique_hfile snapshot(::CreateToolhelp32Snapshot(TH32CS_SNAPMODULE,
+        ::GetCurrentProcessId()));
+    if (!snapshot) {
+        LYRA_TRACE(_T("CreateToolhelp32Snapshot failed: 0x%x"),
+            ::GetLastError());
+        return retval;
+    }
+
+    if (!::Module32FirstW(snapshot.get(), &module)) {
+        LYRA_TRACE(_T("Module32First failed: 0x%x"), ::GetLastError());
+        return retval;
+    }
+
+    do {
+        retval.push_back(to_utf8(module.szExePath));
+    } while (::Module32NextW(snapshot.get(), &module));
+
+#else /* defined(_WIN32) */
+    link_map *map = nullptr;
+
+    auto handle = ::dlopen(nullptr, RTLD_NOW);
+    if (handle == nullptr) {
+        LYRA_TRACE("dlopen failed: %s", ::dlerror());
+        return retval;
+    }
+    LYRA_ON_EXIT([handle] { ::dlclose(handle); });
+
+    if (::dlinfo(handle, RTLD_DI_LINKMAP, &map) == -1) {
+        LYRA_TRACE("RTLD_DI_LINKMAP failed: %s\n", ::dlerror());
+        return retval;
+    }
+
+    while (map != nullptr) {
+        if ((map->l_name != nullptr) && (*map->l_name != 0)) {
+            retval.push_back(map->l_name);
+        }
+
+        map = map->l_next;
+    }
+
+#endif /* defined(_WIN32) */
+
+    return retval;
 }
 
 

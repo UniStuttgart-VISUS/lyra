@@ -41,11 +41,28 @@ namespace application {
     };
 
     /// <summary>
+    /// Identifies the property holding all libraries loaded by the calling
+    /// process at the time of data collection.
+    /// </summary>
+    struct libraries final {
+        typedef property_set type;
+        static constexpr auto name = u8"Libraries";
+    };
+
+    /// <summary>
     /// Identifies the property holding the process ID.
     /// </summary>
     struct process_id final {
         typedef std::uint64_t type;
         static constexpr auto name = u8"Process ID";
+    };
+
+    /// <summary>
+    /// Identifies the property holding the size of an executable in bytes.
+    /// </summary>
+    struct size final {
+        typedef std::uint64_t type;
+        static constexpr auto name = u8"Size";
     };
 
     /// <summary>

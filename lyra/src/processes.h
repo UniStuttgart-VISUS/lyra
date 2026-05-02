@@ -9,6 +9,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #if defined(_WIN32)
 #include <Windows.h>
@@ -57,6 +58,14 @@ LYRA_TEST_API std::string get_executable_path(_In_ const pid_type pid);
 /// </summary>
 /// <returns>The path to the executable of the calling process.</returns>
 LYRA_TEST_API std::string get_executable_path(void);
+
+/// <summary>
+/// Gets a list of paths to all DLLs loaded into the calling process at the
+/// time of the call.
+/// </summary>
+/// <returns>A list of paths to the DLLs loaded whan calling the function.
+/// </returns>
+LYRA_TEST_API std::vector<std::string> get_loaded_library_paths(void);
 
 #if defined(_WIN32)
 /// <summary>
