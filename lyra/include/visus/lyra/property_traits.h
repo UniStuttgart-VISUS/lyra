@@ -11,6 +11,7 @@
 #include <cinttypes>
 
 #include "visus/lyra/dispatch_list.h"
+#include "visus/lyra/guid.h"
 #include "visus/lyra/property_type.h"
 
 
@@ -42,7 +43,8 @@ typedef property_type_dispatch_list<
     property_type::uint32,
     property_type::uint64,
     property_type::float32,
-    property_type::float64
+    property_type::float64,
+    property_type::guid
 > property_types;
 
 
@@ -66,6 +68,7 @@ _LYRA_PROP_TRAITS(uint32, std::uint32_t);
 _LYRA_PROP_TRAITS(uint64, std::uint64_t);
 _LYRA_PROP_TRAITS(float32, float);
 _LYRA_PROP_TRAITS(float64, double);
+_LYRA_PROP_TRAITS(guid, guid);
 
 #undef _LYRA_PROP_TRAITS
 
@@ -101,6 +104,7 @@ _LYRA_PROP_TRAITS(uint32, std::uint32_t);
 _LYRA_PROP_TRAITS(uint64, std::uint64_t);
 _LYRA_PROP_TRAITS(float32, float);
 _LYRA_PROP_TRAITS(float64, double);
+_LYRA_PROP_TRAITS(guid, guid);
 
 #undef _LYRA_PROP_TRAITS
 

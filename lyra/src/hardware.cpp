@@ -6,7 +6,10 @@
 
 #include "visus/lyra/hardware.h"
 
+#include <unordered_map>
+
 #include "visus/lyra/convert_string.h"
+#include "visus/lyra/guid.h"
 #include "visus/lyra/trace.h"
 
 #include "setup_api.h"
@@ -52,11 +55,31 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::hardware::get(
 
 #if defined(_WIN32)
     try {
+        std::unordered_map<guid, std::vector<property_set>> classes;
+
         detail::enum_class_devices(nullptr,
-            [&ps, flags](HDEVINFO handle, SP_DEVINFO_DATA& data) {
+            [&classes, flags](HDEVINFO handle, SP_DEVINFO_DATA& data) {
+                //try {
+                //    const auto value = LYRA_DETAIL_NAMESPACE::get_device_registry_property(
+                //        handle, data, prop);
+                //    if (!value.empty()) {
+                //        const auto v = reinterpret_cast<const wchar_t*>(value.data());
+                //        const auto u = LYRA_NAMESPACE::to_utf8(v);
+                //        LYRA_DETAIL_NAMESPACE::checked_add<TProp>(ps, flags, u.c_str());
+                //        return true;
+                //    }
+
+                //} catch (const std::exception& ex) {
+                //    LYRA_TRACE(_T("Failed to retrieve device registry property 0x%x: %s"),
+                //        prop, ex.what());
+                //}
+
+
                 detail::property_set_impl dps;
                 ::try_add_string_prop<device_class>(dps, flags, handle, data,
                     SPDRP_CLASS);
+                ::try_add_string_prop<friendly_name>(dps, flags, handle, data,
+                    SPDRP_FRIENDLYNAME);
 
                 //{
                 //    const auto v = try_get_prop(SPDRP_DEVICEDESC);
@@ -77,7 +100,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::hardware::get(
                 detail::add_device_install_flags(handle, &data, 0,
                 DI_FLAGSEX_INSTALLEDDRIVER);
                 detail::enum_driver_info(handle, &data, SPDIT_COMPATDRIVER,
-                    [&ps, flags](HDEVINFO h, PSP_DEVINFO_DATA d,
+                    [&dps, flags](HDEVINFO h, PSP_DEVINFO_DATA d,
                             SP_DRVINFO_DATA_W& drv) {
                         return false;
                     });

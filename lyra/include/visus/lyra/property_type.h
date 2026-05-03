@@ -71,7 +71,12 @@ enum class property_type {
     /// <summary>
     /// A 64-bit floating-point number.
     /// </summary>
-    float64
+    float64,
+
+    /// <summary>
+    /// A GUID/UUID.
+    /// </summary>
+    guid
 };
 
 LYRA_NAMESPACE_END

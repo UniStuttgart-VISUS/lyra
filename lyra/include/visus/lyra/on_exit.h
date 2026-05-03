@@ -118,7 +118,7 @@ LYRA_DETAIL_NAMESPACE_END
 /// <paramref name="exit_handler" /> lambda expression when it is destroyed.
 /// </summary>
 #define LYRA_ON_EXIT(exit_handler)\
-volatile auto LYRA_UNIQUE_VARIABLE(__pwrowg_scope_guard)\
+volatile auto LYRA_UNIQUE_VARIABLE(__lyra_scope_guard)\
     = LYRA_DETAIL_NAMESPACE::on_exit(exit_handler)
 
 #include "visus/lyra/on_exit.inl"
