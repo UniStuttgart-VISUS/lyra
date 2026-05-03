@@ -51,7 +51,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::operating_system::get(
         ps.add<version::version>(get_version(flags));
     }
 
-    return detail::to_property_set(std::move(ps));
+    return property_set(std::move(ps));
 }
 
 
@@ -61,7 +61,6 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::operating_system::get(
 LYRA_NAMESPACE::property_set LYRA_NAMESPACE::operating_system::get_version(
         _In_ const collection_flags flags) {
     detail::property_set_impl ps;
-    property_set retval;
 
 #if defined(_WIN32)
     typedef NTSTATUS (WINAPI *gv_t)(PRTL_OSVERSIONINFOW);
@@ -152,6 +151,5 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::operating_system::get_version(
     }
 #endif /* defined(_WIN32) */
 
-    detail::realise(retval, std::move(ps));
-    return retval;
+    return property_set(std::move(ps));
 }

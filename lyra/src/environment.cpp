@@ -84,7 +84,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::environment::get(
 
     detail::checked_add<vars>(ps, flags, get_variables(flags));
 
-    return detail::to_property_set(std::move(ps));
+    return property_set(std::move(ps));
 }
 
 
@@ -93,8 +93,6 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::environment::get(
  */
 LYRA_NAMESPACE::property_set LYRA_NAMESPACE::environment::get_variables(
         _In_ const collection_flags flags) {
-    property_set retval;
-
     if (detail::check_sensitive<variables>(flags)) {
         detail::property_set_impl ps;
 
@@ -136,8 +134,8 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::environment::get_variables(
 
 #endif /* defined(_WIN32) */
 
-        realise(retval, std::move(ps));
+        return property_set(std::move(ps));
     }
 
-    return retval;
+    return property_set();
 }

@@ -15,15 +15,10 @@
 #include "visus/lyra/property_traits.h"
 
 
-// Forward declarations.
-LYRA_DETAIL_NAMESPACE_BEGIN
-struct property_set_impl;
-LYRA_TEST_API property_set_impl& merge(property_set_impl&, property_set&&);
-LYRA_TEST_API property_set& realise(property_set&, property_set_impl&&);
-LYRA_DETAIL_NAMESPACE_END
-
-
 LYRA_NAMESPACE_BEGIN
+
+// Forward declarations.
+namespace detail { struct property_set_impl; }
 
 /// <summary>
 /// Represents a group of properties about the system.
@@ -62,6 +57,12 @@ public:
             : _impl(other._impl) {
         other._impl = nullptr;
     }
+
+    /// <summary>
+    /// Initialises a new instance.
+    /// </summary>
+    /// <param name="impl">The contents of the property set.</param>
+    explicit property_set(_In_ detail::property_set_impl&& impl);
 
     /// <summary>
     /// Answer whether the property set contains a property with the specified
@@ -198,10 +199,13 @@ private:
     static constexpr auto visit_scalar_r = std::is_invocable_r_v<bool, TVisitor,
         const char *, const TType&>;
 
+    //void merge(_In_ property_set&& other);
+
+    void merge_to(_Inout_ detail::property_set_impl& dst);
+
     impl *_impl;
 
-    friend impl& detail::merge(impl&, property_set&&);
-    friend property_set& detail::realise(property_set&, impl&&);
+    friend impl;
 };
 
 LYRA_NAMESPACE_END

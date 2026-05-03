@@ -46,8 +46,10 @@ static void to_json(nlohmann::json& j, const property_set& p) {
 /// Converts a <see cref="multi_sz" /> to a JSON value.
 /// </summary>
 static void to_json(nlohmann::json& j, const multi_sz& v) {
-    if (v.count() <= 1) {
-        j = std::string(v.data());
+    if (v.count() == 1) {
+        auto vv = v.data();
+        assert(vv != nullptr);
+        j = std::string(vv);
     } else {
         j = static_cast<std::vector<std::string>>(v);
     }
@@ -65,6 +67,14 @@ LYRA_NAMESPACE::property_set::property_set(_In_ const property_set& other)
         this->_impl = new detail::property_set_impl(*other._impl);
     }
 }
+
+
+/*
+ * LYRA_NAMESPACE::property_set::property_set
+ */
+LYRA_NAMESPACE::property_set::property_set(
+        _In_ detail::property_set_impl&& impl)
+    : _impl(new detail::property_set_impl(std::move(impl))) { }
 
 
 /*
@@ -236,4 +246,63 @@ std::size_t LYRA_NAMESPACE::property_set::visit(
     }
 
     return retval;
+}
+
+
+///*
+// * LYRA_NAMESPACE::property_set::merge
+// */
+//void LYRA_NAMESPACE::property_set::merge(_In_ property_set&& other) {
+//    if (this == std::addressof(other)) {
+//        return;
+//    }
+//
+//    if (other._impl == nullptr) {
+//        return;
+//    }
+//
+//    if (this->_impl == nullptr) {
+//        this->_impl = other._impl;
+//        other._impl = nullptr;
+//        return;
+//    }
+//
+//    auto& dst = this->_impl->values;
+//    auto& src = other._impl->values;
+//    for (auto& s : src) {
+//        if (dst.find(s.first) == dst.end()) {
+//            dst.emplace(std::move(s.first), std::move(s.second));
+//        }
+//        other._impl->values.clear();
+//    }
+//}
+
+
+/*
+ * LYRA_NAMESPACE::property_set::merge_to
+ */
+void LYRA_NAMESPACE::property_set::merge_to(
+        _Inout_ detail::property_set_impl& dst){
+    if (this->_impl == std::addressof(dst)) {
+        return;
+    }
+
+    if (this->_impl == nullptr) {
+        return;
+    }
+
+    if (dst.values.empty()) {
+        dst = std::move(*this->_impl);
+        this->_impl = nullptr;
+        return;
+    }
+
+    assert(this->_impl != nullptr);
+    auto& src = this->_impl->values;
+    for (auto& s : src) {
+        if (dst.values.find(s.first) == dst.values.end()) {
+            dst.values.emplace(std::move(s.first), std::move(s.second));
+        }
+        this->_impl = nullptr;
+    }
 }

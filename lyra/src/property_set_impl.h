@@ -247,6 +247,14 @@ struct LYRA_TEST_API property_set_impl final {
     /// </summary>
     _Ret_maybenull_ const value_type *find(
         _In_ const key_type& key) const noexcept;
+
+    /// <summary>
+    /// Mersge the properties in <paramref name="other" /> into this property
+    /// set, unless the same property already exists in <see cref="values" />.
+    /// </summary>
+    inline void merge(_In_ property_set&& other) {
+        other.merge_to(*this);
+    }
 };
 
 
@@ -284,35 +292,6 @@ template<class TName, class... TArgs> bool checked_add(
     }
     return retval;
 }
-
-/// <summary>
-/// Merges a <see cref="property_set" /> into <paramref name="dst" />
-/// </summary>
-/// <param name=""></param>
-/// <param name=""></param>
-/// <returns></returns>
-LYRA_TEST_API property_set_impl& merge(_In_ property_set_impl& dst,
-    _Inout_ property_set&& src);
-
-/// <summary>
-/// Moves the implementation into a <see cref="property_set" />.
-/// </summary>
-/// <remarks>
-/// This function is intended for implementors that want to construct a publicly
-/// accessible <see cref="property_set" /> after filling an implementation.
-/// </remarks>
-/// <param name="dst"></param>
-/// <param name="src"></param>
-/// <returns><paramref name="dst" />.</returns>
-LYRA_TEST_API property_set& realise(_In_ property_set& dst,
-    _Inout_ property_set_impl&& src);
-
-/// <summary>
-/// Moves the implementation into a new <see cref="property_set" />.
-/// </summary>
-/// <param name="src"></param>
-/// <returns></returns>
-LYRA_TEST_API property_set to_property_set(_Inout_ property_set_impl&& src);
 
 LYRA_DETAIL_NAMESPACE_END
 

@@ -90,5 +90,5 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::hardware::get(
 
 #endif /* defined(_WIN32)*/
 
-    return detail::to_property_set(std::move(ps));
+    return property_set(std::move(ps));
 }

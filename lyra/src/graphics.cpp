@@ -16,13 +16,12 @@
  */
 LYRA_NAMESPACE::property_set LYRA_NAMESPACE::graphics::get_dxgi_adapters(
         _In_ const collection_flags flags) {
-    property_set retval;
 #if defined(_WIN32)
     static const auto make_luid = [](const LUID& luid) {
         detail::property_set_impl ps;
         ps.add(u8"LowPart", static_cast<std::uint32_t>(luid.LowPart));
         ps.add(u8"HighPart", luid.HighPart);
-        return detail::to_property_set(std::move(ps));
+        return property_set(std::move(ps));
     };
 
     std::vector<property_set> pss;
@@ -40,7 +39,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::graphics::get_dxgi_adapters(
         ps.add(u8"SharedSystemMemory", d.SharedSystemMemory);
         ps.add(u8"AdapterLuid", make_luid(d.AdapterLuid));
         ps.add(u8"Flags", d.Flags);
-        pss.push_back(detail::to_property_set(std::move(ps)));
+        pss.push_back(property_set(std::move(ps)));
     }
 
     if (descs1.empty()) {
@@ -59,16 +58,16 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::graphics::get_dxgi_adapters(
             ps.add(u8"DedicatedSystemMemory", d.DedicatedSystemMemory);
             ps.add(u8"SharedSystemMemory", d.SharedSystemMemory);
             ps.add(u8"AdapterLuid", make_luid(d.AdapterLuid));
-            pss.push_back(detail::to_property_set(std::move(ps)));
+            pss.push_back(property_set(std::move(ps)));
         }
     }
 
     {
         detail::property_set_impl ps;
         ps.add<dxgi_adapter>(std::move(pss));
-        detail::realise(retval, std::move(ps));
+        return property_set(std::move(ps));
     }
 #endif /* defined(_WIN32) */
 
-    return retval;
+    return property_set();
 }

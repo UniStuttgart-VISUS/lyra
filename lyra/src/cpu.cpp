@@ -38,7 +38,6 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
         _In_ const collection_flags flags) {
     constexpr auto reg_size = sizeof(std::uint32_t);
     detail::property_set_impl ps;
-    property_set retval;
 
     {
         constexpr auto brand_comps = 3;
@@ -101,7 +100,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
         add_infos(infos, 0);
         add_infos(ex_infos, 0x80000000);
 
-        ps.add<cpu::cpuid>(detail::to_property_set(std::move(info_set)));
+        ps.add<cpu::cpuid>(property_set(std::move(info_set)));
     }
 
     {
@@ -161,13 +160,12 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
                 u8"AVX 512 Vector Neural Network Instructions");
             ::add_simd<simd_instruction_set::avx512bitalg>(simds,
                 u8"AVX 512 Bit Algorithms");
-            insts.add<cpu::simd_instructions>(detail::to_property_set(
+            insts.add<cpu::simd_instructions>(property_set(
                 std::move(simds)));
         }
 
-        ps.add<cpu::instructions>(detail::to_property_set(std::move(insts)));
+        ps.add<cpu::instructions>(property_set(std::move(insts)));
     }
 
-    detail::realise(retval, std::move(ps));
-    return retval;
+    return property_set(std::move(ps));
 }

@@ -32,7 +32,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::memory::get(
     ps.add<sysconf>(get_sysconf(flags));
 #endif /* !defined(_WIN32) */
 
-    return detail::to_property_set(std::move(ps));
+    return property_set(std::move(ps));
 }
 
 
@@ -65,7 +65,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::memory::get_memory_status(
     }
 #endif /* defined(_WIN32) */
 
-    return detail::to_property_set(std::move(ps));
+    return property_set(std::move(ps));
 }
 
 
@@ -113,7 +113,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::memory::get_performance_info(
     }
 #endif /* defined(_WIN32) */
 
-    return detail::to_property_set(std::move(ps));
+    return property_set(std::move(ps));
 }
 
 
@@ -133,5 +133,5 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::memory::get_sysconf(
     detail::checked_add<total_physical_memory>(ps, flags, cnt * size);
 #endif /* !defined(_WIN32) */
 
-    return detail::to_property_set(std::move(ps));
+    return property_set(std::move(ps));
 }

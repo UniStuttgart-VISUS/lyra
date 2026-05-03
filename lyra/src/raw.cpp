@@ -59,12 +59,12 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::raw::get(
     }
 
     if (detail::check_sensitive<graphics::dxgi_adapter>(flags)) {
-        detail::merge(ps, graphics::get_dxgi_adapters(flags));
+        ps.merge(graphics::get_dxgi_adapters(flags));
     }
 
     if (detail::check_sensitive<smbios>(flags)) {
         ps.add<smbios>(LYRA_NAMESPACE::smbios::get(flags));
     }
 
-    return detail::to_property_set(std::move(ps));
+    return property_set(std::move(ps));
 }

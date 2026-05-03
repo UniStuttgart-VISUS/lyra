@@ -66,11 +66,11 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::application::get(
                     LYRA_TRACE(_T("Failed to get library size: %s"), ex.what());
                 }
 
-                return detail::to_property_set(std::move(ps));
+                return property_set(std::move(ps));
             });
 
         ps.add<libraries>(std::move(pss));
     }
 
-    return detail::to_property_set(std::move(ps));
+    return property_set(std::move(ps));
 }
