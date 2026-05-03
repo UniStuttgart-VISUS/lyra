@@ -9,7 +9,7 @@ The interface of the library is mostly built around a class named `property_set`
 
 Property sets can be obtained by calling the appropriate factory functions. For instance, the following code obtains all raw data we can get:
 ```cpp
-#include "visus/lyra/rawh"
+#include "visus/lyra/raw.h"
 
 auto data = visus::lyra::raw::get();
 ```
