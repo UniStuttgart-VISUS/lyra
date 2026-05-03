@@ -38,7 +38,13 @@ enum class collection_flags : std::uint32_t {
     /// contains additional information not available on Linux and vice versa.
     /// Such information will be removed if this flag is set,
     /// </summary>
-    no_undeclared = 0x00000002
+    no_undeclared = 0x00000002,
+
+    /// <summary>
+    /// Instructs the library to only collect the properties that are variable
+    /// over time.
+    /// </summary>
+    variable_only = 0x00000004,
 };
 
 

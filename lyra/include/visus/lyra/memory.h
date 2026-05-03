@@ -26,6 +26,7 @@ namespace memory {
     /// </remarks>
     struct available_physical_memory final {
         typedef std::uint64_t type;
+        static constexpr auto is_variable = true;
         static constexpr auto name = u8"Available Physical Memory";
     };
 
@@ -34,6 +35,7 @@ namespace memory {
     /// </summary>
     struct available_physical_pages final {
         typedef std::uint64_t type;
+        static constexpr auto is_variable = true;
         static constexpr auto name = u8"Available Physical Pages";
     };
 
@@ -44,6 +46,7 @@ namespace memory {
     /// </summary>
     struct available_virtual_memory final {
         typedef std::uint64_t type;
+        static constexpr auto is_variable = true;
         static constexpr auto name = u8"Available Virtual Memory";
     };
 
@@ -53,6 +56,7 @@ namespace memory {
     /// </summary>
     struct committed_pages_limit final {
         typedef std::uint64_t type;
+        static constexpr auto is_variable = true;
         static constexpr auto name = u8"Committed Pages Limit";
     };
 
@@ -62,6 +66,7 @@ namespace memory {
     /// </summary>
     struct committed_memory_limit final {
         typedef std::uint64_t type;
+        static constexpr auto is_variable = true;
         static constexpr auto name = u8"Committed Memory Limit";
     };
 
@@ -70,6 +75,7 @@ namespace memory {
     /// </summary>
     struct memory_status final {
         typedef property_set type;
+        static constexpr auto is_variable = true;
         static constexpr auto name = u8"Memory Status";
     };
 
@@ -79,6 +85,7 @@ namespace memory {
     /// </summary>
     struct non_paged_kernel_pages final {
         typedef std::uint64_t type;
+        static constexpr auto is_variable = true;
         static constexpr auto name = u8"Non-Paged Kernel Pages";
     };
 
@@ -88,6 +95,7 @@ namespace memory {
     /// </summary>
     struct paged_kernel_pages final {
         typedef std::uint64_t type;
+        static constexpr auto is_variable = true;
         static constexpr auto name = u8"Paged Kernel Pages";
     };
 
@@ -96,6 +104,7 @@ namespace memory {
     /// </summary>
     struct page_size final {
         typedef std::uint64_t type;
+        static constexpr auto is_variable = true;
         static constexpr auto name = u8"Page Size";
     };
 
@@ -105,6 +114,7 @@ namespace memory {
     /// </summary>
     struct performance_info final {
         typedef property_set type;
+        static constexpr auto is_variable = true;
         static constexpr auto name = u8"Performance Info";
     };
 
@@ -123,6 +133,7 @@ namespace memory {
     /// </summary>
     struct system_cache_pages final {
         typedef std::uint64_t type;
+        static constexpr auto is_variable = true;
         static constexpr auto name = u8"System Cache Pages";
     };
 
@@ -131,6 +142,7 @@ namespace memory {
     /// </summary>
     struct total_committed_memory final {
         typedef std::uint64_t type;
+        static constexpr auto is_variable = true;
         static constexpr auto name = u8"Total Committed Memory";
     };
 
@@ -145,6 +157,7 @@ namespace memory {
     /// </remarks>
     struct total_committed_pages final {
         typedef std::uint64_t type;
+        static constexpr auto is_variable = true;
         static constexpr auto name = u8"Total Committed Pages";
     };
 
@@ -153,6 +166,7 @@ namespace memory {
     /// </summary>
     struct total_kernel_pages final {
         typedef std::uint64_t type;
+        static constexpr auto is_variable = true;
         static constexpr auto name = u8"Total Kernel Pages";
     };
 

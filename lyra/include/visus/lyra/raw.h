@@ -34,6 +34,14 @@ namespace raw {
     };
 
     /// <summary>
+    /// Identifies a block containing the hardware.
+    /// </summary>
+    struct hardware final {
+        typedef property_set type;
+        static constexpr auto name = u8"Hardware";
+    };
+
+    /// <summary>
     /// Identifies a block containing information about the RAM.
     /// </summary>
     struct memory final {
@@ -63,6 +71,7 @@ namespace raw {
     /// </summary>
     struct timestamp final {
         typedef LYRA_NAMESPACE::timestamp::value_type type;
+        static constexpr auto is_variable = true;
         static constexpr auto name = u8"Timestamp";
     };
 

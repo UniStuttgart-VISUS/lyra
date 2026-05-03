@@ -10,6 +10,7 @@
 #include "visus/lyra/cpu.h"
 #include "visus/lyra/environment.h"
 #include "visus/lyra/graphics.h"
+#include "visus/lyra/hardware.h"
 #include "visus/lyra/memory.h"
 #include "visus/lyra/operating_system.h"
 #include "visus/lyra/smbios.h"
@@ -42,6 +43,10 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::raw::get(
 
     if (detail::check_sensitive<environment>(flags)) {
         ps.add<environment>(LYRA_NAMESPACE::environment::get(flags));
+    }
+
+    if (detail::check_sensitive<hardware>(flags)) {
+        ps.add<hardware>(LYRA_NAMESPACE::hardware::get(flags));
     }
 
     if (detail::check_sensitive<memory>(flags)) {

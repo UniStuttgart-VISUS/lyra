@@ -13,7 +13,7 @@ std::size_t LYRA_DETAIL_NAMESPACE::enum_class_devices(
         _In_opt_ const GUID *class_guid,
         _In_ TCallback cb,
         _In_ const DWORD flags) {
-    auto handle = ::SetupDiGetClassDevs(class_guid, nullptr, NULL, flags);
+    auto handle = ::SetupDiGetClassDevsW(class_guid, nullptr, NULL, flags);
     if (handle == INVALID_HANDLE_VALUE) {
         const auto error = ::GetLastError();
         LYRA_TRACE(_T("SetupDiGetClassDevs failed with error code %d."), error);

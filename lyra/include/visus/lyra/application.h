@@ -46,6 +46,7 @@ namespace application {
     /// </summary>
     struct libraries final {
         typedef property_set type;
+        static constexpr auto is_variable = true;
         static constexpr auto name = u8"Libraries";
     };
 

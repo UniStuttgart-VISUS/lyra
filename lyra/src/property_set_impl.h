@@ -18,6 +18,7 @@
 #include "visus/lyra/property_traits.h"
 
 #include "is_sensitive.h"
+#include "is_variable.h"
 #include "property_variant.h"
 
 
@@ -258,7 +259,8 @@ template<class TProp, class... TArgs> bool checked_add(
         _Inout_ property_set_impl& ps,
         _In_ const collection_flags flags,
         _In_ TArgs&&... args) {
-    const auto retval = check_sensitive<TProp>(flags);
+    const auto retval = check_sensitive<TProp>(flags)
+        && check_variable<TProp>(flags);
     if (retval) {
         ps.add<TProp>(std::forward<TArgs>(args)...);
     }
