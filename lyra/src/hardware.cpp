@@ -37,11 +37,30 @@ template<class TProp> bool try_add_string_prop(
         }
 
     } catch (const std::exception& ex) {
-        LYRA_TRACE(_T("Failed to retrieve device registry property 0x%x: %s"),
+        LYRA_TRACE("Failed to retrieve device registry property 0x%x: %s",
             prop, ex.what());
     }
 
     return false;
+}
+
+/// <summary>
+/// Tries retrieving the class GUID of the given device.
+/// </summary>
+static LYRA_NAMESPACE::guid try_get_clsid(_In_ HDEVINFO handle,
+        _In_ SP_DEVINFO_DATA& data) {
+    LYRA_NAMESPACE::guid retval;
+    try {
+        const auto value = LYRA_DETAIL_NAMESPACE::get_device_registry_property(
+            handle, data, SPDRP_CLASSGUID);
+        if (!value.empty()) {
+            retval = LYRA_NAMESPACE::guid(value.data());
+        }
+    } catch (const std::exception& ex) {
+        LYRA_TRACE("Failed to retrieve device class: %s", ex.what());
+    }
+
+    return retval;
 }
 #endif /* defined(_WIN32) */
 
@@ -58,59 +77,43 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::hardware::get(
         std::unordered_map<guid, std::vector<property_set>> classes;
 
         detail::enum_class_devices(nullptr,
-            [&classes, flags](HDEVINFO handle, SP_DEVINFO_DATA& data) {
-                //try {
-                //    const auto value = LYRA_DETAIL_NAMESPACE::get_device_registry_property(
-                //        handle, data, prop);
-                //    if (!value.empty()) {
-                //        const auto v = reinterpret_cast<const wchar_t*>(value.data());
-                //        const auto u = LYRA_NAMESPACE::to_utf8(v);
-                //        LYRA_DETAIL_NAMESPACE::checked_add<TProp>(ps, flags, u.c_str());
-                //        return true;
-                //    }
+                [&classes, flags](HDEVINFO handle, SP_DEVINFO_DATA& data) {
+            const auto clsid = try_get_clsid(handle, data);
 
-                //} catch (const std::exception& ex) {
-                //    LYRA_TRACE(_T("Failed to retrieve device registry property 0x%x: %s"),
-                //        prop, ex.what());
-                //}
+            detail::property_set_impl dps;
+            ::try_add_string_prop<description>(dps, flags, handle, data,
+                SPDRP_DEVICEDESC);
+            ::try_add_string_prop<device_class>(dps, flags, handle, data,
+                SPDRP_CLASS);
+            ::try_add_string_prop<friendly_name>(dps, flags, handle, data,
+                SPDRP_FRIENDLYNAME);
+            ::try_add_string_prop<location>(dps, flags, handle, data,
+                SPDRP_LOCATION_INFORMATION);
+            ::try_add_string_prop<manufacturer>(dps, flags, handle, data,
+                SPDRP_MFG);
+            ::try_add_string_prop<hardware_id>(dps, flags, handle, data,
+                SPDRP_HARDWAREID);
 
+            //detail::add_device_install_flags(handle, &data, 0,
+            //DI_FLAGSEX_INSTALLEDDRIVER);
+            //detail::enum_driver_info(handle, &data, SPDIT_COMPATDRIVER,
+            //    [&dps, flags](HDEVINFO h, PSP_DEVINFO_DATA d,
+            //            SP_DRVINFO_DATA_W& drv) {
+            //        return false;
+            //    });
 
-                detail::property_set_impl dps;
-                ::try_add_string_prop<device_class>(dps, flags, handle, data,
-                    SPDRP_CLASS);
-                ::try_add_string_prop<friendly_name>(dps, flags, handle, data,
-                    SPDRP_FRIENDLYNAME);
+            classes[clsid].emplace_back(std::move(dps));
 
-                //{
-                //    const auto v = try_get_prop(SPDRP_DEVICEDESC);
-                //    if (!v.empty()) {
-                //    };
-                //}
-                //
+            return true;
+        }, DIGCF_ALLCLASSES | DIGCF_PRESENT | DIGCF_PROFILE);
 
-                //const auto desc = try_get_prop(SPDRP_DEVICEDESC);
-
-
-                const auto desc = detail::get_device_registry_property(
-                    handle, data, SPDRP_DEVICEDESC);
-
-                const auto hwid = detail::get_device_registry_property(
-                    handle, data, SPDRP_HARDWAREID);
-
-                detail::add_device_install_flags(handle, &data, 0,
-                DI_FLAGSEX_INSTALLEDDRIVER);
-                detail::enum_driver_info(handle, &data, SPDIT_COMPATDRIVER,
-                    [&dps, flags](HDEVINFO h, PSP_DEVINFO_DATA d,
-                            SP_DRVINFO_DATA_W& drv) {
-                        return false;
-                    });
-
-                return true;
-            }, DIGCF_ALLCLASSES | DIGCF_PRESENT | DIGCF_PROFILE);
+        for (auto& c : classes) {
+            const auto clsid = c.first.to_string<char>();
+            ps.add(clsid.c_str(), std::move(c.second));
+        }
     } catch (const std::exception& ex) {
         LYRA_TRACE("Failed to enumerate devices: %s", ex.what());
     }
-
 #endif /* defined(_WIN32)*/
 
     return property_set(std::move(ps));

@@ -17,6 +17,14 @@ LYRA_NAMESPACE_BEGIN
 namespace hardware {
 
     /// <summary>
+    /// Identifies a property holding a description of the device.
+    /// </summary>
+    struct description final {
+        typedef const char *type;
+        static constexpr auto name = u8"Description";
+    };
+
+    /// <summary>
     /// Identifies a property holding the class of a device.
     /// </summary>
     struct device_class final {
@@ -30,6 +38,30 @@ namespace hardware {
     struct friendly_name final {
         typedef const char *type;
         static constexpr auto name = u8"Friendly Name";
+    };
+
+    /// <summary>
+    /// Identifies a property holding the hardware identifier of a device.
+    /// </summary>
+    struct hardware_id final {
+        typedef const char *type;
+        static constexpr auto name = u8"Hardware ID";
+    };
+
+    /// <summary>
+    /// Identifies a property holding the location of a device.
+    /// </summary>
+    struct location final {
+        typedef const char *type;
+        static constexpr auto name = u8"Location";
+    };
+
+    /// <summary>
+    /// Identifies a property holding the name of the manufacturer.
+    /// </summary>
+    struct manufacturer final {
+        typedef const char *type;
+        static constexpr auto name = u8"Manufacturer";
     };
 
     /// <summary>

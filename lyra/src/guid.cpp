@@ -334,7 +334,7 @@ std::size_t LYRA_NAMESPACE::guid::to_string(
     }
 
     auto hack = reinterpret_cast<char *>(tmp);
-    auto retval = ::strlen(hack);
+    auto retval = ::strlen(hack) + 1;
     if ((dst != nullptr) && (cnt >= retval)) {
         ::strcpy_s(dst, cnt, hack);
     }
@@ -375,7 +375,7 @@ std::size_t LYRA_NAMESPACE::guid::to_string(
     }
 
     auto hack = reinterpret_cast<wchar_t *>(tmp);
-    auto retval = ::wcslen(hack);
+    auto retval = ::wcslen(hack) + 1;
     if ((dst != nullptr) && (cnt >= retval)) {
         ::wcscpy_s(dst, cnt, hack);
     }
