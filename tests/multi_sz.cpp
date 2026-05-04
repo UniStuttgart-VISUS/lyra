@@ -6,7 +6,7 @@
 
 #include <gtest/gtest.h>
 
-#include "visus/lyra/multi_sz.h"
+#include "visus/autodoc/multi_sz.h"
 
 
 TEST(multi_sz, ctor) {

@@ -6,7 +6,7 @@
 
 #include <gtest/gtest.h>
 
-#include "visus/lyra/hash.h"
+#include "visus/autodoc/hash.h"
 
 #include "string_manipulation.h"
 

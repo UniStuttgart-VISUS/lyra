@@ -6,8 +6,8 @@
 
 #include <gtest/gtest.h>
 
-#include "visus/lyra/property_set.h"
-#include "visus/lyra/property_type.h"
+#include "visus/autodoc/property_set.h"
+#include "visus/autodoc/property_type.h"
 
 
 TEST(property_type, property_type_t) {

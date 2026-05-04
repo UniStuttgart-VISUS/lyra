@@ -6,7 +6,7 @@
 
 #include <gtest/gtest.h>
 
-#include "visus/lyra/raw.h"
+#include "visus/autodoc/raw.h"
 
 
 TEST(raw, get) {

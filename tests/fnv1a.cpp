@@ -6,7 +6,7 @@
 
 #include <gtest/gtest.h>
 
-#include "visus/lyra/fnv1a.h"
+#include "visus/autodoc/fnv1a.h"
 
 
 TEST(fnv1a, char32) {

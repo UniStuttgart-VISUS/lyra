@@ -6,7 +6,7 @@
 
 #include <gtest/gtest.h>
 
-#include "visus/lyra/environment.h"
+#include "visus/autodoc/environment.h"
 
 
 TEST(environment, cwd) {

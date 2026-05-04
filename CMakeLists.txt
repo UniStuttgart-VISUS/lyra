@@ -55,7 +55,7 @@ if (LYRA_BuildTests)
 endif ()
 
 # The library
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lyra)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/autodoc)
 
 # Unit tests
 if (LYRA_BuildTests)

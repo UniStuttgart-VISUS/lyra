@@ -6,7 +6,7 @@
 
 #include <gtest/gtest.h>
 
-#include "visus/lyra/guid.h"
+#include "visus/autodoc/guid.h"
 
 
 TEST(guid, dft_ctor) {

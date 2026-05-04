@@ -4,7 +4,7 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
-#include "visus/lyra/raw.h"
+#include "visus/autodoc/raw.h"
 
 #include <iostream>
 

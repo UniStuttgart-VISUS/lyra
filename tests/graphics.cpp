@@ -6,7 +6,7 @@
 
 #include <gtest/gtest.h>
 
-#include "visus/lyra/graphics.h"
+#include "visus/autodoc/graphics.h"
 
 
 #if defined(_WIN32)

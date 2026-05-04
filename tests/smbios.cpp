@@ -6,8 +6,8 @@
 
 #include <gtest/gtest.h>
 
-#include "visus/lyra/smbios.h"
-#include "visus/lyra/version.h"
+#include "visus/autodoc/smbios.h"
+#include "visus/autodoc/version.h"
 
 
 #if defined(_WIN32)

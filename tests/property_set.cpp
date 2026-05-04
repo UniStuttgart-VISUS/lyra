@@ -8,8 +8,8 @@
 #include <gtest/gtest.h>
 
 #include "property_set_impl.h"
-#include "visus/lyra/property_set.h"
-#include "visus/lyra/version.h"
+#include "visus/autodoc/property_set.h"
+#include "visus/autodoc/version.h"
 
 
 TEST(property_set, default_ctor) {

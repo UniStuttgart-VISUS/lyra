@@ -6,7 +6,7 @@
 
 #include <gtest/gtest.h>
 
-#include "visus/lyra/operating_system.h"
+#include "visus/autodoc/operating_system.h"
 
 
 TEST(operating_system, version) {

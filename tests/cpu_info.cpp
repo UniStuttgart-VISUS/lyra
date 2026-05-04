@@ -8,10 +8,10 @@
 
 #include <vector>
 
-#include "visus/lyra/cpu.h"
-#include "visus/lyra/cpu_info.h"
-#include "visus/lyra/cpu_info_detector.h"
-#include "visus/lyra/simd_detector.h"
+#include "visus/autodoc/cpu.h"
+#include "visus/autodoc/cpu_info.h"
+#include "visus/autodoc/cpu_info_detector.h"
+#include "visus/autodoc/simd_detector.h"
 
 
 TEST(cpu_info, base) {
