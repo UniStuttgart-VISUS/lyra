@@ -45,6 +45,7 @@
 
 #include <cassert>
 #include <cerrno>
+#include <cstring>
 #include <memory>
 #include <stdexcept>
 #include <system_error>
@@ -109,6 +110,7 @@ LYRA_NAMESPACE::guid& LYRA_NAMESPACE::guid::parse(
 }
 
 
+#if defined(_WIN32)
 /*
  * LYRA_NAMESPACE::guid::parse
  */
@@ -118,20 +120,14 @@ LYRA_NAMESPACE::guid& LYRA_NAMESPACE::guid::parse(
         throw std::invalid_argument("A valid GUID string must be provided.");
     }
 
-#if defined(_WIN32)
     auto s = reinterpret_cast<RPC_WSTR>(const_cast<wchar_t *>(str));
     auto status = ::UuidFromStringW(s, &retval._value);
     if (status != RPC_S_OK) {
         throw std::system_error(status, std::system_category());
     }
-
-#else /* defined(_WIN32) */
-    auto s = convert_string<char>(str);
-    parse(retval, s.c_str());
-#endif /* defined(_WIN32) */
-
     return retval;
 }
+#endif /* defined(_WIN32) */
 
 
 /*

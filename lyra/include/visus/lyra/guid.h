@@ -119,6 +119,7 @@ public:
     /// not represent a valid GUID.</exception>
     static guid& parse(_Out_ guid& retval, _In_z_ const char *str);
 
+#if defined(_WIN32)
     /// <summary>
     /// Parse the GUID from a string representation.
     /// </summary>
@@ -130,6 +131,7 @@ public:
     /// <exception cref="std::system_error">If <paramref name="str" /> does
     /// not represent a valid GUID.</exception>
     static guid& parse(_Out_ guid& retval, _In_z_ const wchar_t *str);
+#endif /* defined(_WIN32) */
 
     /// <summary>
     /// Parse the GUID from a string representation.
@@ -145,6 +147,7 @@ public:
         return guid::parse(retval, str);
     }
 
+#if defined(_WIN32)
     /// <summary>
     /// Parse the GUID from a string representation.
     /// </summary>
@@ -158,6 +161,7 @@ public:
         guid retval;
         return guid::parse(retval, str);
     }
+#endif /* defined(_WIN32) */
 
     /// <summary>
     /// Parse the GUID from a string representation.

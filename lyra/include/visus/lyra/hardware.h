@@ -33,6 +33,22 @@ namespace hardware {
     };
 
     /// <summary>
+    /// Identifies a property holding the device type.
+    /// </summary>
+    struct device_type final {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"Device Type";
+    };
+
+    /// <summary>
+    /// Identifies a property holding information about the device driver.
+    /// </summary>
+    struct driver final {
+        typedef property_set type;
+        static constexpr auto name = u8"Driver";
+    };
+
+    /// <summary>
     /// Identifies a property holding the human-readable name of a device.
     /// </summary>
     struct friendly_name final {

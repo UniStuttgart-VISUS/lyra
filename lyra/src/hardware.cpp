@@ -20,6 +20,31 @@
 /// <summary>
 /// Tries to extract the given property and adds it to <see cref="ps" />.
 /// </summary>
+template<class TProp> bool try_add_prop(
+        _Inout_ LYRA_DETAIL_NAMESPACE::property_set_impl& ps,
+        _In_ const LYRA_NAMESPACE::collection_flags flags,
+        _In_ HDEVINFO handle,
+        _In_ SP_DEVINFO_DATA& data,
+        _In_ const DWORD prop) {
+    try {
+        const auto value = LYRA_DETAIL_NAMESPACE::get_device_registry_property(
+            handle, data, prop);
+        if (value.size() == sizeof(typename TProp::type)) {
+            LYRA_DETAIL_NAMESPACE::checked_add<TProp>(ps, flags,
+                *reinterpret_cast<const typename TProp::type *>(value.data()));
+            return true;
+        }
+    } catch (const std::exception& ex) {
+        LYRA_TRACE("Failed to retrieve device registry property 0x%x: %s",
+            prop, ex.what());
+    }
+
+    return false;
+}
+
+/// <summary>
+/// Tries to extract the given property and adds it to <see cref="ps" />.
+/// </summary>
 template<class TProp> bool try_add_string_prop(
         _Inout_ LYRA_DETAIL_NAMESPACE::property_set_impl& ps,
         _In_ const LYRA_NAMESPACE::collection_flags flags,
@@ -85,6 +110,8 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::hardware::get(
                 SPDRP_DEVICEDESC);
             ::try_add_string_prop<device_class>(dps, flags, handle, data,
                 SPDRP_CLASS);
+            ::try_add_prop<device_type>(dps, flags, handle, data,
+                SPDRP_DEVTYPE);
             ::try_add_string_prop<friendly_name>(dps, flags, handle, data,
                 SPDRP_FRIENDLYNAME);
             ::try_add_string_prop<location>(dps, flags, handle, data,

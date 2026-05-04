@@ -35,6 +35,7 @@ FetchContent_MakeAvailable(nlohmann_json)
 
 if (NOT WIN32)
     find_package(OpenSSL)
+    #find_package(LibUUID REQUIRED)
 endif ()
 
 if (WIN32)
