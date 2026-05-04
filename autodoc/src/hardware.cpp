@@ -10,6 +10,7 @@
 
 #include "visus/autodoc/convert_string.h"
 #include "visus/autodoc/guid.h"
+#include "visus/autodoc/multi_sz.h"
 #include "visus/autodoc/timestamp.h"
 #include "visus/autodoc/trace.h"
 
@@ -18,6 +19,40 @@
 
 
 #if defined(_WIN32)
+/// <summary>
+/// Tries to extract the given property and adds it to <see cref="ps" />.
+/// </summary>
+template<class TProp> bool try_add_multi_sz_prop(
+        _Inout_ LYRA_DETAIL_NAMESPACE::property_set_impl& ps,
+        _In_ const LYRA_NAMESPACE::collection_flags flags,
+        _In_ HDEVINFO handle,
+        _In_ SP_DEVINFO_DATA& data,
+        _In_ const DWORD prop) {
+    try {
+        const auto value = LYRA_DETAIL_NAMESPACE::get_device_registry_property(
+            handle, data, prop);
+        if (!value.empty()) {
+            const auto v = reinterpret_cast<const wchar_t*>(value.data());
+            std::vector<const wchar_t *> w;
+            LYRA_DETAIL_NAMESPACE::multi_sz_copy(std::back_inserter(w), v);
+            LYRA_NAMESPACE::multi_sz m;
+            // TODO: this could be optimise to reduce reallocations.
+            for (auto s : w) {
+                auto t = LYRA_NAMESPACE::to_utf8(s);
+                m.add(t.c_str());
+            }
+            LYRA_DETAIL_NAMESPACE::checked_add<TProp>(ps, flags, std::move(m));
+            return true;
+        }
+
+    } catch (const std::exception& ex) {
+        LYRA_TRACE("Failed to retrieve device registry property 0x%x: %s",
+            prop, ex.what());
+    }
+
+    return false;
+}
+
 /// <summary>
 /// Tries to extract the given property and adds it to <see cref="ps" />.
 /// </summary>
@@ -164,7 +199,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::hardware::get(
                 SPDRP_LOCATION_INFORMATION);
             ::try_add_string_prop<manufacturer>(dps, flags, handle, data,
                 SPDRP_MFG);
-            ::try_add_string_prop<hardware_id>(dps, flags, handle, data,
+            ::try_add_multi_sz_prop<hardware_id>(dps, flags, handle, data,
                 SPDRP_HARDWAREID);
             classes[clsid].emplace_back(std::move(dps));
 

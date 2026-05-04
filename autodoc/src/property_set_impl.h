@@ -241,6 +241,18 @@ struct LYRA_TEST_API property_set_impl final {
         this->values.emplace(TProp::name, std::move(value));
     }
 
+    template<class TProp> inline std::enable_if_t<
+        std::is_same_v<typename TProp::type, const char *>>
+    add(_In_ const multi_sz& value) {
+        this->add(TProp::name, value.begin(), value.end());
+    }
+
+    template<class TProp> inline std::enable_if_t<
+        std::is_same_v<typename TProp::type, const char *>>
+    add(_Inout_ multi_sz&& value) {
+        this->values.emplace(TProp::name, std::move(value));
+    }
+
     /// <summary>
     /// Find the property with the specified name, or return
     /// <see langword="nullptr" /> if no such property exists.
