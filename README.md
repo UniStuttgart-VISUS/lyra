@@ -74,4 +74,26 @@ The data from a property set can be easily persisted in the form of JSON strings
 ```cpp
 std::string snapshot = data.json();
 ```
-The JSON string will be cached within the property set and remains valid as long as the object exists unless copied.
+The JSON string will be cached within the property set and remains valid as long as the object exists, unless copied.
+
+### Documenting the system state
+The `autodoc_write_raw` function is a one-stop solution for documenting everything we know of the system state from your application. Call it as follows to store the state in a JSON file:
+```cpp
+#include "visus/autodoc/autodoc.h"
+
+// This call dumps really everything the library collects.
+::autodoc_write_raw("state.json", visus::lyra::collection_flags::none);
+
+// This call dumps really everything the library collects.
+::autodoc_write_raw("state.json", visus::lyra::collection_flags::none);
+
+// This call skips all data marked sensitive, which includes the environment
+// variables and unique hardware serials.
+::autodoc_write_raw("state.json", visus::lyra::collection_flags::no_sensitive);
+
+// This call skips all data marked immutable, which is helpful or documenting
+// changes to parts of the state that might change over time.
+::autodoc_write_raw("state.json", visus::lyra::collection_flags::no_immutable);
+```
+`autodoc_write_raw` is available to C clients as well. Just replace the enumeration class with `collection_flags_none`, `collection_flags_no_sensitive`, etc.
+
