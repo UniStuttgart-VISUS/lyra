@@ -66,6 +66,15 @@ namespace memory {
     };
 
     /// <summary>
+    /// Identifies the property holding the memory status from /proc/meminfo on
+    /// Linux.
+    /// </summary>
+    struct meminfo final {
+        typedef property_set type;
+        static constexpr auto name = u8"/proc/meminfo";
+    };
+
+    /// <summary>
     /// Identifies the property holding the memory status from Win32 API.
     /// </summary>
     struct memory_status final {
@@ -187,6 +196,15 @@ namespace memory {
     /// behaviour.</param>
     /// <returns>A property set describing the RAM.</returns>
     LYRA_API property_set get(_In_ const collection_flags flags
+        = collection_flags::none);
+
+    /// <summary>
+    /// Gets everything we can parse from /proc/meminfo on Linux.
+    /// </summary>
+    /// <param name="flags">Allows for customising the collection
+    /// behaviour.</param>
+    /// <returns>A property set describing the RAM.</returns>
+    LYRA_API property_set get_meminfo(_In_ const collection_flags flags
         = collection_flags::none);
 
     /// <summary>

@@ -6,6 +6,9 @@
 
 #include "visus/autodoc/memory.h"
 
+#include <fstream>
+#include <regex>
+
 #if defined(_WIN32)
 #include <Windows.h>
 #include <Psapi.h>
@@ -13,6 +16,7 @@
 #include <unistd.h>
 #endif /* !defined(_WIN32) */
 
+#include "equals.h"
 #include "property_set_impl.h"
 
 
@@ -26,11 +30,49 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::memory::get(
 #if defined(_WIN32)
     ps.add<memory_status>(get_memory_status(flags));
     ps.add<performance_info>(get_performance_info(flags));
+#else /* !defined(_WIN32) */
+    ps.add<meminfo>(get_meminfo(flags));
 #endif /* defined(_WIN32) */
 
 #if !defined(_WIN32)
     ps.add<sysconf>(get_sysconf(flags));
 #endif /* !defined(_WIN32) */
+
+    return property_set(std::move(ps));
+}
+
+
+/*
+ * LYRA_NAMESPACE::memory::get_meminfo
+ */
+LYRA_NAMESPACE::property_set LYRA_NAMESPACE::memory::get_meminfo(
+        _In_ const collection_flags flags) {
+    detail::property_set_impl ps;
+
+#if !defined(_WIN32)
+    std::ifstream stream("/proc/meminfo");
+
+    if (stream.is_open()) {
+        std::string line;
+        std::smatch match;
+        std::regex rx("([^:]+)\\s*:\\s*(\\d+)\\s*(.*)");
+
+        while (std::getline(stream, line)) {
+            if (std::regex_match(line, match, rx)) {
+                auto value = std::stoull(match[2].str());
+                if (detail::iequals(match[3].str(), "kB")) {
+                    value *= 1000;
+                } else if (detail::iequals(match[3].str(), "MB")) {
+                    value *= 1000 * 1000;
+                } else if (detail::iequals(match[3].str(), "GB")) {
+                    value *= 1000 * 1000 * 1000;
+                }
+
+                ps.add(match[1].str(), value);
+            }
+        }
+    }
+#endif /* defined(_WIN32) */
 
     return property_set(std::move(ps));
 }
