@@ -135,14 +135,18 @@ inline bool equals(
 /// <summary>
 /// Tests whether two strings are equal, ignoring case.
 /// </summary>
-/// <typeparam name="TLhs"></typeparam>
-/// <typeparam name="TRhs"></typeparam>
-/// <param name="lhs"></param>
-/// <param name="rhs"></param>
-/// <returns></returns>
+/// <typeparam name="TLhs">The left-hand-side operand, which can be a character
+/// pointer or an STL string.</typeparam>
+/// <typeparam name="TRhs">The right-hand-side operand, which can be a character
+/// pointer or an STL string.</typeparam>
+/// <param name="lhs">The left-hand-side operand.</param>
+/// <param name="rhs">The right-hand-side operand.</param>
+/// <returns><see langword="true" /> if <paramref name="lhs" /> and
+/// <paramref name="rhs" /> are equal, ignoring case.</returns>
 template<class TLhs, class TRhs>
 inline bool iequals(_In_ TLhs&& lhs, _In_ TRhs&& rhs) noexcept {
-    return equals(std::forward<TLhs>(lhs),
+    return equals(
+        std::forward<TLhs>(lhs),
         std::forward<TRhs>(rhs),
         string_comparison::case_insensitive);
 }
