@@ -6,6 +6,7 @@
 
 #include "visus/autodoc/autodoc.h"
 
+#include <filesystem>
 #include <fstream>
 #include <system_error>
 
@@ -14,6 +15,8 @@
 #include "visus/autodoc/raw.h"
 #include "visus/autodoc/trace.h"
 
+#include "results.h"
+
 
 /*
  * ::autodoc_write_raw_a
@@ -21,6 +24,10 @@
 int autodoc_write_raw_a(
         _In_z_ const char *path,
         _In_ const LYRA_NAMESPACE::collection_flags flags) {
+    if (path == nullptr) {
+        return LYRA_DETAIL_NAMESPACE::results::invalid_argument;
+    }
+
     try {
         const auto data = LYRA_NAMESPACE::raw::get(flags);
         std::ofstream stream(path, std::ios::trunc);
@@ -33,7 +40,7 @@ int autodoc_write_raw_a(
         LYRA_TRACE("Uncaught exception: %s", ex.what());
         return -1;
     } catch (...) {
-        LYRA_TRACE("Uncaught excetpion.");
+        LYRA_TRACE("Uncaught exception.");
         return -2;
     }
 }
@@ -46,6 +53,10 @@ int autodoc_write_raw_a(
 int autodoc_write_raw_w(
         _In_z_ const wchar_t *path,
         _In_ const LYRA_NAMESPACE::collection_flags flags) {
+    if (path == nullptr) {
+        return LYRA_DETAIL_NAMESPACE::results::invalid_argument;
+    }
+
     try {
         const auto data = LYRA_NAMESPACE::raw::get(flags);
         std::ofstream stream(path, std::ios::trunc);
@@ -58,7 +69,7 @@ int autodoc_write_raw_w(
         LYRA_TRACE("Uncaught exception: %s", ex.what());
         return -1;
     } catch (...) {
-        LYRA_TRACE("Uncaught excetpion.");
+        LYRA_TRACE("Uncaught exception.");
         return -2;
     }
 }

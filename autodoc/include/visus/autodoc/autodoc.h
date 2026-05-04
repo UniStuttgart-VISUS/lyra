@@ -38,14 +38,22 @@ LYRA_NAMESPACE_END
 /// <summary>
 /// Collects the raw data from the system and writes it to the specified file.
 /// </summary>
-/// <param name="path"></param>
-/// <param name="flags"></param>
+/// <param name="path">The path to the file where the data should be stored.
+/// </param>
+/// <param name="flags">The flags specifying which data to collect.</param>
 /// <returns>Zero in case of success, an error code otherwise.</returns>
 extern "C" int LYRA_API autodoc_write_raw_a(
     _In_z_ const char *path,
     _In_ const LYRA_NAMESPACE::collection_flags flags);
 
 #if defined(_WIN32)
+/// <summary>
+/// Collects the raw data from the system and writes it to the specified file.
+/// </summary>
+/// <param name="path">The path to the file where the data should be stored.
+/// </param>
+/// <param name="flags">The flags specifying which data to collect.</param>
+/// <returns>Zero in case of success, an error code otherwise.</returns>
 extern "C" int LYRA_API autodoc_write_raw_w(
     _In_z_ const wchar_t *path,
     _In_ const LYRA_NAMESPACE::collection_flags flags);
