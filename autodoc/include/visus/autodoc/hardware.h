@@ -9,6 +9,7 @@
 #pragma once
 
 #include "visus/autodoc/collection_flags.h"
+#include "visus/autodoc/multi_sz.h"
 #include "visus/autodoc/property_set.h"
 #include "visus/autodoc/timestamp.h"
 
@@ -78,7 +79,7 @@ namespace hardware {
     /// Identifies a property holding the hardware identifier of a device.
     /// </summary>
     struct hardware_id final {
-        typedef const char *type;
+        typedef multi_sz type;
         static constexpr auto name = u8"Hardware ID";
     };
 

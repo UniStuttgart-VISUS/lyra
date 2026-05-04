@@ -10,7 +10,6 @@
 
 #include "visus/autodoc/convert_string.h"
 #include "visus/autodoc/guid.h"
-#include "visus/autodoc/multi_sz.h"
 #include "visus/autodoc/timestamp.h"
 #include "visus/autodoc/trace.h"
 
@@ -28,6 +27,8 @@ template<class TProp> bool try_add_multi_sz_prop(
         _In_ HDEVINFO handle,
         _In_ SP_DEVINFO_DATA& data,
         _In_ const DWORD prop) {
+    static_assert(std::is_same_v<LYRA_NAMESPACE::multi_sz, typename TProp::type>,
+        "TProp must be a multi_sz property.");
     try {
         const auto value = LYRA_DETAIL_NAMESPACE::get_device_registry_property(
             handle, data, prop);
