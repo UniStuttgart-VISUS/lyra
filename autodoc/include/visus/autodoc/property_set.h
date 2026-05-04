@@ -11,6 +11,7 @@
 #include <functional>
 #include <map>
 #include <utility>
+#include <type_traits>
 
 #include "visus/autodoc/property_traits.h"
 

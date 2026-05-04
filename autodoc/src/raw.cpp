@@ -33,36 +33,44 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::raw::get(
     }
 
     // Add all the actual information.
-    if (detail::check_sensitive<application>(flags)) {
+    if (detail::check_sensitive<application>(flags)
+            && detail::check_immutable<application>(flags)) {
         ps.add<application>(LYRA_NAMESPACE::application::get(flags));
     }
 
-    if (detail::check_sensitive<cpu::cpuid>(flags)) {
+    if (detail::check_sensitive<cpu::cpuid>(flags)
+            && detail::check_immutable<cpu::cpuid>(flags)) {
         ps.add<cpu::cpuid>(cpu::get_cpuid(flags));
     }
 
-    if (detail::check_sensitive<environment>(flags)) {
+    if (detail::check_sensitive<environment>(flags)
+            && detail::check_immutable<environment>(flags)) {
         ps.add<environment>(LYRA_NAMESPACE::environment::get(flags));
     }
 
-    if (detail::check_sensitive<hardware>(flags)) {
+    if (detail::check_sensitive<hardware>(flags)
+            && detail::check_immutable<hardware>(flags)) {
         ps.add<hardware>(LYRA_NAMESPACE::hardware::get(flags));
     }
 
-    if (detail::check_sensitive<memory>(flags)) {
+    if (detail::check_sensitive<memory>(flags)
+            && detail::check_immutable<memory>(flags)) {
         ps.add<memory>(LYRA_NAMESPACE::memory::get(flags));
     }
 
-    if (detail::check_sensitive<operating_system>(flags)) {
+    if (detail::check_sensitive<operating_system>(flags)
+            && detail::check_immutable<operating_system>(flags)) {
         ps.add<operating_system>(LYRA_NAMESPACE::operating_system::get(
             flags));
     }
 
-    if (detail::check_sensitive<graphics::dxgi_adapter>(flags)) {
+    if (detail::check_sensitive<graphics::dxgi_adapter>(flags)
+            && detail::check_immutable<graphics::dxgi_adapter>(flags)) {
         ps.merge(graphics::get_dxgi_adapters(flags));
     }
 
-    if (detail::check_sensitive<smbios>(flags)) {
+    if (detail::check_sensitive<smbios>(flags)
+            && detail::check_immutable<smbios>(flags)) {
         ps.add<smbios>(LYRA_NAMESPACE::smbios::get(flags));
     }
 

@@ -22,6 +22,7 @@ namespace cpu {
     /// </summary>
     struct brand_string final {
         typedef const char *type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Brand String";
     };
 
@@ -31,6 +32,7 @@ namespace cpu {
     /// </summary>
     struct cpuid final {
         typedef property_set type;
+        static constexpr auto is_immutable = true;
         static constexpr auto is_sensitive = true;
         static constexpr auto name = u8"CPUID";
     };
@@ -41,6 +43,7 @@ namespace cpu {
     /// </summary>
     struct instructions final {
         typedef property_set type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Instructions";
     };
 
@@ -50,6 +53,7 @@ namespace cpu {
     /// </summary>
     struct simd_instructions final {
         typedef property_set type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"SIMD";
     };
 
@@ -58,6 +62,7 @@ namespace cpu {
     /// </summary>
     struct vendor final {
         typedef const char *type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Vendor";
     };
 

@@ -21,6 +21,7 @@ namespace application {
     /// </summary>
     struct command_line final {
         typedef const char *type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Command Line";
     };
 
@@ -46,7 +47,6 @@ namespace application {
     /// </summary>
     struct libraries final {
         typedef property_set type;
-        static constexpr auto is_variable = true;
         static constexpr auto name = u8"Libraries";
     };
 
@@ -55,6 +55,7 @@ namespace application {
     /// </summary>
     struct process_id final {
         typedef std::uint64_t type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Process ID";
     };
 

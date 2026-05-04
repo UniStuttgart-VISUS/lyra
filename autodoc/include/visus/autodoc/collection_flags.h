@@ -20,6 +20,12 @@
 
 LYRA_NAMESPACE_BEGIN
 
+#if defined(__cplusplus)
+#define _LYRA_COLLECTION_FLAGS(f) f
+#else /* defined(__cplusplus) */
+#define _LYRA_COLLECTION_FLAGS(f) collection_flags_##f
+#endif /* defined(__cplusplus) */
+
 /// <summary>
 /// Allows for customising how the library collects information.
 /// </summary>
@@ -28,12 +34,12 @@ enum LYRA_ENUM_CLASS collection_flags {
     /// <summary>
     /// Specifies the default collection behaviour.
     /// </summary>
-    none = 0,
+    _LYRA_COLLECTION_FLAGS(none) = 0,
 
     /// <summary>
     /// Instructs the library not to include any sensitive information.
     /// </summary>
-    no_sensitive = 0x00000001,
+    _LYRA_COLLECTION_FLAGS(no_sensitive) = 0x00000001,
 
     /// <summary>
     /// Instructs the library to remove all information that is not explicitly
@@ -42,14 +48,16 @@ enum LYRA_ENUM_CLASS collection_flags {
     /// contains additional information not available on Linux and vice versa.
     /// Such information will be removed if this flag is set,
     /// </summary>
-    no_undeclared = 0x00000002,
+    _LYRA_COLLECTION_FLAGS(no_undeclared) = 0x00000002,
 
     /// <summary>
     /// Instructs the library to only collect the properties that are variable
     /// over time.
     /// </summary>
-    variable_only = 0x00000004,
+    _LYRA_COLLECTION_FLAGS(no_immutable) = 0x00000004,
 };
+
+#undef _LYRA_COLLECTION_FLAGS
 
 
 #if defined(__cplusplus)

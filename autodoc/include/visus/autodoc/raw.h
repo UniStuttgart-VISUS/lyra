@@ -38,6 +38,7 @@ namespace raw {
     /// </summary>
     struct hardware final {
         typedef property_set type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Hardware";
     };
 
@@ -54,6 +55,7 @@ namespace raw {
     /// </summary>
     struct operating_system final {
         typedef property_set type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Operating System";
     };
 
@@ -62,6 +64,7 @@ namespace raw {
     /// </summary>
     struct smbios final {
         typedef property_set type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"SMBIOS";
     };
 
@@ -71,7 +74,6 @@ namespace raw {
     /// </summary>
     struct timestamp final {
         typedef LYRA_NAMESPACE::timestamp::value_type type;
-        static constexpr auto is_variable = true;
         static constexpr auto name = u8"Timestamp";
     };
 

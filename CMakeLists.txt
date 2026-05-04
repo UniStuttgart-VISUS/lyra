@@ -13,6 +13,7 @@ include(GNUInstallDirs)
 # User-configurable options.
 option(LYRA_BuildDump "Build the dump tool." ON)
 option(LYRA_BuildTests "Build unit tests." OFF)
+option(LYRA_BuildWrite "Build the write tool." ON)
 cmake_dependent_option(LYRA_BuildCOM "Build with COM support." OFF WIN32 OFF)
 cmake_dependent_option(LYRA_Profile "Build with profiling information." OFF WIN32 OFF)
 
@@ -67,4 +68,8 @@ endif ()
 # A demo application
 if (LYRA_BuildDump)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/dump)
+endif ()
+
+if (LYRA_BuildWrite)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/write)
 endif ()

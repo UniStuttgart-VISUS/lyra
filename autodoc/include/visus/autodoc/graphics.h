@@ -21,6 +21,7 @@ namespace graphics {
     /// </summary>
     struct dxgi_adapter final {
         typedef property_set type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"DXGI Adapter";
     };
 

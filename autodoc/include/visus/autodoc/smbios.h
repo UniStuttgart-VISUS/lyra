@@ -516,6 +516,7 @@ namespace smbios {
     /// </summary>
     struct bank final {
         typedef const char *type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Bank";
     };
 
@@ -526,6 +527,7 @@ namespace smbios {
     /// </summary>
     struct baseboard final {
         typedef property_set type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Baseboard";
     };
 
@@ -535,6 +537,7 @@ namespace smbios {
     struct baseboard_asset_tag final {
         typedef const char *type;
         static constexpr auto dmi_id = u8"board_asset_tag";
+        static constexpr auto is_immutable = true;
         static constexpr auto is_sensitive = true;
         static constexpr auto name = u8"AssetTag";
     };
@@ -544,6 +547,7 @@ namespace smbios {
     /// </summary>
     struct baseboard_location final {
         typedef const char *type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Location";
     };
 
@@ -553,6 +557,7 @@ namespace smbios {
     struct baseboard_product final {
         typedef const char *type;
         static constexpr auto dmi_id = u8"board_name";
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Product";
     };
 
@@ -562,6 +567,7 @@ namespace smbios {
     struct baseboard_serial final {
         typedef const char *type;
         static constexpr auto dmi_id = u8"board_serial";
+        static constexpr auto is_immutable = true;
         static constexpr auto is_sensitive = true;
         static constexpr auto name = u8"Serial Number";
     };
@@ -572,6 +578,7 @@ namespace smbios {
     struct baseboard_vendor final {
         typedef const char *type;
         static constexpr auto dmi_id = u8"board_vendor";
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Vendor";
     };
 
@@ -581,6 +588,7 @@ namespace smbios {
     struct baseboard_version final {
         typedef const char *type;
         static constexpr auto dmi_id = u8"board_version";
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Version";
     };
 
@@ -591,6 +599,7 @@ namespace smbios {
     /// </summary>
     struct bios final {
         typedef property_set type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"BIOS";
     };
 
@@ -600,6 +609,7 @@ namespace smbios {
     struct bios_date final {
         typedef const char *type;
         static constexpr auto dmi_id = u8"bios_date";
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Release Date";
     };
 
@@ -617,6 +627,7 @@ namespace smbios {
     struct bios_release final {
         typedef const char *type;
         static constexpr auto dmi_id = u8"bios_release";
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Release";
     };
 
@@ -625,6 +636,7 @@ namespace smbios {
     /// </summary>
     struct bios_rom_size final {
         typedef std::uint32_t type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"ROM Size";
     };
 
@@ -634,6 +646,7 @@ namespace smbios {
     struct bios_vendor final {
         typedef const char *type;
         static constexpr auto dmi_id = u8"bios_vendor";
+        static constexpr auto is_immutable = true;
         static constexpr auto name = baseboard_vendor::name;
     };
 
@@ -643,6 +656,7 @@ namespace smbios {
     struct bios_version final {
         typedef const char *type;
         static constexpr auto dmi_id = u8"bios_version";
+        static constexpr auto is_immutable = true;
         static constexpr auto name = baseboard_version::name;
     };
 
@@ -651,6 +665,7 @@ namespace smbios {
     /// </summary>
     struct chassis final {
         typedef property_set type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Chassis";
     };
 
@@ -660,6 +675,7 @@ namespace smbios {
     struct chassis_asset_tag final {
         typedef const char *type;
         static constexpr auto dmi_id = u8"board_asset_tag";
+        static constexpr auto is_immutable = true;
         static constexpr auto is_sensitive = true;
         static constexpr auto name = baseboard_asset_tag::name;
     };
@@ -670,6 +686,7 @@ namespace smbios {
     struct chassis_serial final {
         typedef const char *type;
         static constexpr auto dmi_id = u8"chassis_serial";
+        static constexpr auto is_immutable = true;
         static constexpr auto is_sensitive = true;
         static constexpr auto name = baseboard_serial::name;
     };
@@ -680,6 +697,7 @@ namespace smbios {
     struct chassis_type final {
         typedef const char *type;
         static constexpr auto dmi_id = u8"chassis_type";
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Type";
     };
 
@@ -689,6 +707,7 @@ namespace smbios {
     struct chassis_vendor final {
         typedef const char *type;
         static constexpr auto dmi_id = u8"chassis_vendor";
+        static constexpr auto is_immutable = true;
         static constexpr auto name = baseboard_vendor::name;
     };
 
@@ -698,6 +717,7 @@ namespace smbios {
     struct chassis_version final {
         typedef const char *type;
         static constexpr auto dmi_id = u8"chassis_version";
+        static constexpr auto is_immutable = true;
         static constexpr auto name = baseboard_version::name;
     };
 
@@ -708,6 +728,7 @@ namespace smbios {
     /// </summary>
     struct cpu final {
         typedef property_set type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"CPU";
     };
 
@@ -716,6 +737,7 @@ namespace smbios {
     /// </summary>
     struct cpu_asset_tag final {
         typedef const char *type;
+        static constexpr auto is_immutable = true;
         static constexpr auto is_sensitive = true;
         static constexpr auto name = baseboard_asset_tag::name;
     };
@@ -725,6 +747,7 @@ namespace smbios {
     /// </summary>
     struct cpu_characteristics final {
         typedef std::uint32_t type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Characteristics";
     };
 
@@ -733,6 +756,7 @@ namespace smbios {
     /// </summary>
     struct cpu_cores final {
         typedef std::uint32_t type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Cores";
     };
 
@@ -741,6 +765,7 @@ namespace smbios {
     /// </summary>
     struct cpu_enabled_cores final {
         typedef std::uint32_t type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Enabled Cores";
     };
 
@@ -749,6 +774,7 @@ namespace smbios {
     /// </summary>
     struct cpu_external_clock final {
         typedef std::uint32_t type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"External Clock";
     };
 
@@ -757,6 +783,7 @@ namespace smbios {
     /// </summary>
     struct cpu_id final {
         typedef std::uint32_t type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"ID";
     };
 
@@ -765,6 +792,7 @@ namespace smbios {
     /// </summary>
     struct cpu_maximum_speed final {
         typedef std::uint32_t type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Maximum Speed";
     };
 
@@ -773,6 +801,7 @@ namespace smbios {
     /// </summary>
     struct cpu_part_number final {
         typedef const char *type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Part Number";
     };
 
@@ -790,6 +819,7 @@ namespace smbios {
     /// </summary>
     struct cpu_socket final {
         typedef std::uint32_t type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Socket";
     };
 
@@ -807,6 +837,7 @@ namespace smbios {
     /// </summary>
     struct cpu_threads final {
         typedef std::uint32_t type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Threads";
     };
 
@@ -815,6 +846,7 @@ namespace smbios {
     /// </summary>
     struct cpu_upgrade final {
         typedef std::uint32_t type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Upgrade";
     };
 
@@ -823,6 +855,7 @@ namespace smbios {
     /// </summary>
     struct cpu_vendor final {
         typedef const char *type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = baseboard_vendor::name;
     };
 
@@ -831,6 +864,7 @@ namespace smbios {
     /// </summary>
     struct cpu_version final {
         typedef const char *type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = baseboard_version::name;
     };
 
@@ -839,6 +873,7 @@ namespace smbios {
     /// </summary>
     struct cpu_voltage final {
         typedef std::uint32_t type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Voltage";
     };
 
@@ -847,6 +882,7 @@ namespace smbios {
     /// </summary>
     struct memory_asset_tag final {
         typedef const char *type;
+        static constexpr auto is_immutable = true;
         static constexpr auto is_sensitive = true;
         static constexpr auto name = baseboard_asset_tag::name;
     };
@@ -856,6 +892,7 @@ namespace smbios {
     /// </summary>
     struct memory_bank_locator final {
         typedef const char *type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Bank Locator";
     };
 
@@ -864,6 +901,7 @@ namespace smbios {
     /// </summary>
     struct memory_device final {
         typedef property_set type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Memory Device";
     };
 
@@ -872,6 +910,7 @@ namespace smbios {
     /// </summary>
     struct memory_device_locator final {
         typedef const char *type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Device Locator";
     };
 
@@ -880,6 +919,7 @@ namespace smbios {
     /// </summary>
     struct memory_enabled_size final {
         typedef std::uint32_t type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Enabled Size";
     };
 
@@ -889,6 +929,7 @@ namespace smbios {
     /// </summary>
     struct memory_form_factor final {
         typedef const char *type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Form Factor";
     };
 
@@ -897,6 +938,7 @@ namespace smbios {
     /// </summary>
     struct memory_maximum_voltage final {
         typedef std::uint32_t type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Maximum Voltage";
     };
 
@@ -905,6 +947,7 @@ namespace smbios {
     /// </summary>
     struct memory_minimum_voltage final {
         typedef std::uint32_t type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Minimum Voltage";
     };
 
@@ -913,6 +956,7 @@ namespace smbios {
     /// </summary>
     struct memory_module final {
         typedef property_set type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Memory Module";
     };
 
@@ -921,6 +965,7 @@ namespace smbios {
     /// </summary>
     struct memory_part_number final {
         typedef const char *type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = cpu_part_number::name;
     };
 
@@ -929,6 +974,7 @@ namespace smbios {
     /// </summary>
     struct memory_serial final {
         typedef const char *type;
+        static constexpr auto is_immutable = true;
         static constexpr auto is_sensitive = true;
         static constexpr auto name = baseboard_serial::name;
     };
@@ -938,6 +984,7 @@ namespace smbios {
     /// </summary>
     struct memory_size final {
         typedef std::uint32_t type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Size";
     };
 
@@ -946,6 +993,7 @@ namespace smbios {
     /// </summary>
     struct memory_socket final {
         typedef const char *type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Socket";
     };
 
@@ -954,6 +1002,7 @@ namespace smbios {
     /// </summary>
     struct memory_speed final {
         typedef std::uint32_t type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Speed";
     };
 
@@ -962,6 +1011,7 @@ namespace smbios {
     /// </summary>
     struct memory_type final {
         typedef std::uint32_t type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Type";
     };
 
@@ -970,6 +1020,7 @@ namespace smbios {
     /// </summary>
     struct memory_vendor final {
         typedef const char *type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Vendor";
     };
 
@@ -978,6 +1029,7 @@ namespace smbios {
     /// </summary>
     struct memory_voltage final {
         typedef std::uint32_t type;
+        static constexpr auto is_immutable = true;
         static constexpr auto name = cpu_voltage::name;
     };
 

@@ -21,7 +21,6 @@ namespace environment {
     /// </summary>
     struct current_directory final {
         typedef const char *type;
-        static constexpr auto is_variable = true;
         static constexpr auto name = u8"Current Directory";
     };
 
@@ -31,7 +30,6 @@ namespace environment {
     struct variables final {
         typedef property_set type;
         static constexpr auto is_sensitive = true;
-        static constexpr auto is_variable = true;
         static constexpr auto name = u8"Variables";
     };
 
