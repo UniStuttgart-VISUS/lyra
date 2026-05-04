@@ -95,5 +95,8 @@ The `autodoc_write_raw` function is a one-stop solution for documenting everythi
 // changes to parts of the state that might change over time.
 ::autodoc_write_raw("state.json", visus::lyra::collection_flags::no_immutable);
 ```
-`autodoc_write_raw` is available to C clients as well. Just replace the enumeration class with `collection_flags_none`, `collection_flags_no_sensitive`, etc.
+`autodoc_write_raw` is available to C clients as well. Just replace the enumeration class with `collection_flags_none`, `collection_flags_no_sensitive`, etc. Consider the following example collecting all non-sensitive data to a file named like the calling process:
+```c
+autodoc_write_raw(NULL, collection_flags_none);
+```
 
