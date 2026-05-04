@@ -38,6 +38,7 @@
 #define LYRA_ABI_VERSION(mj, mn) LYRA_CONCAT(mj, LYRA_CONCAT(_, mn))
 
 
+#if defined(__cplusplus)
 /// <summary>
 /// Creates the name of the namespace for the specified ABI version.
 /// </summary>
@@ -94,6 +95,25 @@ LYRA_NAMESPACE_BEGIN _LYRA_NAMESPACE_BEGIN(detail)
 /// Marks the end of the namespace for implementation details.
 /// </summary>
 #define LYRA_DETAIL_NAMESPACE_END } LYRA_NAMESPACE_END
+
+#else /* defined(__cplusplus) */
+
+#define LYRA_NAMESPACE
+#define LYRA_NAMESPACE_BEGIN
+#define LYRA_NAMESPACE_END
+
+#endif /* defined(__cplusplus) */
+
+
+/// <summary>
+/// Helper for defining an enum class in C++ and a regular enum in C in the
+/// public API.
+/// </summary>
+#if defined(__cplusplus)
+#define LYRA_ENUM_CLASS class
+#else /* defined(__cplusplus) */
+#define LYRA_ENUM_CLASS
+#endif /* defined(__cplusplus) */
 
 
 #if defined(_WIN32)

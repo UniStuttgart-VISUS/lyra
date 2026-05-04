@@ -16,10 +16,11 @@ file(GLOB_RECURSE PublicHeaderFiles RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "${In
 set(SourceDir "${CMAKE_CURRENT_SOURCE_DIR}/src")
 file(GLOB_RECURSE PrivateHeaderFiles RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "${SourceDir}/*.h" "${SourceDir}/*.inl")
 file(GLOB_RECURSE SourceFiles RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "${SourceDir}/*.cpp")
+file(GLOB_RECURSE IdlFiles RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "${SourceDir}/*.idl")
 
-source_group("Header Files\\include" FILES  ${PublicHeaderFiles})
-source_group("Header Files\\src" FILES  ${PrivateHeaderFiles})
-source_group("Source Files\\src" FILES  ${SourceFiles})
+source_group("Header Files\\include" FILES ${PublicHeaderFiles})
+source_group("Header Files\\src" FILES ${PrivateHeaderFiles})
+source_group("Source Files\\src" FILES ${SourceFiles} ${IdlFiles})
 
 # Define the output.
 add_library(${PROJECT_NAME} SHARED ${PublicHeaderFiles} ${PrivateHeaderFiles} ${SourceFiles})

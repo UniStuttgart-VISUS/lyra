@@ -8,8 +8,12 @@
 #define _LYRA_COLLECTION_FLAGS_H
 #pragma once
 
+#if defined(__cplusplus)
 #include <cinttypes>
 #include <type_traits>
+#else /* defined(__cplusplus) */
+#include <stdint.h>
+#endif /* defined(__cplusplus) */
 
 #include "visus/autodoc/api.h"
 
@@ -19,7 +23,7 @@ LYRA_NAMESPACE_BEGIN
 /// <summary>
 /// Allows for customising how the library collects information.
 /// </summary>
-enum class collection_flags : std::uint32_t {
+enum LYRA_ENUM_CLASS collection_flags {
 
     /// <summary>
     /// Specifies the default collection behaviour.
@@ -48,6 +52,7 @@ enum class collection_flags : std::uint32_t {
 };
 
 
+#if defined(__cplusplus)
 /// <summary>
 /// Answer whether all of <paramref name="flag" /> are set in
 /// <paramref name="flags" />.
@@ -65,9 +70,12 @@ inline constexpr bool has_flag(_In_ const collection_flags flags,
     const auto f = static_cast<int_type>(flag);
     return (fs & f) == f;
 }
+#endif /* defined(__cplusplus) */
 
 LYRA_NAMESPACE_END
 
+
+#if defined(__cplusplus)
 /// <summary>
 /// Combines two <see cref="collection_flags" /> values into one.
 /// </summary>
@@ -82,5 +90,6 @@ inline constexpr LYRA_NAMESPACE::collection_flags operator |(
     const auto r = static_cast<int_type>(rhs);
     return static_cast<LYRA_NAMESPACE::collection_flags>(l | r);
 }
+#endif /* defined(__cplusplus) */
 
 #endif /* !defined(_LYRA_COLLECTION_FLAGS_H) */
