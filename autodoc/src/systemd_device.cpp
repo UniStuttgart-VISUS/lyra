@@ -38,6 +38,35 @@ LYRA_DETAIL_NAMESPACE::systemd_device::enumerate(void) {
         retval.emplace_back();
         auto& device = retval.back();
 
+        //{
+        //    const char *value;
+        //    if (::sd_device_get_device_id(d, &value) >= 0) {
+        //        device._dev_id = value;
+        //    }
+        //}
+
+        {
+            const char *value;
+            if (::sd_device_get_devname(d, &value) >= 0) {
+                device._dev_name = value;
+            }
+        }
+
+        {
+            const char *value;
+            if (::sd_device_get_devpath(d, &value) >= 0) {
+                device._dev_path = value;
+            }
+        }
+
+        if (::sd_device_get_devnum(d, &device._dev_num) < 0) {
+            device._dev_num = 0;
+        }
+
+        if (::sd_device_get_diskseq(d, &device._disk_seq) < 0) {
+            device._disk_seq = 0;
+        }
+
         {
             const char *value;
             if (::sd_device_get_driver(d, &value) >= 0) {
@@ -45,17 +74,21 @@ LYRA_DETAIL_NAMESPACE::systemd_device::enumerate(void) {
             }
         }
 
-        {
-            const char *value;
-            if (::sd_device_get_devname(d, &value) >= 0) {
-                device._name = value;
-            }
+        //{
+        //    const char *value;
+        //    if (::sd_device_get_driver_subsystem(d, &value) >= 0) {
+        //        device._driver_subsystem = value;
+        //    }
+        //}
+
+        if (::sd_device_get_ifindex(d, &device._ifindex) < 0) {
+            device._ifindex = 0;
         }
 
         {
             const char *value;
-            if (::sd_device_get_devpath(d, &value) >= 0) {
-                device._path = value;
+            if (::sd_device_get_devtype(d, &value) >= 0) {
+                device._dev_type = value;
             }
         }
 
@@ -68,15 +101,22 @@ LYRA_DETAIL_NAMESPACE::systemd_device::enumerate(void) {
 
         {
             const char *value;
-            if (::sd_device_get_syspath(d, &value) >= 0) {
-                device._sys_path = value;
+            if (::sd_device_get_sysname(d, &value) >= 0) {
+                device._sys_name = value;
             }
         }
 
         {
             const char *value;
-            if (::sd_device_get_devtype(d, &value) >= 0) {
-                device._type = value;
+            if (::sd_device_get_sysnum(d, &value) >= 0) {
+                device._sys_num = value;
+            }
+        }
+
+        {
+            const char *value;
+            if (::sd_device_get_syspath(d, &value) >= 0) {
+                device._sys_path = value;
             }
         }
     } /* for (auto d =  ... */
