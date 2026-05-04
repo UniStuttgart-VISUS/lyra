@@ -8,6 +8,8 @@
 #define _LYRA_AUTODOC_H
 #pragma once
 
+#include <wchar.h>
+
 #include "visus/autodoc/collection_flags.h"
 
 
