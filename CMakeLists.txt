@@ -35,6 +35,12 @@ FetchContent_Declare(nlohmann_json
 option(JSON_Install "" ON)
 FetchContent_MakeAvailable(nlohmann_json)
 
+# PkgConfig for finding libsystemd on Linux.
+find_package(PkgConfig)
+if (PkgConfig_FOUND)
+    pkg_check_modules(Systemd libsystemd)
+endif ()
+
 if (NOT WIN32)
     find_package(OpenSSL)
     #find_package(LibUUID REQUIRED)

@@ -51,6 +51,7 @@ if (WIN32)
 else ()
     target_link_libraries(${PROJECT_NAME} PRIVATE ICU::uc ICU::data)
     target_link_libraries(${PROJECT_NAME} PRIVATE uuid)
+    target_link_libraries(${PROJECT_NAME} PRIVATE systemd)
 endif ()
 
 if (OpenSSL_FOUND)

@@ -21,7 +21,7 @@
 LYRA_DETAIL_NAMESPACE_BEGIN
 
 /// <summary>
-/// A container for the device inforamtion obtained from sysfs on Linux.
+/// A container for the device information obtained from sysfs on Linux.
 /// </summary>
 class LYRA_TEST_API sysfs_device final {
 
