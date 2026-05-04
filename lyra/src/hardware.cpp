@@ -10,6 +10,7 @@
 
 #include "visus/lyra/convert_string.h"
 #include "visus/lyra/guid.h"
+#include "visus/lyra/timestamp.h"
 #include "visus/lyra/trace.h"
 
 #include "setup_api.h"
@@ -70,6 +71,50 @@ template<class TProp> bool try_add_string_prop(
 }
 
 /// <summary>
+/// Tries to add information about the driver of the given device to
+/// <see cref="ps" />.
+/// </summary>
+static void try_add_driver(
+        _Inout_ LYRA_DETAIL_NAMESPACE::property_set_impl& ps,
+        _In_ const LYRA_NAMESPACE::collection_flags flags,
+        _In_ HDEVINFO handle,
+        _In_ SP_DEVINFO_DATA& data) {
+    using namespace LYRA_NAMESPACE;
+    try {
+        detail::add_device_install_flags(handle, &data, 0,
+            DI_FLAGSEX_INSTALLEDDRIVER);
+        detail::enum_driver_info(handle,
+            &data,
+            SPDIT_COMPATDRIVER,
+            [&](HDEVINFO h, PSP_DEVINFO_DATA d, SP_DRVINFO_DATA_W& drv) {
+                using namespace LYRA_NAMESPACE;
+                using detail::checked_add;
+
+                detail::property_set_impl dps;
+                const auto desc = to_utf8(drv.Description);
+                checked_add<hardware::description>(dps, flags,desc.c_str());
+                const auto mfg = to_utf8(drv.MfgName);
+                checked_add<hardware::manufacturer>(dps, flags, mfg.c_str());
+                const auto prov = to_utf8(drv.ProviderName);
+                checked_add<hardware::provider>(dps, flags, prov.c_str());
+                const auto type = static_cast<std::uint32_t>(drv.DriverType);
+                checked_add<hardware::driver_type>(dps, flags, type);
+                const auto drv_date = timestamp::from_file_time(drv.DriverDate);
+                checked_add<hardware::date>(dps, flags, drv_date);
+                const auto ver = std::to_string(drv.DriverVersion);
+                checked_add<hardware::version>(dps, flags, ver.c_str());
+
+                auto props = property_set(std::move(dps));
+                checked_add<hardware::driver>(ps, flags, std::move(props));
+                return false;
+            });
+    } catch (const std::exception& ex) {
+        LYRA_TRACE("Failed to retrieve device driver: %s", ex.what());
+    }
+}
+
+
+/// <summary>
 /// Tries retrieving the class GUID of the given device.
 /// </summary>
 static LYRA_NAMESPACE::guid try_get_clsid(_In_ HDEVINFO handle,
@@ -112,6 +157,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::hardware::get(
                 SPDRP_CLASS);
             ::try_add_prop<device_type>(dps, flags, handle, data,
                 SPDRP_DEVTYPE);
+            ::try_add_driver(dps, flags, handle, data);
             ::try_add_string_prop<friendly_name>(dps, flags, handle, data,
                 SPDRP_FRIENDLYNAME);
             ::try_add_string_prop<location>(dps, flags, handle, data,
@@ -120,15 +166,6 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::hardware::get(
                 SPDRP_MFG);
             ::try_add_string_prop<hardware_id>(dps, flags, handle, data,
                 SPDRP_HARDWAREID);
-
-            //detail::add_device_install_flags(handle, &data, 0,
-            //DI_FLAGSEX_INSTALLEDDRIVER);
-            //detail::enum_driver_info(handle, &data, SPDIT_COMPATDRIVER,
-            //    [&dps, flags](HDEVINFO h, PSP_DEVINFO_DATA d,
-            //            SP_DRVINFO_DATA_W& drv) {
-            //        return false;
-            //    });
-
             classes[clsid].emplace_back(std::move(dps));
 
             return true;

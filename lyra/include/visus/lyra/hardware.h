@@ -10,11 +10,21 @@
 
 #include "visus/lyra/collection_flags.h"
 #include "visus/lyra/property_set.h"
+#include "visus/lyra/timestamp.h"
 
 
 LYRA_NAMESPACE_BEGIN
 
 namespace hardware {
+
+    /// <summary>
+    /// Identifies a property holding a date, most importantly the date of the
+    /// driver.
+    /// </summary>
+    struct date final {
+        typedef timestamp::value_type type;
+        static constexpr auto name = u8"Date";
+    };
 
     /// <summary>
     /// Identifies a property holding a description of the device.
@@ -49,6 +59,14 @@ namespace hardware {
     };
 
     /// <summary>
+    /// Identifies a property holding the driver type.
+    /// </summary>
+    struct driver_type final {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"Driver Type";
+    };
+
+    /// <summary>
     /// Identifies a property holding the human-readable name of a device.
     /// </summary>
     struct friendly_name final {
@@ -73,11 +91,28 @@ namespace hardware {
     };
 
     /// <summary>
+    /// Identifies a property holding the name of the driver provider.
+    /// </summary>
+    struct provider final {
+        typedef const char *type;
+        static constexpr auto name = u8"Provider";
+    };
+
+    /// <summary>
     /// Identifies a property holding the name of the manufacturer.
     /// </summary>
     struct manufacturer final {
         typedef const char *type;
         static constexpr auto name = u8"Manufacturer";
+    };
+
+    /// <summary>
+    /// Identifies a property holding a version string, most importantly the
+    /// version of the driver.
+    /// </summary>
+    struct version final {
+        typedef const char *type;
+        static constexpr auto name = u8"Version";
     };
 
     /// <summary>
