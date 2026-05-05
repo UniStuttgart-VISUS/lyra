@@ -4,14 +4,19 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 #include "systemd_device.h"
 
 
-#if !defined(_WIN32)
+#if defined(LYRA_USE_SYSTEMD)
 TEST(systemd_device, enumerate) {
-    auto devices = LYRA_DETAIL_NAMESPACE::systemd_device::enumerate();
+    using LYRA_DETAIL_NAMESPACE::systemd_device;
+    using namespace testing;
+
+    auto devices = systemd_device::enumerate();
     EXPECT_FALSE(devices.empty());
+    EXPECT_THAT(devices, Each(Property(&systemd_device::name, Not(IsEmpty()))));
 }
-#endif /* !defined(_WIN32) */
+#endif /* defined(LYRA_USE_SYSTEMD) */

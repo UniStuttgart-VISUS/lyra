@@ -135,6 +135,28 @@ std::string LYRA_DETAIL_NAMESPACE::final_path(_In_z_ const char *path) {
 }
 
 
+#if defined(_WIN32)
+/*
+ * LYRA_DETAIL_NAMESPACE::final_path
+ */
+std::string LYRA_DETAIL_NAMESPACE::final_path(_In_z_ const wchar_t *path) {
+    auto handle = open_read(path);
+
+    auto len = ::GetFinalPathNameByHandleW(handle.get(), nullptr, 0,
+        VOLUME_NAME_NT);
+    if (len > 0) {
+        std::vector<wchar_t> p(len + 1);
+        len = ::GetFinalPathNameByHandleW(handle.get(), p.data(),
+            static_cast<DWORD>(p.size()), VOLUME_NAME_NT);
+        return to_utf8(p.data(), len);
+
+    } else {
+        return "";
+    }
+}
+#endif /* defined(_WIN32) */
+
+
 /*
  * LYRA_DETAIL_NAMESPACE::open_read
  */

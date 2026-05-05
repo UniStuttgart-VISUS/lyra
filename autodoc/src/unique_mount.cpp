@@ -4,6 +4,7 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+#if !defined(_WIN32)
 #include "unique_mount.h"
 
 #include <cstring>
@@ -102,3 +103,5 @@ LYRA_DETAIL_NAMESPACE::unique_mount::operator =(
 
     return *this;
 }
+
+#endif /* !defined(_WIN32) */

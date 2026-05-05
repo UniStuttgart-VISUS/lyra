@@ -444,6 +444,16 @@ public:
     multi_sz& add(_In_opt_z_ const value_type *str);
 
     /// <summary>
+    /// Append <paramref name="str" /> at the end of the multi-sz.
+    /// </summary>
+    /// <param name="str">The string to be appended.</param>
+    /// <returns><c>*<see langword="this" />.</c>.</returns>
+    template<class TTraits, class TAlloc> inline multi_sz& add(
+            _In_ const std::basic_string<value_type, TTraits, TAlloc>& str) {
+        return this->add(str.c_str());
+    }
+
+    /// <summary>
     /// Answer the raw data of the <paramref name="idx" />th string in the
     /// multi-sz or <c>nullptr</c> if no such element exists.
     /// </summary>

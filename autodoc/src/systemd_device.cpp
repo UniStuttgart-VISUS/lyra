@@ -6,9 +6,12 @@
 
 #include "systemd_device.h"
 
+#include <filesystem>
 #include <memory>
 
+#if defined(LYRA_USE_SYSTEMD)
 #include <systemd/sd-device.h>
+#endif /* LYRA_USE_SYSTEMD */
 
 
 /*
@@ -16,11 +19,13 @@
  */
 std::vector<LYRA_DETAIL_NAMESPACE::systemd_device>
 LYRA_DETAIL_NAMESPACE::systemd_device::enumerate(void) {
+    std::vector<systemd_device> retval;
+
+#if defined(LYRA_USE_SYSTEMD)
     typedef sd_device_enumerator enum_type;
     typedef decltype(&::sd_device_enumerator_unref) del_type;
     std::unique_ptr<enum_type, del_type> enumerator(nullptr,
         &::sd_device_enumerator_unref);
-    std::vector<systemd_device> retval;
 
     // Create a device enumerator and hand it over to the unique pointer if
     // successful.
@@ -120,6 +125,28 @@ LYRA_DETAIL_NAMESPACE::systemd_device::enumerate(void) {
             }
         }
     } /* for (auto d =  ... */
+#endif /* LYRA_USE_SYSTEMD */
 
     return retval;
+}
+
+
+/*
+ * LYRA_DETAIL_NAMESPACE::systemd_device::name
+ */
+std::string LYRA_DETAIL_NAMESPACE::systemd_device::name(void) const noexcept {
+    if (!this->_dev_name.empty()) {
+        return this->_dev_name;
+
+    } else if (!this->_sys_name.empty()) {
+        return this->_sys_name;
+
+    } else if (!this->_dev_path.empty()) {
+        std::filesystem::path p(this->_dev_path);
+        return p.filename().string();
+
+    } else {
+        std::filesystem::path p(this->_sys_path);
+        return p.filename().string();
+    }
 }

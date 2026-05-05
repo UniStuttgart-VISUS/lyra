@@ -38,7 +38,10 @@ FetchContent_MakeAvailable(nlohmann_json)
 # PkgConfig for finding libsystemd on Linux.
 find_package(PkgConfig)
 if (PkgConfig_FOUND)
-    pkg_check_modules(Systemd libsystemd)
+    pkg_check_modules(SYSTEMD libsystemd)
+    if (SYSTEMD_FOUND)
+        add_compile_definitions(LYRA_USE_SYSTEMD)
+    endif ()
 endif ()
 
 if (NOT WIN32)

@@ -8,55 +8,41 @@
 /*
  * LYRA_DETAIL_NAMESPACE::sysfs_device::from_path
  */
-template<class TIterator>
+template<class TIterator > 
 std::size_t LYRA_DETAIL_NAMESPACE::sysfs_device::from_path(
         _In_ TIterator oit,
-        _In_ const std::filesystem::path& path) {
-    std::size_t retval = 0;
-
+        _In_ const std::filesystem::path& path,
+        _In_ const bool recursive) {
     if (!std::filesystem::exists(path)) {
-        return retval;
+        return 0;
     }
 
-    for (auto& p : std::filesystem::directory_iterator(
-            path,
-            std::filesystem::directory_options::skip_permission_denied)) {
-        const auto subsystem = p.path() / "subsystem";
-        LYRA_TRACE("Checking for subsystem directory \"%s\".",
-            subsystem.c_str());
+    // Note: the following enumeration should be safe with recursive iterators,
+    // too, as long as we do not follow symlinks, which might cause an infinite
+    // loop.
+    const auto enumerate = [&oit](const auto& iterator) {
+        std::size_t retval = 0;
 
-        if (std::filesystem::exists(subsystem)) {
-            *oit++ = sysfs_device(p.path());
-            ++retval;
+        for (auto& p : iterator) {
+            const auto subsystem = p.path() / "subsystem";
+            LYRA_TRACE("Checking for subsystem directory \"%s\".",
+                subsystem.c_str());
+
+            if (std::filesystem::exists(subsystem)) {
+                LYRA_TRACE("Found device at\"%s\".", p.path().c_str());
+                *oit++ = sysfs_device(p);
+                ++retval;
+            }
         }
-    }
 
-    return retval;
-}
-
-
-/*
- * LYRA_DETAIL_NAMESPACE::sysfs_device::from_container
- */
-template<class TIterator > 
-std::size_t LYRA_DETAIL_NAMESPACE::sysfs_device::from_container(
-        _In_ TIterator oit,
-        _In_ const std::filesystem::path& path) {
-    std::size_t retval = 0;
-
-    if (!std::filesystem::exists(path)) {
         return retval;
-    }
+    };
 
-    // Note: the following should be safe as long as we do not follow symlinks,
-    // which might cause an infinite loop.
-    for (auto& p : std::filesystem::recursive_directory_iterator(
+    return (recursive)
+        ? enumerate(std::filesystem::recursive_directory_iterator(
             path,
-            std::filesystem::directory_options::skip_permission_denied)) {
-        if (p.is_directory()) {
-            retval += from_path(oit, p.path());
-        }
-    }
-
-    return retval;
+            std::filesystem::directory_options::skip_permission_denied))
+        : enumerate(std::filesystem::directory_iterator(
+            path,
+            std::filesystem::directory_options::skip_permission_denied));
 }

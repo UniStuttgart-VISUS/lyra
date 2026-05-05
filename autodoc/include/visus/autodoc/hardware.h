@@ -36,6 +36,14 @@ namespace hardware {
     };
 
     /// <summary>
+    /// Identifies a property holding the name of a device.
+    /// </summary>
+    struct device_name final {
+        typedef const char *type;
+        static constexpr auto name = u8"Name";
+    };
+
+    /// <summary>
     /// Identifies a property holding the class of a device.
     /// </summary>
     struct device_class final {
@@ -92,6 +100,14 @@ namespace hardware {
     };
 
     /// <summary>
+    /// Identifies a property holding the path of the device.
+    /// </summary>
+    struct path final {
+        typedef const char *type;
+        static constexpr auto name = u8"Path";
+    };
+
+    /// <summary>
     /// Identifies a property holding the name of the driver provider.
     /// </summary>
     struct provider final {
@@ -105,6 +121,22 @@ namespace hardware {
     struct manufacturer final {
         typedef const char *type;
         static constexpr auto name = u8"Manufacturer";
+    };
+
+    /// <summary>
+    /// Identifies a property holding the contents of the uevent file.
+    /// </summary>
+    struct user_event final {
+        typedef property_set type;
+        static constexpr auto name = u8"User Event";
+    };
+
+    /// <summary>
+    /// Identifies a property holding the vendor ID.
+    /// </summary>
+    struct vendor final {
+        typedef const char *type;
+        static constexpr auto name = u8"Vendor";
     };
 
     /// <summary>

@@ -95,6 +95,16 @@ LYRA_TEST_API std::size_t file_size(_In_z_ const wchar_t *path);
 /// <returns></returns>
 LYRA_TEST_API std::string final_path(_In_z_ const char *path);
 
+#if defined(_WIN32)
+/// <summary>
+/// Resolves any links in the given <paramref name="path" /> and returns
+/// the final path.
+/// </summary>
+/// <param name="path"></param>
+/// <returns></returns>
+LYRA_TEST_API std::string final_path(_In_z_ const wchar_t *path);
+#endif /* defined(_WIN32) */
+
 /// <summary>
 /// Opens an existing file for reading.
 /// </summary>

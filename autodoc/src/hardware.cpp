@@ -13,8 +13,10 @@
 #include "visus/autodoc/timestamp.h"
 #include "visus/autodoc/trace.h"
 
-#include "setup_api.h"
 #include "property_set_impl.h"
+#include "setup_api.h"
+#include "sysfs_device.h"
+#include "systemd_device.h"
 
 
 #if defined(_WIN32)
@@ -194,14 +196,16 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::hardware::get(
             ::try_add_prop<device_type>(dps, flags, handle, data,
                 SPDRP_DEVTYPE);
             ::try_add_driver(dps, flags, handle, data);
+            ::try_add_multi_sz_prop<hardware_id>(dps, flags, handle, data,
+                SPDRP_HARDWAREID);
             ::try_add_string_prop<friendly_name>(dps, flags, handle, data,
                 SPDRP_FRIENDLYNAME);
             ::try_add_string_prop<location>(dps, flags, handle, data,
                 SPDRP_LOCATION_INFORMATION);
             ::try_add_string_prop<manufacturer>(dps, flags, handle, data,
                 SPDRP_MFG);
-            ::try_add_multi_sz_prop<hardware_id>(dps, flags, handle, data,
-                SPDRP_HARDWAREID);
+            ::try_add_string_prop<path>(dps, flags, handle, data,
+                SPDRP_PHYSICAL_DEVICE_OBJECT_NAME);
             classes[clsid].emplace_back(std::move(dps));
 
             return true;
@@ -210,6 +214,65 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::hardware::get(
         for (auto& c : classes) {
             const auto clsid = c.first.to_string<char>();
             ps.add(clsid.c_str(), std::move(c.second));
+        }
+    } catch (const std::exception& ex) {
+        LYRA_TRACE("Failed to enumerate devices: %s", ex.what());
+    }
+#else  /* defined(_WIN32)*/
+    try {
+        std::unordered_map<std::string, std::vector<property_set>> buses;
+        auto devices = detail::sysfs_device::from_path();
+
+        for (auto& d : devices) {
+            detail::property_set_impl dps;
+
+            // Add the path unconditionally, because we need it later.
+            dps.add<path>(d.path().c_str());
+
+            // Add scalar propeties of the device object.
+            if (!d.device().empty()) {
+                multi_sz m;
+                m.add(d.device());
+                detail::checked_add<hardware_id>(dps, flags, std::move(m));
+            }
+            if (!d.driver().empty()) {
+                detail::property_set_impl drvps;
+                detail::checked_add<path>(drvps, flags, d.driver().c_str());
+                detail::checked_add<driver>(dps, flags,
+                    property_set(std::move(drvps)));
+            }
+            if (!d.name().empty()) {
+                detail::checked_add<device_name>(dps, flags, d.name().c_str());
+            }
+            if (!d.vendor().empty()) {
+                detail::checked_add<vendor>(dps, flags, d.vendor().c_str());
+            }
+
+            // Convert the uevent map to a property set.
+            if (!d.uevent().empty()) {
+                detail::property_set_impl uevtps;
+                for (auto& e : d.uevent()) {
+                    uevtps.add(e.first.c_str(), e.second.c_str());
+                }
+                detail::checked_add<user_event>(dps, flags, property_set(
+                    std::move(uevtps)));
+            }
+
+            // Emplace the device in the per-bus list of devices.
+            buses[d.bus()].emplace_back(std::move(dps));
+        }
+
+        for (auto& bus : buses) {
+            if (bus.first.empty()) {
+                // If the device has no bus associated with it, we add it
+                // directly via its path, which is a unique key.
+                for (auto& dev : bus.second) {
+                    assert(dev.contains(path::name));
+                    ps.add(dev.get<path>()->data(), std::move(dev));
+                }
+            } else {
+                ps.add(bus.first.c_str(), std::move(bus.second));
+            }
         }
     } catch (const std::exception& ex) {
         LYRA_TRACE("Failed to enumerate devices: %s", ex.what());

@@ -59,6 +59,10 @@ if (OpenSSL_FOUND)
     target_compile_definitions(${PROJECT_NAME} PRIVATE LYRA_USE_OPENSSL)
 endif ()
 
+if (SYSTEMD_FOUND)
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${SYSTEMD_LINK_LIBRARIES})
+endif ()
+
 # Publish the private headers for testing.
 if (LYRA_BuildTests)
     set(LyraTestInclude ${SourceDir} PARENT_SCOPE)

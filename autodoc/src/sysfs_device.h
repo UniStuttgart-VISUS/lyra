@@ -13,6 +13,7 @@
 #include <filesystem>
 #include <set>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include "visus/autodoc/trace.h"
@@ -28,7 +29,7 @@ class LYRA_TEST_API sysfs_device final {
 public:
 
     static std::vector<sysfs_device> from_path(_In_opt_z_ const char *path
-        = nullptr);
+        = nullptr, _In_ const bool recursive = false);
 
     static constexpr const char *block_path = "/sys/block";
     static constexpr const char *bus_path = "/sys/bus";
@@ -44,6 +45,14 @@ public:
     }
 
     /// <summary>
+    /// Gets the device ID.
+    /// </summary>
+    /// <returns></returns>
+    inline const std::string& device(void) const noexcept {
+        return this->_device;
+    }
+
+    /// <summary>
     /// Gets the name of the device class.
     /// </summary>
     /// <returns></returns>
@@ -52,11 +61,36 @@ public:
     }
 
     /// <summary>
+    /// Gets the path to the driver if known.
+    /// </summary>
+    /// <returns></returns>
+    inline const std::string& driver(void) const noexcept {
+        return this->_driver;
+    }
+
+    /// <summary>
     /// Gets the name of the device in the sys file system.
     /// </summary>
     /// <returns></returns>
     inline const std::string& name(void) const noexcept {
         return this->_name;
+    }
+
+    /// <summary>
+    /// Gets the path by which the device was discovered in sysfs.
+    /// </summary>
+    /// <returns></returns>
+    inline const std::string& path(void) const noexcept {
+        return this->_path;
+    }
+
+    /// <summary>
+    /// Gets the contents of the uevent file at the time the snapshot was taken.
+    /// </summary>
+    /// <returns></returns>
+    const std::unordered_map<std::string, std::string>& uevent(
+            void) const noexcept {
+        return this->_uevent;
     }
 
     /// <summary>
@@ -69,11 +103,8 @@ public:
 
 private:
 
-    template<class TIterator > static std::size_t from_container(
-        _In_ TIterator oit, _In_ const std::filesystem::path& path);
-
     template<class TIterator> static std::size_t from_path(_In_ TIterator oit,
-        _In_ const std::filesystem::path& path);
+        _In_ const std::filesystem::path& path, _In_ const bool recursive);
 
     /// <summary>
     /// Initialises a new instance.
@@ -84,7 +115,11 @@ private:
 
     std::string _bus;
     std::string _class;
+    std::string _device;
+    std::string _driver;
     std::string _name;
+    std::string _path;
+    std::unordered_map<std::string, std::string> _uevent;
     std::string _vendor;
 };
 
@@ -92,7 +127,7 @@ LYRA_DETAIL_NAMESPACE_END
 
 
 /// <summary>
-/// Orders a device based on its name.
+/// Orders a device based on its path, which should be a unique key.
 /// </summary>
 template<> struct std::less<LYRA_DETAIL_NAMESPACE::sysfs_device> final {
     typedef LYRA_DETAIL_NAMESPACE::sysfs_device value_type;
@@ -100,7 +135,7 @@ template<> struct std::less<LYRA_DETAIL_NAMESPACE::sysfs_device> final {
     inline bool operator ()(_In_ const value_type& lhs,
             _In_ const value_type& rhs) const noexcept {
         constexpr std::less<std::string> less;
-        return less(lhs.name(), rhs.name());
+        return less(lhs.path(), rhs.path());
     }
 };
 
