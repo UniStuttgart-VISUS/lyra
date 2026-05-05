@@ -45,7 +45,6 @@ wil::com_ptr<IWbemServices> LYRA_DETAIL_NAMESPACE::make_wbem_services(
 }
 
 
-
 /*
  * LYRA_DETAIL_NAMESPACE::query_wql
  */

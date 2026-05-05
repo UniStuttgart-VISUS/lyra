@@ -8,11 +8,16 @@
 #define _LYRA_WBEM_H
 #pragma once
 
+#include <array>
+#include <cassert>
+#include <type_traits>
+
 #include <wil/com.h>
 #include <wil/result.h>
 
 #include <WbemIdl.h>
 
+#include "visus/autodoc/on_exit.h"
 #include "visus/autodoc/trace.h"
 
 #include "com_scope.h"
@@ -21,6 +26,20 @@
 #if defined(_WIN32)
 
 LYRA_DETAIL_NAMESPACE_BEGIN
+
+/// <summary>
+/// Invokes <paramref name="callback"/> for each object returned by the given
+/// WBEM <paramref name="enumerator" />.
+/// </summary>
+/// <typeparam name="TCallback"></typeparam>
+/// <param name="enumerator"></param>
+/// <param name="callback"></param>
+/// <returns>The number of objects returned by the enumerator.</returns>
+/// <exception cref="wil::ResultException">If the operation fails.</exception>
+template<class TCallback, ULONG Batch = 16> std::size_t foreach_wbem(
+    _In_ IEnumWbemClassObject *enumerator,
+    _In_ const TCallback callback,
+    _In_ const WBEM_TIMEOUT_TYPE timeout = WBEM_INFINITE);
 
 /// <summary>
 /// Initialise COM security for using WBEM. The caller must hold a

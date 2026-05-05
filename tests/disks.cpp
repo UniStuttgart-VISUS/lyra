@@ -35,5 +35,20 @@ TEST(disks, wql) {
 
     auto disk_enum = LYRA_DETAIL_NAMESPACE::query_wql(services.get(), L"SELECT * FROM Win32_DiskDrive");
     EXPECT_NE(disk_enum, nullptr);
+    const auto cnt_disks = LYRA_DETAIL_NAMESPACE::foreach_wbem(disk_enum.get(), [](IWbemClassObject *disk) {
+        wil::unique_variant value;
+        EXPECT_HRESULT_SUCCEEDED(disk->Get(L"Name", 0, value.addressof(), nullptr, nullptr));
+        EXPECT_NE(value.pbstrVal, nullptr);
+        return false;
+    });
+    EXPECT_EQ(cnt_disks, 1);
+
+    auto mount_enum = LYRA_DETAIL_NAMESPACE::query_wql(services.get(), L"SELECT * FROM Win32_MountPoint");
+    EXPECT_NE(mount_enum, nullptr);
+    const auto cnt_mounts = LYRA_DETAIL_NAMESPACE::foreach_wbem(mount_enum.get(), [](IWbemClassObject *) { });
+    EXPECT_GE(cnt_mounts, 1);
+
+    auto vol_enum = LYRA_DETAIL_NAMESPACE::query_wql(services.get(), L"SELECT * FROM Win32_Volume");
+    EXPECT_NE(vol_enum, nullptr);
 }
 #endif /* defined(_WIN32) */
