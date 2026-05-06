@@ -53,7 +53,7 @@
 /// <remarks>
 /// Use this macro when defining implementations in cpp or inline files.
 /// </remarks>
-#define LYRA_NAMESPACE visus::lyra::\
+#define LYRA_NAMESPACE visus::autodoc::\
 LYRA_ABI_NAMESPACE(LYRA_ABI_MAJOR, LYRA_ABI_MINOR)
 
 
@@ -77,7 +77,7 @@ LYRA_ABI_NAMESPACE(LYRA_ABI_MAJOR, LYRA_ABI_MINOR)
 /// </summary>
 #define LYRA_NAMESPACE_BEGIN \
 _LYRA_NAMESPACE_BEGIN(visus)\
-_LYRA_NAMESPACE_BEGIN(lyra)\
+_LYRA_NAMESPACE_BEGIN(autodoc)\
 inline _LYRA_NAMESPACE_BEGIN(LYRA_ABI_NAMESPACE(LYRA_ABI_MAJOR, LYRA_ABI_MINOR))
 
 /// <summary>

@@ -11,7 +11,7 @@ Property sets can be obtained by calling the appropriate factory functions. For 
 ```cpp
 #include "visus/autodoc/raw.h"
 
-auto data = visus::lyra::raw::get();
+auto data = visus::autodoc::raw::get();
 ```
 
 There are different ways of accessing the data stored in a property set. The most convenient one is probably the `visit` method:
@@ -23,7 +23,7 @@ data.visit([](const char *name, const auto value, const std::size_t cnt) {
     // vector-valued properties, too.
 });
 ```
-If the callback wants to abort the enumeration of the properties prematurely, it can do so by returning a `bool` that tells the proeprty set when to continue and when not:
+If the callback wants to abort the enumeration of the properties prematurely, it can do so by returning a `bool` that tells the property set when to continue and when not:
 ```cpp
 data.visit([](const char *name, const auto value, const std::size_t cnt) {
     // Abort the enumeration once the first property with more than one value
@@ -43,7 +43,7 @@ Individual properties can be retrieved via the `get` method:
 ```cpp
 const void *value;
 std::size_t cnt;
-visus::lyra::property_type type;
+visus::autodoc::property_type type;
 
 if (data.get(value, cnt, type, "CPU")) {
     // Do something with the information. The method will return false if the
@@ -63,11 +63,11 @@ struct environment final {
 Such properties can be used to obtain individual properties in a more convenient manner:
 ```cpp
 std::size_t cnt;
-auto env = data.get<visus::lyra::raw::environment>(cnt);
+auto env = data.get<visus::autodoc::raw::environment>(cnt);
 ```
 The method returns a pointer to an array of `cnt` values or `nullptr` if the property does not exist. There is a parameterless overload of the method which just returns the pointer, but no counter. For instance, the first (and only) timestamp can be retrieved like this:
 ```cpp
-auto ts = data.get<visus::lyra::raw::timestamp>();
+auto ts = data.get<visus::autodoc::raw::timestamp>();
 ```
 
 The data from a property set can be easily persisted in the form of JSON strings. Use the `json` method for that:
@@ -82,18 +82,18 @@ The `autodoc_write_raw` function is a one-stop solution for documenting everythi
 #include "visus/autodoc/autodoc.h"
 
 // This call dumps really everything the library collects.
-::autodoc_write_raw("state.json", visus::lyra::collection_flags::none);
+::autodoc_write_raw("state.json", visus::autodoc::collection_flags::none);
 
 // This call dumps really everything the library collects.
-::autodoc_write_raw("state.json", visus::lyra::collection_flags::none);
+::autodoc_write_raw("state.json", visus::autodoc::collection_flags::none);
 
 // This call skips all data marked sensitive, which includes the environment
 // variables and unique hardware serials.
-::autodoc_write_raw("state.json", visus::lyra::collection_flags::no_sensitive);
+::autodoc_write_raw("state.json", visus::autodoc::collection_flags::no_sensitive);
 
 // This call skips all data marked immutable, which is helpful or documenting
 // changes to parts of the state that might change over time.
-::autodoc_write_raw("state.json", visus::lyra::collection_flags::no_immutable);
+::autodoc_write_raw("state.json", visus::autodoc::collection_flags::no_immutable);
 ```
 `autodoc_write_raw` is available to C clients as well. Just replace the enumeration class with `collection_flags_none`, `collection_flags_no_sensitive`, etc. Consider the following example collecting all non-sensitive data to a file named like the calling process:
 ```c
