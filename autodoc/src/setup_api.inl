@@ -47,6 +47,30 @@ std::size_t LYRA_DETAIL_NAMESPACE::enum_class_devices(
 
 
 /*
+ * LYRA_DETAIL_NAMESPACE::enum_class_device_interfaces
+ */
+template<class TCallback>
+std::size_t LYRA_DETAIL_NAMESPACE::enum_class_device_interfaces(
+        _In_ const GUID& class_guid,
+        _In_ TCallback cb,
+        _In_ const DWORD flags) {
+    std::size_t retval = 0;
+
+    enum_class_devices(&class_guid, [&](HDEVINFO h, SP_DEVINFO_DATA& d) {
+        auto cb_retval = false;
+        retval += enum_device_interfaces(h, d, class_guid, [&](HDEVINFO h,
+                SP_DEVINFO_DATA& d, SP_DEVICE_INTERFACE_DATA& i) {
+            cb_retval = cb(h, d, i);
+            return cb_retval;
+        });
+        return cb_retval;
+    }, flags);
+
+    return retval;
+}
+
+
+/*
  * LYRA_DETAIL_NAMESPACE::enum_device_interfaces
  */
 template<class TCallback>
@@ -59,9 +83,9 @@ std::size_t LYRA_DETAIL_NAMESPACE::enum_device_interfaces(
     data.cbSize = sizeof(SP_DEVICE_INTERFACE_DATA);
 
     DWORD i = 0;
-    for (::SetupDiEnumDeviceInterfaces(handle, &info, &interface_guid,
+    for (; ::SetupDiEnumDeviceInterfaces(handle, &info, &interface_guid,
             i, &data); ++i) {
-        if (!cb(hDevInfo, devInfo, devIfData)) {
+        if (!cb(handle, info, data)) {
             break;
         }
     }

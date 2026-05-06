@@ -21,6 +21,7 @@ std::string LYRA_DETAIL_NAMESPACE::to_hex_string(
         return std::string();
     }
 
+    // TODO: this is performance off
     std::stringstream ss;
     ss << std::hex;
 

@@ -77,6 +77,21 @@ std::vector<std::uint8_t> LYRA_DETAIL_NAMESPACE::get_device_interface_detail(
 
 
 /*
+ * LYRA_DETAIL_NAMESPACE::get_device_interface_detail
+ */
+_Ret_maybenull_ const SP_DEVICE_INTERFACE_DETAIL_DATA_W *
+LYRA_DETAIL_NAMESPACE::get_device_interface_detail(
+        _Out_ std::vector<std::uint8_t>& buffer,
+        _In_ HANDLE handle,
+        _In_ SP_DEVICE_INTERFACE_DATA& data,
+        _In_opt_ SP_DEVINFO_DATA *detail) {
+    typedef const SP_DEVICE_INTERFACE_DETAIL_DATA_W *ret_t;
+    buffer = get_device_interface_detail(handle, data, detail);
+    return buffer.empty() ? nullptr : reinterpret_cast<ret_t>(buffer.data());
+}
+
+
+/*
  * LYRA_DETAIL_NAMESPACE::get_device_registry_property
  */
 std::vector<std::uint8_t> LYRA_DETAIL_NAMESPACE::get_device_registry_property(

@@ -4,13 +4,16 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 #include <vector>
 
 #include "com_scope.h"
+#include "file.h"
 #include "vds_api.h"
 #include "wbem.h"
+#include "win32_disks.h"
 
 
 #if false && defined(_WIN32)
@@ -56,3 +59,85 @@ TEST(disks, wql) {
     });
 }
 #endif /* defined(_WIN32) */
+
+TEST(disks, paths) {
+#if defined(_WIN32)
+    const auto paths = LYRA_DETAIL_NAMESPACE::get_disk_paths();
+    EXPECT_GE(paths.size(), 1);
+    EXPECT_THAT(paths, testing::Each(testing::Not(testing::IsEmpty())));
+#endif /* defined(_WIN32) */
+}
+
+#if defined(_WIN32)
+TEST(disks, geometry) {
+    const auto paths = LYRA_DETAIL_NAMESPACE::get_disk_paths();
+    EXPECT_GE(paths.size(), 1);
+
+    LYRA_DETAIL_NAMESPACE::unique_file handle(::CreateFileW(paths[0].c_str(),
+        0,
+        FILE_SHARE_READ | FILE_SHARE_WRITE,
+        nullptr,
+        OPEN_EXISTING,
+        0,
+        nullptr));
+    EXPECT_TRUE(handle);
+
+    {
+        DISK_GEOMETRY geometry;
+        EXPECT_NO_THROW(LYRA_DETAIL_NAMESPACE::get_disk_geometry(geometry, handle.get()));
+        EXPECT_GT(geometry.BytesPerSector, 0);
+    }
+
+#if (_WIN32_WINNT >= 0x0500)
+    {
+        DISK_GEOMETRY_EX geometry;
+        EXPECT_NO_THROW(LYRA_DETAIL_NAMESPACE::get_disk_geometry(geometry, handle.get()));
+        EXPECT_GT(geometry.DiskSize.QuadPart, 0);
+    }
+#endif /* (_WIN32_WINNT >= 0x0500) */
+}
+#endif /* defined(_WIN32) */
+
+#if defined(_WIN32)
+TEST(disks, layout) {
+    const auto paths = LYRA_DETAIL_NAMESPACE::get_disk_paths();
+    EXPECT_GE(paths.size(), 1);
+
+    LYRA_DETAIL_NAMESPACE::unique_file handle(::CreateFileW(paths[0].c_str(),
+        0,
+        FILE_SHARE_READ | FILE_SHARE_WRITE,
+        nullptr,
+        OPEN_EXISTING,
+        0,
+        nullptr));
+    EXPECT_TRUE(handle);
+
+    // Note: this API only works for MBR disks.
+    //{
+    //    DRIVE_LAYOUT_INFORMATION layout;
+    //    std::vector<PARTITION_INFORMATION> partitions;
+    //    EXPECT_NO_THROW(LYRA_DETAIL_NAMESPACE::get_drive_layout(layout, partitions, handle.get()));
+    //    EXPECT_EQ(layout.PartitionCount, partitions.size());
+    //}
+
+#if (_WIN32_WINNT >= 0x0500)
+    {
+        DRIVE_LAYOUT_INFORMATION_EX layout;
+        std::vector<PARTITION_INFORMATION_EX> partitions;
+        EXPECT_NO_THROW(LYRA_DETAIL_NAMESPACE::get_drive_layout(layout, partitions, handle.get()));
+        EXPECT_EQ(layout.PartitionCount, partitions.size());
+    }
+#endif /* (_WIN32_WINNT >= 0x0500) */
+}
+#endif /* defined(_WIN32) */
+
+TEST(disks, volumes) {
+#if defined(_WIN32)
+    const auto paths = LYRA_DETAIL_NAMESPACE::get_volume_paths();
+    EXPECT_GE(paths.size(), 1);
+    EXPECT_THAT(paths, testing::Each(testing::Not(testing::IsEmpty())));
+    const auto mounts = LYRA_DETAIL_NAMESPACE::get_volume_paths(paths[0].c_str());
+    EXPECT_GE(mounts.size(), 1);
+    const auto extents = LYRA_DETAIL_NAMESPACE::get_volume_extents(paths[0].c_str());
+#endif /* defined(_WIN32) */
+}

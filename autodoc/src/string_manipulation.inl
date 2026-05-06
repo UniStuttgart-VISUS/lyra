@@ -24,14 +24,5 @@ std::vector<TChar>& LYRA_DETAIL_NAMESPACE::null_terminate(
 template<class TIterator>
 TIterator LYRA_DETAIL_NAMESPACE::remove_trailing_nulls(
         _In_ const TIterator begin, _In_ const TIterator end) {
-    const auto b = std::make_reverse_iterator(end);
-    const auto e = std::make_reverse_iterator(begin);
-
-    for (auto it = b; it != e; ++it) {
-        if (*it != 0) {
-            return it.base();
-        }
-    }
-
-    return begin;
+    return trim_right_if(begin, end, [](const auto c) { return c == 0; });
 }

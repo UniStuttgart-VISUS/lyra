@@ -51,15 +51,56 @@ LYRA_TEST_API void add_device_install_flags(_In_ HANDLE handle,
 /// <c>DIGCF_ALLCLASSES</c> flag.</param>
 /// <param name="cb">The callback to be invoked for all results.</param>
 /// <param name="flags">The enumeration flags as described on
-/// https://msdn.microsoft.com/en-us/library/windows/hardware/ff551069(v=vs.85).aspx
-/// The parameter defaults to <c>DIGCF_PRESENT</c>.</param>
+/// https://msdn.microsoft.com/en-us/library/windows/hardware/ff551069(v=vs.85).aspx.
+/// </param>
 /// <returns>The number of elements that have been enumerated.</returns>
 /// <exception cref="std::system_error">If any of the API calls failed.
 /// </exception>
 template<class TCallback> std::size_t enum_class_devices(
     _In_opt_ const GUID *class_guid,
     _In_ TCallback cb,
-    _In_ const DWORD flags = DIGCF_PRESENT);
+    _In_ const DWORD flags);
+
+/// <summary>
+/// Invoke <paramref name="cb" /> for all devices of the given class.
+/// </summary>
+/// <remarks>
+/// <para>The function continues enumerating devices as long as there are
+/// more devices and <paramref cref="cb" /> returns <c>true</c>.</para>
+/// <para><paramref name="cb" /> should not throw exceptions. Failing to
+/// fulfil this requirement might result in a memory leak.</para>
+/// </remarks>
+/// <typeparam name="TCallback"></typeparam>
+/// <param name="class_guid">The class GUID to enumerate.</param>
+/// <param name="cb">The callback to be invoked for all results.</param>
+/// <param name="flags">The enumeration flags as described on
+/// https://msdn.microsoft.com/en-us/library/windows/hardware/ff551069(v=vs.85).aspx.
+/// </param>
+/// <returns>The number of elements that have been enumerated.</returns>
+/// <exception cref="std::system_error">If any of the API calls failed.
+/// </exception>
+template<class TCallback> inline std::size_t enum_class_devices(
+        _In_ const GUID& class_guid,
+        _In_ TCallback&& cb,
+        _In_ const DWORD flags) {
+    return enum_class_devices(&class_guid, std::forward<TCallback>(cb), flags);
+}
+
+/// <summary>
+/// Enumerates all class devices of the given class and invokes the given
+/// callback for all of the interfaces of each device.
+/// </summary>
+/// <typeparam name="TCallback"></typeparam>
+/// <param name="class_guid"></param>
+/// <param name="cb"></param>
+/// <param name="flags">The enumeration flags as described on
+/// https://msdn.microsoft.com/en-us/library/windows/hardware/ff551069(v=vs.85).aspx.
+/// </param>
+/// <returns></returns>
+template<class TCallback> std::size_t enum_class_device_interfaces(
+    _In_ const GUID& class_guid,
+    _In_ TCallback cb,
+    _In_ const DWORD flags = DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
 
 /// <summary>
 /// Invokes a callback for all device interfaces in a device information
@@ -110,9 +151,23 @@ template<class TCallback> std::size_t enum_driver_info(
 /// </summary>
 /// <exception cref="std::system_error">If any of the API calls failed.
 /// </exception>
-std::vector<std::uint8_t> get_device_interface_detail(
+LYRA_TEST_API std::vector<std::uint8_t> get_device_interface_detail(
     _In_ HANDLE handle,
     _In_ SP_DEVICE_INTERFACE_DATA& data,
+    _In_opt_ SP_DEVINFO_DATA *detail = nullptr);
+
+/// <summary>
+/// Gets the <see cref="SP_DEVICE_INTERFACE_DETAIL_DATA_W" /> for the given
+/// device interface data.
+/// </summary>
+/// <param name="buffer"></param>
+/// <param name="handle"></param>
+/// <param name="data"></param>
+/// <param name="detail"></param>
+/// <returns></returns>
+LYRA_TEST_API _Ret_maybenull_ const SP_DEVICE_INTERFACE_DETAIL_DATA_W *
+get_device_interface_detail(_Out_ std::vector<std::uint8_t>& buffer,
+    _In_ HANDLE handle, _In_ SP_DEVICE_INTERFACE_DATA& data,
     _In_opt_ SP_DEVINFO_DATA *detail = nullptr);
 
 /// <summary>
