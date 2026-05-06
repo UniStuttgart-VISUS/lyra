@@ -14,6 +14,10 @@
 #include <variant>
 #include <vector>
 
+#if defined(_WIN32)
+#include <oaidl.h>
+#endif /* defined(_WIN32) */
+
 #include "visus/autodoc/multi_sz.h"
 #include "visus/autodoc/property_traits.h"
 
@@ -149,6 +153,16 @@ template<> struct property_variant_access<std::vector<boolean>> final {
     }
 };
 
+
+#if defined(_WIN32)
+/// <summary>
+/// Converts a COM/Win32 variant to a <see cref="property_variant" />. Unsupported
+/// types will be ignored.
+/// </summary>
+/// <param name="v"></param>
+/// <returns></returns>
+LYRA_TEST_API property_variant make_property_variant(_In_ const VARIANT& v);
+#endif /* defined(_WIN32) */
 
 LYRA_DETAIL_NAMESPACE_END
 

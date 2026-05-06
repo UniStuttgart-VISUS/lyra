@@ -10,6 +10,34 @@
 
 
 /*
+ * LYRA_DETAIL_NAMESPACE::copy_wbem_properties
+ */
+void LYRA_DETAIL_NAMESPACE::copy_wbem_properties(
+        _Inout_ property_set_impl& ps,
+        _In_ IWbemClassObject *object) {
+    THROW_HR_IF(E_POINTER, object == nullptr);
+
+    auto hr = object->BeginEnumeration(0);
+
+    if (SUCCEEDED(hr)) {
+        wil::unique_bstr name;
+        wil::unique_variant value;
+
+        while ((hr = object->Next(0, name.put(), value.addressof(),
+                nullptr, nullptr)) == S_OK /* [sic] */) {
+            auto v = make_property_variant(value);
+            if (!std::holds_alternative<std::monostate>(v)) {
+                ps.add(to_utf8(name.get()), std::move(v));
+            }
+            value.reset();
+        }
+    }
+
+    THROW_HR_IF(hr, hr != WBEM_S_NO_MORE_DATA);
+}
+
+
+/*
  * LYRA_DETAIL_NAMESPACE::initialise_wbem_security
  */
 void LYRA_DETAIL_NAMESPACE::initialise_wbem_security(void) {

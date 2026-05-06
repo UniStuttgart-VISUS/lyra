@@ -50,5 +50,9 @@ TEST(disks, wql) {
 
     auto vol_enum = LYRA_DETAIL_NAMESPACE::query_wql(services.get(), L"SELECT * FROM Win32_Volume");
     EXPECT_NE(vol_enum, nullptr);
+    const auto cnt_vols = LYRA_DETAIL_NAMESPACE::foreach_wbem(vol_enum.get(), [](IWbemClassObject *volume) {
+        LYRA_DETAIL_NAMESPACE::property_set_impl ps;
+        LYRA_DETAIL_NAMESPACE::copy_wbem_properties(ps, volume);
+    });
 }
 #endif /* defined(_WIN32) */

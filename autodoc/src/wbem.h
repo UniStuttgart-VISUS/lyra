@@ -17,15 +17,27 @@
 
 #include <WbemIdl.h>
 
+#include "visus/autodoc/convert_string.h"
 #include "visus/autodoc/on_exit.h"
 #include "visus/autodoc/trace.h"
 
 #include "com_scope.h"
+#include "property_set_impl.h"
 
 
 #if defined(_WIN32)
 
 LYRA_DETAIL_NAMESPACE_BEGIN
+
+/// <summary>
+/// Copy the properties from <paramref name="object"/> to the given property set
+/// <paramref name="ps"/>.
+/// </summary>
+/// <param name="ps"></param>
+/// <param name="object"></param>
+/// <returns></returns>
+LYRA_TEST_API void copy_wbem_properties(_Inout_ property_set_impl& ps,
+    _In_ IWbemClassObject *object);
 
 /// <summary>
 /// Invokes <paramref name="callback"/> for each object returned by the given
