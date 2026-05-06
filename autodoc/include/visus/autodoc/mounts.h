@@ -18,6 +18,14 @@ LYRA_NAMESPACE_BEGIN
 namespace mounts {
 
     /// <summary>
+    /// Identifies a property that holds the device object name of a disk.
+    /// </summary>
+    struct device_object final {
+        typedef const char *type;
+        static constexpr auto name = u8"Device Object Name";
+    };
+
+    /// <summary>
     /// Identifies a group of properties holding the mounts on local block
     /// devices.
     /// </summary>
@@ -40,6 +48,41 @@ namespace mounts {
     struct file_system final {
         typedef const char *type;
         static constexpr auto name = u8"File System";
+    };
+
+    /// <summary>
+    /// Identifies a property that holds the length of a volume or partition.
+    /// </summary>
+    struct length final {
+        typedef std::uint64_t type;
+        static constexpr auto name = u8"Length";
+    };
+
+    /// <summary>
+    /// Identifies a group of properties holding the mounts on network
+    /// devices.
+    /// </summary>
+    struct network final {
+        typedef property_set type;
+        static constexpr auto name = u8"Network";
+    };
+
+    /// <summary>
+    /// Identifies a property that holds an offset, for instance, the start of a
+    /// partition or of a volume.
+    /// </summary>
+    struct offset final {
+        typedef std::uint64_t type;
+        static constexpr auto name = u8"Offset";
+    };
+
+    /// <summary>
+    /// Identifies a group of properties holding the mounts that cannot be
+    /// identified as block devices or network devices.
+    /// </summary>
+    struct other final {
+        typedef property_set type;
+        static constexpr auto name = u8"Other";
     };
 
     /// <summary>

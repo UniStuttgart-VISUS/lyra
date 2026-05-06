@@ -54,9 +54,9 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::mounts::get(
                 detail::property_set_impl ps;
                 detail::checked_add<disk_index>(ps, flags,
                     e.DiskNumber);
-                detail::checked_add("Starting Offset", ps, flags,
+                detail::checked_add<offset>(ps, flags,
                     e.StartingOffset.QuadPart);
-                detail::checked_add("Extent Length", ps, flags,
+                detail::checked_add<length>(ps, flags,
                     e.ExtentLength.QuadPart);
                 extents.emplace_back(std::move(ps));
             }
@@ -66,6 +66,8 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::mounts::get(
             for (auto& d : disk_infos) {
                 if (v.on_disk(d)) {
                     detail::property_set_impl ps;
+                    detail::checked_add<device_object>(ps, flags,
+                        to_utf8(d.device()));
                     detail::checked_add<path>(ps, flags,
                         to_utf8(d.path()));
                     detail::checked_add<disk_index>(ps, flags,

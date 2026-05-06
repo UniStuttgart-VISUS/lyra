@@ -42,7 +42,13 @@ public:
     /// Initialises a new instance.
     /// </summary>
     /// <param name="path">The device path of the disk.</param>
-    explicit disk_info(_In_ const std::wstring& path);
+    /// <param name="device_object">The device object name of the disk.</param>
+    explicit disk_info(_In_ const std::wstring& path,
+        _In_ const std::wstring& device);
+
+    inline const std::wstring& device(void) const noexcept {
+        return this->_device;
+    }
 
     inline const geometry_type& geometry(void) const noexcept {
         return this->_geometry;
@@ -66,6 +72,7 @@ public:
 
 private:
 
+    std::wstring _device;
     geometry_type _geometry;
     layout_type _layout;
     STORAGE_DEVICE_NUMBER _number;

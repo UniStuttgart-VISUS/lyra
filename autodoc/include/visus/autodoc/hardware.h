@@ -52,6 +52,14 @@ namespace hardware {
     };
 
     /// <summary>
+    /// Identifies a property holding the device path.
+    /// </summary>
+    struct device_path final {
+        typedef const char *type;
+        static constexpr auto name = u8"Device Path";
+    };
+
+    /// <summary>
     /// Identifies a property holding the device type.
     /// </summary>
     struct device_type final {

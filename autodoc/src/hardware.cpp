@@ -189,6 +189,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::hardware::get(
             const auto clsid = try_get_clsid(handle, data);
 
             detail::property_set_impl dps;
+            detail::checked_add("Device Class GUID", dps, flags, clsid);
             ::try_add_string_prop<description>(dps, flags, handle, data,
                 SPDRP_DEVICEDESC);
             ::try_add_string_prop<device_class>(dps, flags, handle, data,
@@ -206,6 +207,26 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::hardware::get(
                 SPDRP_MFG);
             ::try_add_string_prop<path>(dps, flags, handle, data,
                 SPDRP_PHYSICAL_DEVICE_OBJECT_NAME);
+
+            // TODO: would need the *interface* GUID here ...
+            //try {
+            //    multi_sz m;
+            //    detail::enum_class_device_interfaces(clsid,
+            //            [&dps, &m](HDEVINFO h, SP_DEVINFO_DATA&,
+            //            SP_DEVICE_INTERFACE_DATA& i) {
+            //        std::vector<std::uint8_t> buffer;
+            //        auto d = detail::get_device_interface_detail(buffer, h, i);
+            //        assert(d != nullptr);
+            //        m.add(to_utf8(d->DevicePath));
+            //        return true;
+            //    });
+            //    if (!m.empty()) {
+            //        detail::checked_add<device_path>(dps, flags, std::move(m));
+            //    }
+            //} catch (const std::exception& ex) {
+            //    LYRA_TRACE("Failed to retrieve device path: %s", ex.what());
+            //}
+
             classes[clsid].emplace_back(std::move(dps));
 
             return true;

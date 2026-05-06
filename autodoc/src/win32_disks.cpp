@@ -25,8 +25,10 @@
 /*
  * LYRA_DETAIL_NAMESPACE::disk_info::disk_info
  */
-LYRA_DETAIL_NAMESPACE::disk_info::disk_info(_In_ const std::wstring& path)
-        : _path(path) {
+LYRA_DETAIL_NAMESPACE::disk_info::disk_info(_In_ const std::wstring& path,
+        _In_ const std::wstring& device)
+    : _device(device),
+        _path(path) {
     wil::unique_hfile handle(::CreateFileW(
         this->_path.c_str(),
         0,
@@ -104,9 +106,20 @@ std::vector<LYRA_DETAIL_NAMESPACE::disk_info> LYRA_DETAIL_NAMESPACE::get_disks(
         void) {
     std::vector<LYRA_DETAIL_NAMESPACE::disk_info> retval;
 
-    for (auto p : get_disk_paths()) {
-        retval.emplace_back(p);
-    }
+    enum_class_device_interfaces(GUID_DEVINTERFACE_DISK, [&retval](HDEVINFO h,
+            SP_DEVINFO_DATA& d, SP_DEVICE_INTERFACE_DATA& i) {
+        std::vector<std::uint8_t> detail_buf;
+        auto detail = get_device_interface_detail(detail_buf, h, i);
+        assert(detail != nullptr);
+
+        auto device_buf = LYRA_DETAIL_NAMESPACE::get_device_registry_property(
+            h, d, SPDRP_PHYSICAL_DEVICE_OBJECT_NAME);
+        assert(!device_buf.empty());
+        auto device = reinterpret_cast<const wchar_t*>(device_buf.data());
+
+        retval.emplace_back(detail->DevicePath, device);
+        return true;
+    }, DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
 
     return retval;
 }
