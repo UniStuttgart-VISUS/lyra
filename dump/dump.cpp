@@ -6,6 +6,7 @@
 
 #include "visus/autodoc/raw.h"
 
+#include <fstream>
 #include <iostream>
 
 #include "nlohmann/json.hpp"
@@ -33,6 +34,12 @@ int _tmain(const int argc, const _TCHAR **argv) {
         return -1;
     }
 
-    std::cout << nlohmann::json::parse(json).dump(4) << std::endl;
+    if (argc > 1) {
+        std::ofstream out(argv[1]);
+        out << nlohmann::json::parse(json).dump(4) << std::endl;
+    } else {
+        std::cout << nlohmann::json::parse(json).dump(4) << std::endl;
+    }
+
     return 0;
 }
