@@ -211,6 +211,24 @@ struct LYRA_TEST_API property_set_impl final {
     void add(_In_z_ const key_type::value_type *key,
         _In_opt_z_ const char16_t *value);
 
+#if defined(_WIN32)
+    /// <summary>
+    /// Adds a DWORD property as <see cref="std::uint32_t" />.
+    /// </summary>
+    inline void add(_Inout_ key_type&& key, _In_ const DWORD value) {
+        this->add(std::move(key), static_cast<std::uint32_t>(value));
+    }
+
+    /// <summary>
+    /// Adds a DWORD property as <see cref="std::uint32_t" />.
+    /// </summary>
+    inline void add(_In_z_ const key_type::value_type *key,
+            _In_ const DWORD value) {
+        this->add(std::string(key), static_cast<std::uint32_t>(value));
+    }
+#endif /* defined(_WIN32) */
+
+
     /// <summary>
     /// Convenience method for adding a new property using a property
     /// descriptor, which will enforce the expected type and set the correct
@@ -251,6 +269,15 @@ struct LYRA_TEST_API property_set_impl final {
         std::is_same_v<typename TProp::type, const char *>>
     add(_Inout_ multi_sz&& value) {
         this->values.emplace(TProp::name, std::move(value));
+    }
+
+    /// <summary>
+    /// Enables adding a string property in the form of an STL string.
+    /// </summary>
+    template<class TProp> inline std::enable_if_t<
+        std::is_same_v<typename TProp::type, const char *>>
+    add(_In_ const std::string& value) {
+        this->add<TProp>(value.c_str());
     }
 
     /// <summary>

@@ -8,6 +8,7 @@
 #include "win32_disks.h"
 
 #include <cassert>
+#include <memory>
 #include <system_error>
 
 #include <wil/resource.h>
@@ -19,6 +20,96 @@
 #include "results.h"
 #include "setup_api.h"
 #include "string_manipulation.h"
+
+
+/*
+ * LYRA_DETAIL_NAMESPACE::disk_info::disk_info
+ */
+LYRA_DETAIL_NAMESPACE::disk_info::disk_info(_In_ const std::wstring& path)
+        : _path(path) {
+    wil::unique_hfile handle(::CreateFileW(
+        this->_path.c_str(),
+        0,
+        FILE_SHARE_READ | FILE_SHARE_WRITE,
+        nullptr,
+        OPEN_EXISTING,
+        0,
+        nullptr));
+    THROW_LAST_ERROR_IF(!handle);
+
+    get_disk_geometry(this->_geometry, handle.get());
+    get_drive_layout(this->_layout, this->_partitions, handle.get());
+    this->_number = get_storage_device_number(handle.get());
+}
+
+
+/*
+ * LYRA_DETAIL_NAMESPACE::volume_info::volume_info
+ */
+LYRA_DETAIL_NAMESPACE::volume_info::volume_info(_In_ const std::wstring& path)
+        : _file_system(MAX_PATH + 1, L'\0'),
+        _name(MAX_PATH + 1, L'\0'),
+        _path(path) {
+
+    THROW_LAST_ERROR_IF(!::GetVolumeInformationW(
+        this->_path.c_str(),
+        std::addressof(this->_name[0]),
+        static_cast<DWORD>(this->_name.size()),
+        &this->_serial,
+        nullptr,
+        &this->_flags,
+        std::addressof(this->_file_system[0]),
+        static_cast<DWORD>(this->_file_system.size())));
+    remove_trailing_nulls(this->_name);
+    remove_trailing_nulls(this->_file_system);
+
+    // Note: we need to try/catch this as some volumes (e.g. the UEFI partition)
+    // cannot be opened by normal users and we do not want to fail everything in
+    // this case.
+    try {
+        this->_extents = get_volume_extents(this->_path.c_str());
+    } catch (const std::exception& ex) {
+        LYRA_TRACE("Failed to get volume extents for \"%ls\": %s",
+            this->_path.c_str(), ex.what());
+    }
+
+    try {
+        this->_mounts = get_volume_paths(this->_path.c_str());
+    } catch (const std::exception& ex) {
+        LYRA_TRACE("Failed to get volume paths for \"%ls\": %s",
+            this->_path.c_str(), ex.what());
+    }
+}
+
+
+/*
+ * LYRA_DETAIL_NAMESPACE::volume_info::on_disk
+ */
+bool LYRA_DETAIL_NAMESPACE::volume_info::on_disk(
+        _In_ const disk_info& disk) const noexcept {
+    for (auto& e : this->_extents) {
+        if (e.DiskNumber == disk.number().DeviceNumber) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+/*
+ * LYRA_DETAIL_NAMESPACE::get_disks
+ */
+std::vector<LYRA_DETAIL_NAMESPACE::disk_info> LYRA_DETAIL_NAMESPACE::get_disks(
+        void) {
+    std::vector<LYRA_DETAIL_NAMESPACE::disk_info> retval;
+
+    for (auto p : get_disk_paths()) {
+        retval.emplace_back(p);
+    }
+
+    return retval;
+}
 
 
 /*
@@ -98,6 +189,35 @@ void LYRA_DETAIL_NAMESPACE::get_drive_layout(
     std::copy_n(l->PartitionEntry, partitions.size(), partitions.begin());
 }
 #endif /* (_WIN32_WINNT >= 0x0500) */
+
+
+/*
+ * LYRA_DETAIL_NAMESPACE::get_storage_device_number
+ */
+STORAGE_DEVICE_NUMBER LYRA_DETAIL_NAMESPACE::get_storage_device_number(
+        _In_ HANDLE handle) {
+    STORAGE_DEVICE_NUMBER retval;
+    if (!::DeviceIoControl(handle, IOCTL_STORAGE_GET_DEVICE_NUMBER, nullptr,
+            0, &retval, sizeof(STORAGE_DEVICE_NUMBER), nullptr, nullptr)) {
+        throw std::system_error(::GetLastError(), std::system_category());
+    }
+    return retval;
+}
+
+
+/*
+ * LYRA_DETAIL_NAMESPACE::get_volumes
+ */
+std::vector<LYRA_DETAIL_NAMESPACE::volume_info>
+LYRA_DETAIL_NAMESPACE::get_volumes(void) {
+    std::vector<volume_info> retval;
+
+    for (auto v : get_volume_paths()) {
+        retval.emplace_back(v);
+    }
+
+    return retval;
+}
 
 
 /*
@@ -219,6 +339,5 @@ std::vector<std::uint8_t> LYRA_DETAIL_NAMESPACE::io_control(
         }
     }
 }
-
 
 #endif /* defined(_WIN32) */

@@ -139,5 +139,7 @@ TEST(disks, volumes) {
     const auto mounts = LYRA_DETAIL_NAMESPACE::get_volume_paths(paths[0].c_str());
     EXPECT_GE(mounts.size(), 1);
     const auto extents = LYRA_DETAIL_NAMESPACE::get_volume_extents(paths[0].c_str());
+    const auto volumes = LYRA_DETAIL_NAMESPACE::get_volumes();
+    EXPECT_EQ(paths.size(), volumes.size());
 #endif /* defined(_WIN32) */
 }
