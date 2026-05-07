@@ -89,6 +89,32 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::mounts::get(
         LYRA_TRACE("Failed to get disk information: %s", ex.what());
     }
 
+    try {
+        std::vector<property_set> pss;
+
+        detail::enumerate_resources(RESOURCE_CONNECTED,
+            RESOURCETYPE_DISK,
+            RESOURCEUSAGE_CONTAINER | RESOURCEUSAGE_ATTACHED,
+                [&pss, flags](const NETRESOURCEW& r) {
+            if (r.dwUsage != 0) {
+                detail::property_set_impl ps;
+                detail::checked_add<source>(ps, flags,
+                    to_utf8(r.lpRemoteName));
+                detail::checked_add<target>(ps, flags,
+                    multi_sz::for_string(to_utf8(r.lpLocalName)));
+                detail::checked_add("Comment", ps, flags,
+                    to_utf8(r.lpComment));
+                detail::checked_add("Provider", ps, flags,
+                    to_utf8(r.lpProvider));
+                pss.push_back(property_set(std::move(ps)));
+            }
+        });
+
+        ps.add<network>(std::move(pss));
+    } catch (const std::exception& ex) {
+        LYRA_TRACE("Failed to get share information: %s", ex.what());
+    }
+
 #else /* !defined(_WIN32) */
 #endif /* defined(_WIN32) */
 
