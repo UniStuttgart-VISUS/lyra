@@ -140,7 +140,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::operating_system::get_version(
         if (std::regex_match(vi.release, m, rx)) {
             ps.add<LYRA_NAMESPACE::version::major>(std::stoul(m[1].str()));
             ps.add<LYRA_NAMESPACE::version::minor>(std::stoul(m[2].str()));
-            ps.add<LYRA_NAMESPACE::version::patch>(std::stoul(m[3].str()));
+            ps.add<LYRA_NAMESPACE::version::build>(std::stoul(m[3].str()));
         }
 
         if (!has_flag(flags, collection_flags::no_undeclared)) {

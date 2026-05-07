@@ -6,14 +6,21 @@
 
 #include "visus/autodoc/mounts.h"
 
+#include <fstream>
+#include <regex>
 #include <unordered_map>
 #include <vector>
 
+#if defined(_WIN32)
 #include <wil/resource.h>
+#endif /* defined(_WIN32) */
 
 #include "visus/autodoc/convert_string.h"
+#include "visus/autodoc/version.h"
 
+#include "file.h"
 #include "property_set_impl.h"
+#include "string_manipulation.h"
 #include "win32_disks.h"
 #include "win32_shares.h"
 
@@ -114,8 +121,75 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::mounts::get(
     } catch (const std::exception& ex) {
         LYRA_TRACE("Failed to get share information: %s", ex.what());
     }
-
 #else /* !defined(_WIN32) */
+    std::ifstream stream("/proc/self/mountinfo");
+
+    if (stream.is_open()) {
+        std::string line;
+        std::smatch match;
+        std::regex rx_mount(
+            // mount ID, parent ID, major:minor
+            "([^\\s]+)\\s+([^\\s]+)\\s+([^:]+):([^\\s]+)\\s+"
+            // root, mount point, mount options
+            "([^\\s]+)\\s+([^\\s]+)\\s+([^\\s]+)\\s+"
+            // optional fields.
+            "([^-]*)\\s*-\\s*"
+            // file system type, mount source, super options
+            "([^\\s]+)\\s+([^\\s]+)\\s+(.*)");
+        std::regex rx_nfs("nfs\\d*", std::regex::icase);
+        std::regex rx_opt("([^:]+):([^\\s]+)\\s*");
+        std::vector<property_set> block_devs;
+        std::vector<property_set> shares;
+
+        while (std::getline(stream, line)) {
+            if (std::regex_match(line, match, rx_mount)) {
+                const auto mount_id = std::stoull(match[1].str());
+                const auto parent_id = std::stoull(match[2].str());
+                const auto major = std::stoull(match[3].str());
+                const auto minor = std::stoull(match[4].str());
+                const auto root = match[5].str();
+                const auto mount_point = match[6].str();
+                const auto options = match[7].str();
+                const auto optionals = match[8].str();
+                const auto fs = match[9].str();
+                const auto src = match[10].str();
+                const auto super_options = match[11].str();
+
+                detail::property_set_impl ps;
+                detail::checked_add("Mount ID", ps, flags, mount_id);
+                detail::checked_add("Parent ID", ps, flags, parent_id);
+                detail::checked_add("Device", ps, flags,
+                    LYRA_NAMESPACE::version::make(major, minor));
+                detail::checked_add("Root", ps, flags, root);
+                detail::checked_add<target>(ps, flags,
+                    multi_sz::for_string(mount_point));
+                detail::checked_add("Options", ps, flags, options);
+
+                auto s = optionals.cbegin();
+                detail::property_set_impl pso;
+                while (std::regex_search(s, optionals.cend(), match, rx_opt)) {
+                    pso.add(match[1].str(), match[2].str());
+                    s = match.suffix().first;
+                }
+                detail::checked_add("Optional Fields", ps, flags,
+                    property_set(std::move(pso)));
+
+                detail::checked_add<file_system>(ps, flags, fs);
+                detail::checked_add<source>(ps, flags, src);
+                detail::checked_add("Super Options", ps, flags, super_options);
+
+                if (std::regex_match(fs, match, rx_nfs)) {
+                    shares.emplace_back(std::move(ps));
+                } else {
+                    block_devs.emplace_back(std::move(ps));
+                }
+            }
+        } /* while (std::getline(stream, line)) */
+
+        ps.add<disks>(std::move(block_devs));
+        ps.add<network>(std::move(shares));
+    }
+
 #endif /* defined(_WIN32) */
 
     return property_set(std::move(ps));

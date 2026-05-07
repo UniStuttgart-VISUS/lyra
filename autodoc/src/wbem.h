@@ -8,6 +8,7 @@
 #define _LYRA_WBEM_H
 #pragma once
 
+#if defined(_WIN32)
 #include <array>
 #include <cassert>
 #include <type_traits>
@@ -25,7 +26,6 @@
 #include "property_set_impl.h"
 
 
-#if defined(_WIN32)
 
 LYRA_DETAIL_NAMESPACE_BEGIN
 
