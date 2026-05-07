@@ -17,12 +17,39 @@ LYRA_NAMESPACE_BEGIN
 namespace application {
 
     /// <summary>
+    /// Identifies the property holding the time when an executable was last
+    /// accessed.
+    /// </summary>
+    struct access_time final {
+        typedef timestamp type;
+        static constexpr auto name = u8"Last Access Time";
+    };
+
+    /// <summary>
+    /// Identifies the property holding the time when the inode of an executable
+    /// was last changed.
+    /// </summary>
+    struct change_time final {
+        typedef timestamp type;
+        static constexpr auto name = u8"Last Change Time";
+    };
+
+    /// <summary>
     /// Identifies the property holding the command line.
     /// </summary>
     struct command_line final {
         typedef const char *type;
         static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Command Line";
+    };
+
+    /// <summary>
+    /// Identifies the property holding the time when an executable was created.
+    /// </summary>
+    struct create_time final {
+        typedef timestamp::value_type type;
+        static constexpr auto is_immutable = true;
+        static constexpr auto name = u8"Create Time";
     };
 
     /// <summary>
@@ -65,6 +92,24 @@ namespace application {
     struct size final {
         typedef std::uint64_t type;
         static constexpr auto name = u8"Size";
+    };
+
+    /// <summary>
+    /// Identifies a property holding a block of embedded meta data from a
+    /// binary.
+    /// </summary>
+    struct version_info final {
+        typedef property_set type;
+        static constexpr auto name = u8"Version Info";
+    };
+
+    /// <summary>
+    /// Identifies the property holding the time when an executable was last
+    /// modified.
+    /// </summary>
+    struct write_time final {
+        typedef timestamp type;
+        static constexpr auto name = u8"Last Write Time";
     };
 
     /// <summary>

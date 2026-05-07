@@ -30,7 +30,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::raw::get(
     // First, add the timestamp.
     if (detail::check_sensitive<timestamp>(flags)) {
         const auto now = LYRA_NAMESPACE::timestamp::now();
-        ps.add<timestamp>(now.value());
+        ps.add<timestamp>(now);
     }
 
     // Add all the actual information.

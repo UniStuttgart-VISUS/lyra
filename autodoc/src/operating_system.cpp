@@ -81,7 +81,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::operating_system::get_version(
         if (gv(&vi) == 0) {
             ps.add<LYRA_NAMESPACE::version::major>(vi.dwMajorVersion);
             ps.add<LYRA_NAMESPACE::version::minor>(vi.dwMinorVersion);
-            ps.add<LYRA_NAMESPACE::version::patch>(vi.dwBuildNumber);
+            ps.add<LYRA_NAMESPACE::version::build>(vi.dwBuildNumber);
 
         } else {
             LYRA_TRACE(_T("RtlGetVersion failed."));
@@ -101,7 +101,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::operating_system::get_version(
             if (gv == nullptr) {
                 ps.add<LYRA_NAMESPACE::version::major>(vi.dwMajorVersion);
                 ps.add<LYRA_NAMESPACE::version::minor>(vi.dwMinorVersion);
-                ps.add<LYRA_NAMESPACE::version::patch>(vi.dwBuildNumber);
+                ps.add<LYRA_NAMESPACE::version::build>(vi.dwBuildNumber);
             }
 
             if (!has_flag(flags, collection_flags::no_undeclared)) {

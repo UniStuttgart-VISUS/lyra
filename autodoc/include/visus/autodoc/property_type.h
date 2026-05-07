@@ -8,7 +8,7 @@
 #define _LYRA_PROPERTY_TYPE_H
 #pragma once
 
-#include "visus/autodoc/multi_sz.h"
+#include "visus/autodoc/api.h"
 
 
 LYRA_NAMESPACE_BEGIN
@@ -76,7 +76,12 @@ enum class property_type {
     /// <summary>
     /// A GUID/UUID.
     /// </summary>
-    guid
+    guid,
+
+    /// <summary>
+    /// A timestamp.
+    /// </summary>
+    timestamp
 };
 
 LYRA_NAMESPACE_END

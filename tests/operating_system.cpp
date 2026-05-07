@@ -14,5 +14,5 @@ TEST(operating_system, version) {
     EXPECT_TRUE(!result.empty());
     EXPECT_NE(result.get<LYRA_NAMESPACE::version::major>(), nullptr);
     EXPECT_NE(result.get<LYRA_NAMESPACE::version::minor>(), nullptr);
-    EXPECT_NE(result.get<LYRA_NAMESPACE::version::patch>(), nullptr);
+    EXPECT_NE(result.get<LYRA_NAMESPACE::version::release>(), nullptr);
 }

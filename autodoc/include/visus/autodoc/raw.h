@@ -82,7 +82,7 @@ namespace raw {
     /// collected.
     /// </summary>
     struct timestamp final {
-        typedef LYRA_NAMESPACE::timestamp::value_type type;
+        typedef LYRA_NAMESPACE::timestamp type;
         static constexpr auto name = u8"Timestamp";
     };
 

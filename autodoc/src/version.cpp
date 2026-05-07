@@ -15,13 +15,15 @@
 LYRA_NAMESPACE::property_set LYRA_NAMESPACE::version::make(
         _In_ const std::uint32_t major,
         _In_ const std::uint32_t minor,
-        _In_ const std::uint32_t patch,
+        _In_ const std::uint32_t release,
+        _In_ const std::uint32_t build,
         _In_opt_z_ const char *prerelease) {
     detail::property_set_impl ps;
 
     ps.add<LYRA_NAMESPACE::version::major>(major);
     ps.add<LYRA_NAMESPACE::version::minor>(minor);
-    ps.add<LYRA_NAMESPACE::version::patch>(patch);
+    ps.add<LYRA_NAMESPACE::version::release>(release);
+    ps.add<LYRA_NAMESPACE::version::build>(build);
     ps.add(LYRA_NAMESPACE::version::prerelease::name, prerelease);
 
     return property_set(std::move(ps));

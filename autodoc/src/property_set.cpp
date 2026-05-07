@@ -23,8 +23,16 @@ LYRA_NAMESPACE_BEGIN
 /// <summary>
 /// Converts a <see cref="multi_sz" /> to a JSON value.
 /// </summary>
-static void to_json(nlohmann::json& j, const guid& v) {
+static inline void to_json(nlohmann::json& j, const guid& v) {
     j = v.to_string<char>();
+}
+
+
+/// <summary>
+/// Converts a <see cref="timestamp" /> to a JSON value.
+/// </summary>
+static inline void to_json(nlohmann::json& j, const timestamp& v) {
+    j = v.value();
 }
 
 

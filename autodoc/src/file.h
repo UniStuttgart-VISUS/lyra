@@ -17,7 +17,8 @@
 #include <wil/resource.h>
 #endif /* defined(_WIN32) */
 
-#include "visus/autodoc/api.h"
+#include "visus/autodoc/property_set.h"
+#include "visus/autodoc/timestamp.h"
 
 #include "unique_fd.h"
 
@@ -105,11 +106,44 @@ LYRA_TEST_API std::string final_path(_In_z_ const char *path);
 LYRA_TEST_API std::string final_path(_In_z_ const wchar_t *path);
 #endif /* defined(_WIN32) */
 
+#if defined(_WIN32)
+/// <summary>
+/// Gets the creation, last access and last write time of the given file handle.
+/// </summary>
+/// <param name="file"></param>
+/// <exception cref="std::system_error">If the operation failed.</exception>
+LYRA_TEST_API void get_file_time(
+    _Out_ timestamp& creation_time,
+    _Out_ timestamp& last_access_time,
+    _Out_ timestamp& last_write_time,
+    _In_ HANDLE file);
+#endif /* defined(_WIN32) */
+
+/// <summary>
+/// Gets the creation, last access and last write time of the given file handle.
+/// </summary>
+/// <param name="file"></param>
+/// <exception cref="std::system_error">If the operation failed.</exception>
+LYRA_TEST_API void get_file_time(
+    _Out_ timestamp& status_time,
+    _Out_ timestamp& last_access_time,
+    _Out_ timestamp& last_write_time,
+    _In_ int file);
+
+/// <summary>
+/// Gets, on Windows, the contents of the version meta data embedded in a file.
+/// </summary>
+/// <param name="path"></param>
+/// <returns></returns>
+LYRA_TEST_API property_set get_file_version_info(_In_z_ const char *path);
+
 /// <summary>
 /// Opens an existing file for reading.
 /// </summary>
 /// <param name="path"></param>
 /// <returns></returns>
+/// <exception cref="std::system_error">If the file could not be opened.
+/// </exception>
 LYRA_TEST_API unique_file open_read(_In_z_ const char *path);
 
 /// <summary>
@@ -117,6 +151,8 @@ LYRA_TEST_API unique_file open_read(_In_z_ const char *path);
 /// </summary>
 /// <param name="path"></param>
 /// <returns></returns>
+/// <exception cref="std::system_error">If the file could not be opened.
+/// </exception>
 LYRA_TEST_API unique_file open_read(_In_z_ const wchar_t *path);
 
 /// <summary>
@@ -124,6 +160,8 @@ LYRA_TEST_API unique_file open_read(_In_z_ const wchar_t *path);
 /// </summary>
 /// <param name="file"></param>
 /// <returns></returns>
+/// <exception cref="std::system_error">If the file could not be opened.
+/// </exception>
 LYRA_TEST_API std::vector<std::uint8_t> read_all_bytes(
     _In_ const unique_file& file);
 
@@ -132,6 +170,8 @@ LYRA_TEST_API std::vector<std::uint8_t> read_all_bytes(
 /// </summary>
 /// <param name="path"></param>
 /// <returns></returns>
+/// <exception cref="std::system_error">If the file could not be opened.
+/// </exception>
 inline std::vector<std::uint8_t> read_all_bytes(_In_z_ const char *path) {
     return read_all_bytes(open_read(path));
 }
@@ -141,6 +181,8 @@ inline std::vector<std::uint8_t> read_all_bytes(_In_z_ const char *path) {
 /// </summary>
 /// <param name="path"></param>
 /// <returns></returns>
+/// <exception cref="std::system_error">If the file could not be opened.
+/// </exception>
 inline  std::vector<std::uint8_t> read_all_bytes(_In_z_ const wchar_t *path) {
     return read_all_bytes(open_read(path));
 }

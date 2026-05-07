@@ -12,7 +12,9 @@
 
 #include "visus/autodoc/dispatch_list.h"
 #include "visus/autodoc/guid.h"
+#include "visus/autodoc/multi_sz.h"
 #include "visus/autodoc/property_type.h"
+#include "visus/autodoc/timestamp.h"
 
 
 // Forward declarations
@@ -44,7 +46,8 @@ typedef property_type_dispatch_list<
     property_type::uint64,
     property_type::float32,
     property_type::float64,
-    property_type::guid
+    property_type::guid,
+    property_type::timestamp
 > property_types;
 
 
@@ -69,6 +72,7 @@ _LYRA_PROP_TRAITS(uint64, std::uint64_t);
 _LYRA_PROP_TRAITS(float32, float);
 _LYRA_PROP_TRAITS(float64, double);
 _LYRA_PROP_TRAITS(guid, guid);
+_LYRA_PROP_TRAITS(timestamp, timestamp);
 
 #undef _LYRA_PROP_TRAITS
 
@@ -105,6 +109,7 @@ _LYRA_PROP_TRAITS(uint64, std::uint64_t);
 _LYRA_PROP_TRAITS(float32, float);
 _LYRA_PROP_TRAITS(float64, double);
 _LYRA_PROP_TRAITS(guid, guid);
+_LYRA_PROP_TRAITS(timestamp, timestamp);
 
 #undef _LYRA_PROP_TRAITS
 

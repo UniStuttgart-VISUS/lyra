@@ -16,6 +16,14 @@ LYRA_NAMESPACE_BEGIN
 namespace version {
 
     /// <summary>
+    /// Identifies the build number (last component).
+    /// </summary>
+    struct build final {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"Build";
+    };
+
+    /// <summary>
     /// Identifies the major version component.
     /// </summary>
     struct major final {
@@ -32,19 +40,19 @@ namespace version {
     };
 
     /// <summary>
-    /// Identifies the patch level.
-    /// </summary>
-    struct patch final {
-        typedef std::uint32_t type;
-        static constexpr auto name = u8"Patch";
-    };
-
-    /// <summary>
     /// Identifies whether the version is a pre-release version.
     /// </summary>
     struct prerelease final {
         typedef const char *type;
         static constexpr auto name = u8"PreRelease";
+    };
+
+    /// <summary>
+    /// Identifies the release or patch component.
+    /// </summary>
+    struct release final {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"Release";
     };
 
     /// <summary>
@@ -61,14 +69,16 @@ namespace version {
     /// </summary>
     /// <param name="major">The major version component.</param>
     /// <param name="minor">The minor version component.</param>
-    /// <param name="patch">The patch level.</param>
+    /// <param name="release">The release number.</param>
+    /// <param name="build">The build number.</param>
     /// <param name="prerelease">The pre-release identifier. This is optional
     /// and will be skipped if <see langword="nullptr" /> is passed.</param>
     /// <returns>A property set representing the specified version.</returns>
     LYRA_API property_set make(
         _In_ const std::uint32_t major,
         _In_ const std::uint32_t minor,
-        _In_ const std::uint32_t patch,
+        _In_ const std::uint32_t release,
+        _In_ const std::uint32_t build,
         _In_opt_z_ const char *prerelease = nullptr);
 
     /// <summary>

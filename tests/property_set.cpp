@@ -161,14 +161,17 @@ TEST(property_set, version_get) {
     LYRA_DETAIL_NAMESPACE::property_set_impl impl;
     impl.add<LYRA_NAMESPACE::version::major>(42);
     impl.add<LYRA_NAMESPACE::version::minor>(43);
-    impl.add<LYRA_NAMESPACE::version::patch>(44);
+    impl.add<LYRA_NAMESPACE::version::release>(44);
+    impl.add<LYRA_NAMESPACE::version::build>(45);
     LYRA_NAMESPACE::property_set properties(std::move(impl));
 
     EXPECT_NE(properties.get<LYRA_NAMESPACE::version::major>(), nullptr);
     EXPECT_EQ(*properties.get<LYRA_NAMESPACE::version::major>(), 42);
     EXPECT_NE(properties.get<LYRA_NAMESPACE::version::minor>(), nullptr);
     EXPECT_EQ(*properties.get<LYRA_NAMESPACE::version::minor>(), 43);
-    EXPECT_NE(properties.get<LYRA_NAMESPACE::version::patch>(), nullptr);
-    EXPECT_EQ(*properties.get<LYRA_NAMESPACE::version::patch>(), 44);
+    EXPECT_NE(properties.get<LYRA_NAMESPACE::version::release>(), nullptr);
+    EXPECT_EQ(*properties.get<LYRA_NAMESPACE::version::release>(), 44);
+    EXPECT_NE(properties.get<LYRA_NAMESPACE::version::build>(), nullptr);
+    EXPECT_EQ(*properties.get<LYRA_NAMESPACE::version::build>(), 45);
     EXPECT_EQ(properties.get<LYRA_NAMESPACE::version::prerelease>(), nullptr);
 }

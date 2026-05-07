@@ -15,6 +15,34 @@
 #include "processes.h"
 
 
+static bool add_timestamps(_Inout_ LYRA_DETAIL_NAMESPACE::property_set_impl& ps,
+        _In_ const LYRA_NAMESPACE::collection_flags flags,
+        _In_ const std::string& path) {
+    using namespace LYRA_NAMESPACE;
+
+    try {
+        auto handle = detail::open_read(path.c_str());
+
+        timestamp a, o, w;
+        LYRA_DETAIL_NAMESPACE::get_file_time(a, o, w, handle.get());
+
+        detail::checked_add<application::access_time>(ps, flags, a);
+        detail::checked_add<application::write_time>(ps, flags, w);
+#if defined(_WIN32)
+        detail::checked_add<application::create_time>(ps, flags, o);
+#else /* defined(_WIN32) */
+        detail::checked_add<application::change_time>(ps, flags, o);
+#endif /* defined(_WIN32) */
+
+        return true;
+    } catch (const std::exception& ex) {
+        LYRA_TRACE(_T("Failed to obtain timestamps for %s: %s"), path.c_str(),
+            ex.what());
+        return false;
+    }
+}
+
+
 /*
  * LYRA_NAMESPACE::application::get
  */
@@ -34,6 +62,11 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::application::get(
         LYRA_TRACE(_T("Failed to get executable hash: %s"), ex.what());
     }
 
+    add_timestamps(ps, flags, exe);
+    detail::checked_add<version_info>(ps, flags, detail::get_file_version_info(
+        exe.c_str()));
+
+
     detail::checked_add<process_id>(ps, flags, detail::get_process_id());
 
     try {
@@ -51,6 +84,9 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::application::get(
             [flags](const auto& d) {
                 detail::property_set_impl ps;
                 detail::checked_add<executable>(ps, flags, d.c_str());
+                add_timestamps(ps, flags, d);
+                detail::checked_add<version_info>(ps, flags,
+                    detail::get_file_version_info(d.c_str()));
 
                 try {
                     const auto dll_hash = detail::file_hash(d.c_str());
