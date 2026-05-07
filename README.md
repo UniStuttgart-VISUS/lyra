@@ -84,9 +84,6 @@ The `autodoc_write_raw` function is a one-stop solution for documenting everythi
 // This call dumps really everything the library collects.
 ::autodoc_write_raw("state.json", visus::autodoc::collection_flags::none);
 
-// This call dumps really everything the library collects.
-::autodoc_write_raw("state.json", visus::autodoc::collection_flags::none);
-
 // This call skips all data marked sensitive, which includes the environment
 // variables and unique hardware serials.
 ::autodoc_write_raw("state.json", visus::autodoc::collection_flags::no_sensitive);
