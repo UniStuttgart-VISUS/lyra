@@ -21,6 +21,7 @@
 #include "visus/autodoc/multi_sz.h"
 #include "visus/autodoc/trace.h"
 
+#include "git_environment.h"
 #include "property_set_impl.h"
 
 
@@ -83,6 +84,13 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::environment::get(
     }
 
     detail::checked_add<vars>(ps, flags, get_variables(flags));
+
+    {
+        const auto git = detail::git_environment::current();
+        if (git) {
+            detail::checked_add<environment::git>(ps, flags, git);
+        }
+    }
 
     return property_set(std::move(ps));
 }

@@ -25,6 +25,15 @@ namespace environment {
     };
 
     /// <summary>
+    /// Identifies a property holding the Git environment of the current
+    /// working directory.
+    /// </summary>
+    struct git final {
+        typedef property_set type;
+        static constexpr auto name = u8"Git";
+    };
+
+    /// <summary>
     /// Identifies a property set containing all environment variables.
     /// </summary>
     struct variables final {

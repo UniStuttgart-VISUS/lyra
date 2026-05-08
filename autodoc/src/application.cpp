@@ -8,9 +8,11 @@
 
 #include <algorithm>
 
+#include "visus/autodoc/environment.h"
 #include "visus/autodoc/trace.h"
 
 #include "file.h"
+#include "git_environment.h"
 #include "property_set_impl.h"
 #include "processes.h"
 
@@ -66,6 +68,12 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::application::get(
     detail::checked_add<version_info>(ps, flags, detail::get_file_version_info(
         exe.c_str()));
 
+    {
+        detail::git_environment git(exe);
+        if (git) {
+            detail::checked_add<environment::git>(ps, flags, git);
+        }
+    }
 
     detail::checked_add<process_id>(ps, flags, detail::get_process_id());
 
