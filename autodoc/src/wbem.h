@@ -44,8 +44,8 @@ LYRA_TEST_API void copy_wbem_properties(_Inout_ property_set_impl& ps,
 /// </summary>
 /// <typeparam name="TCallback"></typeparam>
 /// <typeparam name="Batch">The number of objects requested from the WBEM enumerator per retrieval operation; must be greater than zero.</typeparam>
-/// <param name="enumerator"></param>
-/// <param name="callback"></param>
+/// <param name="enumerator">The WBEM enumerator providing class objects to process.</param>
+/// <param name="callback">The callback invoked for each enumerated WBEM class object.</param>
 /// <returns>The number of objects returned by the enumerator.</returns>
 /// <exception cref="wil::ResultException">If the operation fails.</exception>
 template<class TCallback, ULONG Batch = 16> std::size_t foreach_wbem(
