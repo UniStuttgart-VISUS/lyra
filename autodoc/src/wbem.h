@@ -33,9 +33,8 @@ LYRA_DETAIL_NAMESPACE_BEGIN
 /// Copy the properties from <paramref name="object"/> to the given property set
 /// <paramref name="ps"/>.
 /// </summary>
-/// <param name="ps"></param>
-/// <param name="object"></param>
-/// <returns></returns>
+/// <param name="ps">The destination property set that receives the copied values.</param>
+/// <param name="object">The WBEM class object providing the source properties.</param>
 LYRA_TEST_API void copy_wbem_properties(_Inout_ property_set_impl& ps,
     _In_ IWbemClassObject *object);
 
@@ -44,8 +43,9 @@ LYRA_TEST_API void copy_wbem_properties(_Inout_ property_set_impl& ps,
 /// WBEM <paramref name="enumerator" />.
 /// </summary>
 /// <typeparam name="TCallback"></typeparam>
-/// <param name="enumerator"></param>
-/// <param name="callback"></param>
+/// <typeparam name="Batch">The number of objects requested from the WBEM enumerator per retrieval operation; must be greater than zero.</typeparam>
+/// <param name="enumerator">The WBEM enumerator providing class objects to process.</param>
+/// <param name="callback">The callback invoked for each enumerated WBEM class object.</param>
 /// <returns>The number of objects returned by the enumerator.</returns>
 /// <exception cref="wil::ResultException">If the operation fails.</exception>
 template<class TCallback, ULONG Batch = 16> std::size_t foreach_wbem(
@@ -71,8 +71,10 @@ LYRA_TEST_API wil::com_ptr<IWbemLocator> make_wbem_locator(void);
 /// <summary>
 /// Creates a new WBEM locator object and connects to the specified namespace.
 /// </summary>
-/// <param name="root"></param>
-/// <returns></returns>
+/// <param name="root">The WBEM namespace path to connect to (for example,
+/// <c>ROOT\\CIMV2</c>).</param>
+/// <returns>A COM pointer to the connected <see cref="IWbemServices" />
+/// interface for the requested namespace.</returns>
 LYRA_TEST_API wil::com_ptr<IWbemServices> make_wbem_services(
     _In_z_ const wchar_t *root);
 
@@ -80,9 +82,10 @@ LYRA_TEST_API wil::com_ptr<IWbemServices> make_wbem_services(
 /// Execute the specified WQL query on the given WBEM services and return an
 /// enumerator for the results.
 /// </summary>
-/// <param name="services"></param>
-/// <param name="query"></param>
-/// <returns></returns>
+/// <param name="services">The WBEM services interface used to execute the query.</param>
+/// <param name="query">The WQL query string to execute.</param>
+/// <param name="flags">WBEM query execution flags. Defaults to <c>WBEM_RETURN_WHEN_COMPLETE</c>.</param>
+/// <returns>An enumerator over the WBEM class objects returned by the query.</returns>
 LYRA_TEST_API wil::com_ptr<IEnumWbemClassObject> query_wql(
     _In_ IWbemServices *services,
     _In_z_ const wchar_t *query,
