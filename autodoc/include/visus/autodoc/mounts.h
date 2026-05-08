@@ -118,7 +118,7 @@ namespace mounts {
     };
 
     /// <summary>
-    /// Gets all all devices we can identify on the current system.
+    /// Gets all the mount points we can identify on the current system.
     /// </summary>
     /// <param name="flags">Allows for customising the collection
     /// behaviour.</param>

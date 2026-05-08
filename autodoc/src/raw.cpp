@@ -12,6 +12,7 @@
 #include "visus/autodoc/graphics.h"
 #include "visus/autodoc/hardware.h"
 #include "visus/autodoc/memory.h"
+#include "visus/autodoc/network.h"
 #include "visus/autodoc/mounts.h"
 #include "visus/autodoc/operating_system.h"
 #include "visus/autodoc/smbios.h"
@@ -62,6 +63,11 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::raw::get(
     if (detail::check_sensitive<mounts>(flags)
             && detail::check_immutable<mounts>(flags)) {
         ps.add<mounts>(LYRA_NAMESPACE::mounts::get(flags));
+    }
+
+    if (detail::check_sensitive<network>(flags)
+            && detail::check_immutable<network>(flags)) {
+        ps.add<network>(LYRA_NAMESPACE::network::get(flags));
     }
 
     if (detail::check_sensitive<operating_system>(flags)

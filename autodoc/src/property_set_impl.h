@@ -105,17 +105,18 @@ struct LYRA_TEST_API property_set_impl final {
         this->values.emplace(std::move(key), begin, end);
     }
 
-    /// <summary>
-    /// Convenience method for adding a new vector-valued property to the set.
-    /// </summary>
-    template<class TIterator> inline void add(
-            _In_z_ const char *key,
-            _In_ const TIterator begin,
-            _In_ const TIterator end,
-            const property_traits<iterated_type<TIterator>> *_ = nullptr) {
-        assert(key != nullptr);
-        this->values.emplace(std::string(key), begin, end);
-    }
+    ///// <summary>
+    ///// Convenience method for adding a new vector-valued property to the set.
+    ///// </summary>
+    //template<class TIterator> inline void add(
+    //        _In_z_ const char *key,
+    //        _In_ const TIterator begin,
+    //        _In_ const TIterator end,
+    //        const property_traits<iterated_type<TIterator>> *_ = nullptr) {
+    //    assert(key != nullptr);
+    //    typedef std::vector<std::iterator_traits<TIterator>::value_type> type;
+    //    this->values.emplace(std::string(key), type(begin, end));
+    //}
 
     /// <summary>
     /// Convenience method for adding a new property to the set.
@@ -249,22 +250,36 @@ struct LYRA_TEST_API property_set_impl final {
         this->add(TProp::name, std::forward<typename TProp::type>(value));
     }
 
+    /// <summary>
+    /// Adds a vector-valued property using the type from a property descriptor.
+    /// </summary>
     template<class TProp>
     inline void add(_In_ const std::vector<typename TProp::type>& value) {
-        this->add(TProp::name, value.begin(), value.end());
+        this->add(TProp::name, value);
     }
 
+    /// <summary>
+    /// Adds a vector-valued property using the type from a property descriptor.
+    /// </summary>
     template<class TProp>
     inline void add(_Inout_ std::vector<typename TProp::type>&& value) {
         this->values.emplace(TProp::name, std::move(value));
     }
 
+    /// <summary>
+    /// Specialisation for string-valued properties which allows for directly
+    /// adding a vector-valued string property as multi-sz.
+    /// </summary>
     template<class TProp> inline std::enable_if_t<
         std::is_same_v<typename TProp::type, const char *>>
     add(_In_ const multi_sz& value) {
         this->add(TProp::name, value.begin(), value.end());
     }
 
+    /// <summary>
+    /// Specialisation for string-valued properties which allows for directly
+    /// adding a vector-valued string property as multi-sz.
+    /// </summary>
     template<class TProp> inline std::enable_if_t<
         std::is_same_v<typename TProp::type, const char *>>
     add(_Inout_ multi_sz&& value) {
@@ -331,6 +346,16 @@ template<class TName, class... TArgs> bool checked_add(
     }
     return retval;
 }
+
+
+/// <summary>
+/// Transforms a list of property set implementations into a list of property
+/// sets.
+/// </summary>
+/// <param name="pss"></param>
+/// <returns></returns>
+LYRA_TEST_API std::vector<property_set> make_property_sets(
+    _In_ std::vector<property_set_impl>&& pss);
 
 LYRA_DETAIL_NAMESPACE_END
 

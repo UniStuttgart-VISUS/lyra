@@ -6,6 +6,8 @@
 
 #include "property_set_impl.h"
 
+#include <algorithm>
+
 #include "visus/autodoc/convert_string.h"
 
 
@@ -53,4 +55,18 @@ LYRA_DETAIL_NAMESPACE::property_set_impl::find(
         _In_ const key_type& key) const noexcept {
     auto it = this->values.find(key);
     return (it != this->values.end()) ? std::addressof(it->second) : nullptr;
+}
+
+
+
+/*
+ * LYRA_DETAIL_NAMESPACE::make_property_sets
+ */
+std::vector<LYRA_NAMESPACE::property_set>
+LYRA_DETAIL_NAMESPACE::make_property_sets(
+        _In_ std::vector<property_set_impl>&& pss) {
+    std::vector<LYRA_NAMESPACE::property_set> retval(pss.size());
+    std::transform(pss.begin(), pss.end(), retval.begin(),
+        [](auto&& ps) { return property_set(std::move(ps)); });
+    return retval;
 }

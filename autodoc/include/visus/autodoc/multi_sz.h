@@ -394,6 +394,23 @@ public:
     }
 
     /// <summary>
+    /// Creates a new instance from a range of strings.
+    /// </summary>
+    /// <typeparam name="TIterator"></typeparam>
+    /// <param name="begin"></param>
+    /// <param name="end"></param>
+    /// <returns></returns>
+    template<class TIterator>
+    static multi_sz for_strings(_In_ const TIterator begin,
+            _In_ const TIterator end) {
+        multi_sz retval;
+        for (auto it = begin; it != end; ++it) {
+            retval.add(*it);
+        }
+        return retval;
+    }
+
+    /// <summary>
     /// Initialises a new instance.
     /// </summary>
     /// <param name="value">A set of zero-terminated strings, terminated with

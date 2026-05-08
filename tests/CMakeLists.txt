@@ -17,6 +17,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE gmock_main)
 
 if (WIN32)
     target_link_libraries(${PROJECT_NAME} PRIVATE WIL::WIL)
+    target_link_libraries(${PROJECT_NAME} PRIVATE Iphlpapi)
     target_link_libraries(${PROJECT_NAME} PRIVATE Mpr)
     target_link_libraries(${PROJECT_NAME} PRIVATE Netapi32)
     target_link_libraries(${PROJECT_NAME} PRIVATE SetupAPI)
