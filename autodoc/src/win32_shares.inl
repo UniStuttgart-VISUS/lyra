@@ -153,7 +153,7 @@ std::size_t LYRA_DETAIL_NAMESPACE::enumerate_use(_In_ TCallback callback) {
             case ERROR_MORE_DATA:
                 break;
             default:
-                LYRA_TRACE(_T("NetShareEnum failed with error %u"), status);
+                LYRA_TRACE(_T("NetUseEnum failed with error %u"), status);
                 return retval;
         }
         LYRA_ON_EXIT([&buffer](void) { ::NetApiBufferFree(buffer); });
