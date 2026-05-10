@@ -40,6 +40,16 @@ LYRA_DETAIL_NAMESPACE::dynamic_library::~dynamic_library(void) noexcept {
 LYRA_DETAIL_NAMESPACE::dynamic_library::function_type
 LYRA_DETAIL_NAMESPACE::dynamic_library::get_function(
         const char *name) {
+    if (name == nullptr) {
+        throw std::invalid_argument("A valid function name must be provided.");
+    }
+
+    const std::string key(name);
+    auto it = this->_cache.find(key);
+    if (it != this->_cache.end()) {
+        return it->second;
+    }
+
 #if defined(_WIN32)
     auto retval = ::GetProcAddress(this->_handle, name);
 #else /* defined(_WIN32) */
@@ -53,6 +63,8 @@ LYRA_DETAIL_NAMESPACE::dynamic_library::get_function(
         throw std::runtime_error(::dlerror());
 #endif /* defined(_WIN32) */
     }
+
+    this->_cache.emplace(key, retval);
 
     return retval;
 }

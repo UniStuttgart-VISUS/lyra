@@ -11,6 +11,7 @@
 
 #include <array>
 #include <system_error>
+#include <unordered_map>
 
 #if defined(_WIN32)
 #include <windows.h>
@@ -107,6 +108,7 @@ public:
 
 private:
 
+    std::unordered_map<std::string, function_type> _cache;
     handle_type _handle;
 };
 
