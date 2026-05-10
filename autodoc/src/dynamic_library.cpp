@@ -8,13 +8,16 @@
 
 #include <memory>
 
+#include "visus/autodoc/trace.h"
+
 
 /*
  * LYRA_DETAIL_NAMESPACE::dynamic_library::dynamic_library
  */
 LYRA_DETAIL_NAMESPACE::dynamic_library::dynamic_library(
         _Inout_ dynamic_library&& rhs) noexcept
-        : _handle(rhs._handle) {
+    : _cache(std::move(rhs._cache)),
+        _handle(rhs._handle) {
     rhs._handle = invalid_handle;
 }
 
@@ -37,16 +40,18 @@ LYRA_DETAIL_NAMESPACE::dynamic_library::~dynamic_library(void) noexcept {
 /*
  * LYRA_DETAIL_NAMESPACE::dynamic_library::get_function
  */
-LYRA_DETAIL_NAMESPACE::dynamic_library::function_type
+_Must_inspect_result_ LYRA_DETAIL_NAMESPACE::dynamic_library::function_type
 LYRA_DETAIL_NAMESPACE::dynamic_library::get_function(
-        const char *name) {
+        const char *name) noexcept {
     if (name == nullptr) {
-        throw std::invalid_argument("A valid function name must be provided.");
+        LYRA_TRACE(_T("Invalid function name provided."));
+        return nullptr;
     }
 
     const std::string key(name);
     auto it = this->_cache.find(key);
     if (it != this->_cache.end()) {
+        LYRA_TRACE(_T("Reusing cached function pointer."));
         return it->second;
     }
 
@@ -56,15 +61,10 @@ LYRA_DETAIL_NAMESPACE::dynamic_library::get_function(
     auto retval = ::dlsym(this->_handle, name);
 #endif /* defined(_WIN32) */
 
-    if (retval == nullptr) {
-#if defined(_WIN32)
-        throw std::system_error(::GetLastError(), std::system_category());
-#else /* defined(_WIN32) */
-        throw std::runtime_error(::dlerror());
-#endif /* defined(_WIN32) */
+    if (retval != nullptr) {
+        LYRA_TRACE(_T("Caching function pointer."));
+        this->_cache.emplace(key, retval);
     }
-
-    this->_cache.emplace(key, retval);
 
     return retval;
 }
@@ -77,6 +77,7 @@ LYRA_DETAIL_NAMESPACE::dynamic_library&
 LYRA_DETAIL_NAMESPACE::dynamic_library::operator =(
         _Inout_ dynamic_library&& rhs) noexcept {
     if (this != std::addressof(rhs)) {
+        this->_cache = std::move(rhs._cache);
         this->_handle = rhs._handle;
         rhs._handle = invalid_handle;
     }

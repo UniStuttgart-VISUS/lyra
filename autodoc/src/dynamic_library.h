@@ -84,7 +84,7 @@ public:
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
-    function_type get_function(const char *name);
+    _Must_inspect_result_ function_type get_function(const char *name) noexcept;
 
     /// <summary>
     /// Gets the function with the specified name from the library and casts it
@@ -94,7 +94,7 @@ public:
     /// <param name="name"></param>
     /// <returns></returns>
     template<class TFunction>
-    inline TFunction get_function(const char *name) {
+    inline TFunction get_function(const char *name) noexcept {
         return reinterpret_cast<TFunction>(this->get_function(name));
     }
 
