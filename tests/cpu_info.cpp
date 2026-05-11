@@ -11,6 +11,7 @@
 #include "visus/autodoc/cpu.h"
 #include "visus/autodoc/cpu_info.h"
 #include "visus/autodoc/cpu_info_detector.h"
+#include "visus/autodoc/cpu_vendor_detectors.h"
 #include "visus/autodoc/simd_detector.h"
 
 #include "os_cpu_info.h"
@@ -67,4 +68,16 @@ TEST(cpu_info, topology) {
 
     auto p = LYRA_NAMESPACE::cpu::get_topology();
     EXPECT_FALSE(p.empty());
+}
+
+TEST(cpu_info, vendor) {
+    bool value;
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor_detectors::amd());
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor_detectors::centaur());
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor_detectors::cyrix());
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor_detectors::hyperv());
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor_detectors::intel());
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor_detectors::virtual_box());
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor_detectors::virtual_pc());
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor_detectors::vmware());
 }
