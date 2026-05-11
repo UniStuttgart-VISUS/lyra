@@ -38,7 +38,7 @@ namespace cpu {
 
     /// <summary>
     /// Identifies a property that holds (hierarchically organised) information
-    /// about a single CPU code
+    /// about a single CPU core
     /// </summary>
     struct core final {
         typedef property_set type;
@@ -104,14 +104,17 @@ namespace cpu {
     };
 
     /// <summary>
-    /// Identifies a property that holds the hierarchially organised CPU
+    /// Identifies a property that holds the hierarchically organised CPU
     /// topology of the system.
     /// </summary>
-    struct toplogy final {
+    struct topology final {
         typedef property_set type;
         static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Topology";
     };
+
+    // Backward-compatible alias for previous misspelling.
+    using toplogy = topology;
 
     /// <summary>
     /// Identifies the vendor of a CPU as reported by the CPUID instruction.
@@ -140,7 +143,7 @@ namespace cpu {
         = collection_flags::none);
 
     /// <summary>
-    /// Gets a description of the CPU toplogy of the system.
+    /// Gets a description of the CPU topology of the system.
     /// </summary>
     /// <param name="flags"></param>
     /// <returns></returns>
