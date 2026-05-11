@@ -113,9 +113,6 @@ namespace cpu {
         static constexpr auto name = u8"Topology";
     };
 
-    // Backward-compatible alias for previous misspelling.
-    using toplogy = topology;
-
     /// <summary>
     /// Identifies the vendor of a CPU as reported by the CPUID instruction.
     /// </summary>
