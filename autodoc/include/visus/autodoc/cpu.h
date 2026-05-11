@@ -28,6 +28,16 @@ namespace cpu {
 
     /// <summary>
     /// Identifies a property that holds (hierarchically organised) information
+    /// about the cache.
+    /// </summary>
+    struct cache final {
+        typedef property_set type;
+        static constexpr auto is_immutable = true;
+        static constexpr auto name = u8"Cache";
+    };
+
+    /// <summary>
+    /// Identifies a property that holds (hierarchically organised) information
     /// about a single CPU code
     /// </summary>
     struct core final {

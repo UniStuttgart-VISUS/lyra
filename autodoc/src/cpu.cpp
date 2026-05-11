@@ -198,6 +198,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_topology(
 #if defined(_WIN32) && (_WIN32_WINNT >= 0x0601)
     typedef SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX info_type;
 
+    std::map<BYTE, std::vector<detail::property_set_impl>> caches;
     std::map<GROUP_AFFINITY, detail::property_set_impl> cores;
     std::map<GROUP_AFFINITY, DWORD> nodes;
     std::vector<std::set<GROUP_AFFINITY>> sockets;
@@ -255,6 +256,28 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_topology(
                 }
                 break;
 
+            case RelationCache: {
+                // This is a relation between a cache and one or more cores.
+                auto& c = caches[info.Cache.Level].emplace_back();
+                c.add(u8"Associativity", info.Cache.Associativity);
+                c.add(u8"Line Size", info.Cache.LineSize);
+                c.add(u8"Size", info.Cache.CacheSize);
+                c.add(u8"Type", info.Cache.Type);
+
+                std::vector<detail::property_set_impl> affinity;
+                auto& a = affinity.emplace_back();
+                a.add(u8"Group", info.Cache.GroupMask.Group);
+                a.add(u8"Mask", info.Cache.GroupMask.Mask);
+
+                for (WORD i = 1; i < info.Cache.GroupCount; ++i) {
+                    a.add(u8"Group", info.Cache.GroupMasks[i].Group);
+                    a.add(u8"Mask", info.Cache.GroupMasks[i].Mask);
+                }
+
+                c.add(u8"Affinity", detail::make_property_sets(
+                    std::move(affinity)));
+                } break;
+
             default:
                 // This relationship is not important for our purposes.
                 break;
@@ -300,6 +323,15 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_topology(
 
     detail::checked_add<toplogy>(ps, flags, detail::make_property_sets(
         std::move(sps)));
+
+    // Create the cache hierarchy and add it to the output.
+    detail::property_set_impl cps;
+    for (auto& c : caches) {
+        cps.add(std::to_string(c.first), detail::make_property_sets(
+            std::move(c.second)));
+    }
+
+    detail::checked_add<cache>(ps, flags, property_set(std::move(cps)));
 #endif /* defined(_WIN32) && (_WIN32_WINNT >= 0x0601) */
 
     return property_set(std::move(ps));
