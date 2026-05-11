@@ -72,6 +72,38 @@ enum cpu_info_register : std::size_t {
 
 
 /// <summary>
+/// Checks whether any of the bits in the specified register of the given CPUID
+/// function is set.
+/// </summary>
+/// <typeparam name="Fun"></typeparam>
+/// <typeparam name="Reg"></typeparam>
+template<std::size_t Fun, std::size_t Reg> class cpu_info_any {
+    static_assert(Reg < 4, "The register must be within [0, 4[.");
+
+public:
+
+    /// <summary>
+    /// Initialises a new instance.
+    /// </summary>
+    cpu_info_any(void);
+
+    /// <summary>
+    /// Answer whether the instruction identified by
+    /// <typeparamref name="Fun" /> and <typename="Reg" /> is not zero.
+    /// </summary>
+    /// <returns><see langword="true" /> if the register is not zero,
+    /// <see langword="false" /> otherwise.</returns>
+    inline operator bool(void) const noexcept {
+        return this->_value;
+    }
+
+private:
+
+    bool _value;
+};
+
+
+/// <summary>
 /// Base implementation for detecting the presence of bits in the CPU info
 /// of x86 CPUs.
 /// </summary>

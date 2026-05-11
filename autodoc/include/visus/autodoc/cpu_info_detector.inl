@@ -6,6 +6,19 @@
 
 
 /*
+ * LYRA_NAMESPACE::cpu_info_detector<Fun, Reg, Mask>::cpu_info_any
+ */
+template<std::size_t Fun, std::size_t Reg>
+LYRA_NAMESPACE::cpu_info_any<Fun, Reg>::cpu_info_any(void) : _value(false) {
+    cpu_info info;
+
+    if (get_cpu_info(info, Fun)) {
+        this->_value = (info.values[Reg] != 0);
+    }
+}
+
+
+/*
  * LYRA_NAMESPACE::cpu_info_detector<Fun, Reg, Mask>::cpu_info_detector
  */
 template<std::size_t Fun, std::size_t Reg, std::uint32_t Mask>

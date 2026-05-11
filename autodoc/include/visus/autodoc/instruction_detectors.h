@@ -23,6 +23,13 @@ namespace instruction_detectors {
         detail::cpu_info_bit(23)> popcnt;
 
     /// <summary>
+    /// Answer whether the CPU supports leaf B of the CPUID instruction, which
+    /// contains information about the topology of the CPU. See also
+    /// https://github.com/tpn/cpuid-topo/blob/f9b24d25220965087c1d855f716c52d75bc7bbe0/cpu_topo.c#L1009-L1057
+    /// </summary>
+    typedef cpu_info_any<0x0000000b, cpu_info_register::ebx> topology_leaf_b;
+
+    /// <summary>
     /// Checks whether the <see cref="_xgetbv" /> intrinsic is supported via bit
     /// 27 of ECX in function 1.
     /// </summary>

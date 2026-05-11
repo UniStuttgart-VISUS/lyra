@@ -139,6 +139,8 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
 
         insts.add(u8"POPCNT", instruction_detectors::popcnt());
         insts.add(u8"XGETBV", instruction_detectors::xgetbv());
+        insts.add(u8"Topology Leaf B",
+            instruction_detectors::topology_leaf_b());
 
         if (detail::check_sensitive<cpu::simd_instructions>(flags)) {
             detail::property_set_impl simds;
