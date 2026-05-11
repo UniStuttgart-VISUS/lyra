@@ -6,6 +6,8 @@
 
 #include "os_cpu_info.h"
 
+#include <climits>
+
 #if !defined(_WIN32)
 #include <sched.h>
 #include <unistd.h>

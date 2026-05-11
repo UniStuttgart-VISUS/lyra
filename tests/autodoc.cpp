@@ -47,6 +47,7 @@ TEST(autodoc, wchar_t) {
     EXPECT_TRUE(std::filesystem::exists(exit_path));
 }
 
+
 TEST(autodoc, autodoc_write_raw_a) {
     const std::string path("autodoc_write_raw_a.json");
 

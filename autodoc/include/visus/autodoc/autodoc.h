@@ -96,7 +96,6 @@ extern "C" {
         _In_z_ const char *path,
         _In_ const LYRA_COLLECTION_FLAGS flags);
 
-#if defined(_WIN32)
     /// <summary>
     /// Collects the raw data from the system and writes it to the specified
     /// file.
@@ -108,7 +107,6 @@ extern "C" {
     int LYRA_API autodoc_write_raw_w(
         _In_z_ const wchar_t *path,
         _In_ const LYRA_COLLECTION_FLAGS flags);
-#endif /* defined(_WIN32) */
 
 #if defined(__cplusplus)
 } /* extern "C" */

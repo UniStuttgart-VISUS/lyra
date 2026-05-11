@@ -210,7 +210,6 @@ int autodoc_write_raw_a(_In_z_ const char *path,
 }
 
 
-#if defined(_WIN32)
 /*
  * ::autodoc_write_raw_w
  */
@@ -218,4 +217,3 @@ int autodoc_write_raw_w(_In_z_ const wchar_t *path,
         _In_ const LYRA_NAMESPACE::collection_flags flags) {
     return LYRA_DETAIL_NAMESPACE::write_raw(path, flags);
 }
-#endif /* defined(_WIN32) */
