@@ -342,7 +342,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_topology(
         ss.add<numa_node>(detail::make_property_sets(std::move(nps)));
     }
 
-    detail::checked_add<toplogy>(ps, flags, detail::make_property_sets(
+    detail::checked_add<topology>(ps, flags, detail::make_property_sets(
         std::move(sps)));
 
     // Create the cache hierarchy and add it to the output.

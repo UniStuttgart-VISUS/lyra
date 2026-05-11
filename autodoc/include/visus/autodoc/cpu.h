@@ -107,7 +107,7 @@ namespace cpu {
     /// Identifies a property that holds the hierarchially organised CPU
     /// topology of the system.
     /// </summary>
-    struct toplogy final {
+    struct topology final {
         typedef property_set type;
         static constexpr auto is_immutable = true;
         static constexpr auto name = u8"Topology";
@@ -140,7 +140,7 @@ namespace cpu {
         = collection_flags::none);
 
     /// <summary>
-    /// Gets a description of the CPU toplogy of the system.
+    /// Gets a description of the CPU topology of the system.
     /// </summary>
     /// <param name="flags"></param>
     /// <returns></returns>
