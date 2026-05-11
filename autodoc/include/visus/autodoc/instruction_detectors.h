@@ -15,6 +15,8 @@ LYRA_NAMESPACE_BEGIN
 
 namespace instruction_detectors {
 
+    // https://github.com/tianocore/edk2/blob/master/MdePkg/Include/Register/Amd/Cpuid.h
+
     /// <summary>
     /// Checks whether the POPCNT instruction is supported via bit 23 of ECX in
     /// function 1. POPCNT allows for counting the number of set bits in a word.
