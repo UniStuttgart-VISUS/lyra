@@ -210,15 +210,15 @@ LYRA_NAMESPACE::property_set LYRA_DETAIL_NAMESPACE::get_file_version_info(
 #if defined(_WIN32)
 #define _LYRA_ADD_FLAG_STR(s, f) do {\
     if ((v & f) == f) {\
-        if (!s.empty()) { s+= ", "; }\
-        s += #f;\
+        if (!s.empty()) { s+= u8", "; }\
+        s += u8#f;\
     }\
 } while (false)
 #define _LYRA_ADD_FLAG_PROP(n, s, v) do {\
     if (s.empty()) {\
         ps.add(n, v);\
     } else {\
-        s += " (" + std::to_string(v) + ")";\
+        s += u8" (" + std::to_string(v) + u8")";\
         ps.add(n, s.c_str());\
     }\
 } while (false);

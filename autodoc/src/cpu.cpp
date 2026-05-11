@@ -262,7 +262,28 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_topology(
                 c.add(u8"Associativity", info.Cache.Associativity);
                 c.add(u8"Line Size", info.Cache.LineSize);
                 c.add(u8"Size", info.Cache.CacheSize);
-                c.add(u8"Type", info.Cache.Type);
+
+                switch (info.Cache.Type) {
+                    case CacheUnified:
+                        c.add(u8"Type", u8"Unified");
+                        break;
+
+                    case CacheInstruction:
+                        c.add(u8"Type", u8"Instruction");
+                        break;
+
+                    case CacheData:
+                        c.add(u8"Type", u8"Data");
+                        break;
+
+                    case CacheTrace:
+                        c.add(u8"Type", u8"Trace");
+                        break;
+
+                    default:
+                        c.add(u8"Type", info.Cache.Type);
+                        break;
+                }
 
                 std::vector<detail::property_set_impl> affinity;
                 auto& a = affinity.emplace_back();
