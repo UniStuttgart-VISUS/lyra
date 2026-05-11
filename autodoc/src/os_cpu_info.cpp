@@ -16,6 +16,26 @@
 #include "contains.h"
 
 
+/// <summary>
+/// Convert an integral mask to a vector of Boolean values where each elements
+/// indicates whether a specific bit is set in the mask.
+/// </summary>
+template<class TType> static std::vector<bool> to_booleans(
+        _In_ const TType mask, _In_ std::size_t limit) {
+    constexpr auto length = sizeof(TType) * CHAR_BIT;
+    if (limit > length) {
+        limit = length;
+    }
+
+    std::vector<bool> retval(limit);
+    for (std::size_t i = 0; i < limit; ++i) {
+        const auto bit = static_cast<TType>(1) << i;
+        retval[i] = (mask & bit) != 0;
+    }
+
+    return retval;
+}
+
 
 /*
  * LYRA_DETAIL_NAMESPACE::get_process_cpu_affinity
@@ -61,19 +81,84 @@ std::vector<bool> LYRA_DETAIL_NAMESPACE::get_process_cpu_affinity(void) {
 
 #endif /* (_WIN32_WINNT >= 0x0601) */
     {
-        DWORD_PTR mask;
-        if (::GetProcessAffinityMask(::GetCurrentProcess(), &mask, nullptr)) {
-            const auto limit = (std::min)(get_os_max_cpus(),
-                static_cast<std::size_t>(sizeof(DWORD_PTR) * CHAR_BIT));
-            retval.resize(limit);
-
-            for (std::size_t i = 0; i < limit; ++i) {
-                const auto bit = static_cast<DWORD_PTR>(1) << i;
-                retval[i] = (mask & bit) != 0;
-            }
+        DWORD_PTR mask, dummy;
+        if (::GetProcessAffinityMask(::GetCurrentProcess(), &mask, &dummy)) {
+            retval = to_booleans(mask, get_os_max_cpus());
         }
     }
 
+#else /* defined(_WIN32) */
+    return get_thread_cpu_affinity(0);
+#endif /* defined(_WIN32) */
+
+    return retval;
+}
+
+/*
+ * LYRA_DETAIL_NAMESPACE::get_thread_cpu_affinity
+ */
+std::vector<bool> LYRA_DETAIL_NAMESPACE::get_thread_cpu_affinity(
+        _In_ const thread_handle thread) {
+    std::vector<bool> retval;
+
+#if defined(_WIN32)
+#if (_WIN32_WINNT >= 0x0601)
+    auto cnt_groups = ::GetActiveProcessorGroupCount();
+
+    if (cnt_groups > 0) {
+        GROUP_AFFINITY affinity;
+        std::vector<std::uint8_t> buffer;
+        auto info = get_logical_processor_info(buffer, RelationGroup);
+
+        if ((info != nullptr) && (info->Relationship == RelationGroup)
+                && ::GetThreadGroupAffinity(thread, &affinity)) {
+            for (std::size_t i = 0; i < cnt_groups; ++i) {
+                if (i == affinity.Group) {
+                    // Convert the mask to Booleans.
+                    for (auto j = 0; j < sizeof(KAFFINITY) * CHAR_BIT; ++j) {
+                        const auto bit = static_cast<KAFFINITY>(1) << j;
+                        retval.push_back((affinity.Mask & bit) != 0);
+                    }
+                } else {
+                    // The thread is not running in this group.
+                    const auto& g = info->Group.GroupInfo[i];
+                    for (auto j = 0; j < g.ActiveProcessorCount; ++j) {
+                        retval.push_back(false);
+                    }
+                }
+            }
+
+            return retval;
+        }
+    } /* if (cnt_groups > 0) */
+
+#endif /* (_WIN32_WINNT >= 0x0601) */
+    {
+        DWORD_PTR probe = 1;
+
+        while (probe != 0) {
+            const auto mask = ::SetThreadAffinityMask(thread, probe);
+
+            if (mask != 0) {
+                // If we were able to set the affinity mask, the return value
+                // was the previous mask, which is what we want to know. Reset
+                // the mask and exit the loop.
+                ::SetThreadAffinityMask(thread, mask);
+                retval = to_booleans(mask, get_os_max_cpus());
+                probe = 0;
+
+            } else if (::GetLastError() == ERROR_INVALID_PARAMETER) {
+                // Our probe was invalid as is included a CPU that is not
+                // available to the process. Therefore, we try the next.
+                 probe <<= 1;
+
+            } else {
+                // This is a fatal error, we will not able to determine the
+                // thread affinity.
+                probe = 0;
+            }
+        }
+    }
 #else /* defined(_WIN32) */
     const auto cnt = get_os_max_cpus();
 
@@ -83,7 +168,7 @@ std::vector<bool> LYRA_DETAIL_NAMESPACE::get_process_cpu_affinity(void) {
         const auto size = CPU_ALLOC_SIZE(cnt);
         CPU_ZERO_S(size, cpus);
 
-        if (::sched_getaffinity(0, size, cpus) == 0) {
+        if (::sched_getaffinity(thread, size, cpus) == 0) {
             for (std::size_t i = 0; i < cnt; ++i) {
                 retval.push_back(CPU_ISSET(i, cpus) != 0);
             }
@@ -101,7 +186,7 @@ std::vector<bool> LYRA_DETAIL_NAMESPACE::get_process_cpu_affinity(void) {
  */
 SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX *
 LYRA_DETAIL_NAMESPACE::get_logical_processor_info(
-        _Out_ std::vector<std::uint8_t>& buffer,
+        _Inout_ std::vector<std::uint8_t>& buffer,
         _In_ const LOGICAL_PROCESSOR_RELATIONSHIP relationship) {
     if (buffer.empty()) {
         buffer.resize(sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX));

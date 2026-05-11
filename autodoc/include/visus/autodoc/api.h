@@ -110,9 +110,9 @@ LYRA_NAMESPACE_BEGIN _LYRA_NAMESPACE_BEGIN(detail)
 /// public API.
 /// </summary>
 #if defined(__cplusplus)
-#define LYRA_ENUM_CLASS class
+#define LYRA_ENUM(e) enum class e
 #else /* defined(__cplusplus) */
-#define LYRA_ENUM_CLASS
+#define LYRA_ENUM(e) enum autodoc_##e
 #endif /* defined(__cplusplus) */
 
 

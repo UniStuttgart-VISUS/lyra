@@ -26,6 +26,14 @@ namespace raw {
     };
 
     /// <summary>
+    /// Identifies a block containing information about the CPU.
+    /// </summary>
+    struct cpu final {
+        typedef property_set type;
+        static constexpr auto name = u8"CPU";
+    };
+
+    /// <summary>
     /// Identifies a block containing the environment.
     /// </summary>
     struct environment final {

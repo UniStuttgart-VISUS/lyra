@@ -40,9 +40,9 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::raw::get(
         ps.add<application>(LYRA_NAMESPACE::application::get(flags));
     }
 
-    if (detail::check_sensitive<cpu::cpuid>(flags)
-            && detail::check_immutable<cpu::cpuid>(flags)) {
-        ps.add<cpu::cpuid>(cpu::get_cpuid(flags));
+    if (detail::check_sensitive<cpu>(flags)
+            && detail::check_immutable<cpu>(flags)) {
+        ps.add<cpu>(LYRA_NAMESPACE::cpu::get(flags));
     }
 
     if (detail::check_sensitive<environment>(flags)

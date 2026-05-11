@@ -8,14 +8,16 @@
 #define _LYRA_AUTODOC_H
 #pragma once
 
+#if !defined(__cplusplus)
 #include <wchar.h>
+#endif /* !defined(__cplusplus) */
 
 #include "visus/autodoc/collection_flags.h"
 
 
+#if defined(__cplusplus)
 LYRA_NAMESPACE_BEGIN
 
-#if defined(__cplusplus)
 /// <summary>
 /// A RAII helper for collecting and persisting system information on
 /// construction and destruction, respectively.
@@ -74,43 +76,42 @@ private:
     struct collect *_collect;
 };
 
-#endif /* defined(__cplusplus) */
-
 LYRA_NAMESPACE_END
-
-
-/// <summary>
-/// Collects the raw data from the system and writes it to the specified file.
-/// </summary>
-/// <param name="path">The path to the file where the data should be stored.
-/// </param>
-/// <param name="flags">The flags specifying which data to collect.</param>
-/// <returns>Zero in case of success, an error code otherwise.</returns>
-#if defined(__cplusplus)
-extern "C" int LYRA_API autodoc_write_raw_a(
-    _In_z_ const char *path,
-    _In_ const LYRA_NAMESPACE::collection_flags flags);
-#else /* defined(__cplusplus) */
-int LYRA_API autodoc_write_raw_a(
-    _In_z_ const char *path,
-    _In_ const enum collection_flags flags);
 #endif /* defined(__cplusplus) */
 
-/// <summary>
-/// Collects the raw data from the system and writes it to the specified file.
-/// </summary>
-/// <param name="path">The path to the file where the data should be stored.
-/// </param>
-/// <param name="flags">The flags specifying which data to collect.</param>
-/// <returns>Zero in case of success, an error code otherwise.</returns>
+
 #if defined(__cplusplus)
-extern "C" int LYRA_API autodoc_write_raw_w(
-    _In_z_ const wchar_t *path,
-    _In_ const LYRA_NAMESPACE::collection_flags flags);
-#else /* defined(__cplusplus) */
-int LYRA_API autodoc_write_raw_w(
-    _In_z_ const wchar_t *path,
-    _In_ const enum collection_flags flags);
+extern "C" {
+#endif /* defined(__cplusplus) */
+
+    /// <summary>
+    /// Collects the raw data from the system and writes it to the specified
+    /// file.
+    /// </summary>
+    /// <param name="path">The path to the file where the data should be stored.
+    /// </param>
+    /// <param name="flags">The flags specifying which data to collect.</param>
+    /// <returns>Zero in case of success, an error code otherwise.</returns>
+    int LYRA_API autodoc_write_raw_a(
+        _In_z_ const char *path,
+        _In_ const LYRA_COLLECTION_FLAGS flags);
+
+#if defined(_WIN32)
+    /// <summary>
+    /// Collects the raw data from the system and writes it to the specified
+    /// file.
+    /// </summary>
+    /// <param name="path">The path to the file where the data should be stored.
+    /// </param>
+    /// <param name="flags">The flags specifying which data to collect.</param>
+    /// <returns>Zero in case of success, an error code otherwise.</returns>
+    int LYRA_API autodoc_write_raw_w(
+        _In_z_ const wchar_t *path,
+        _In_ const LYRA_COLLECTION_FLAGS flags);
+#endif /* defined(_WIN32) */
+
+#if defined(__cplusplus)
+} /* extern "C" */
 #endif /* defined(__cplusplus) */
 
 #if defined(_WIN32) && (defined(UNICODE) || defined(_UNICODE))

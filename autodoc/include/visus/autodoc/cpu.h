@@ -27,6 +27,15 @@ namespace cpu {
     };
 
     /// <summary>
+    /// Identifies a property that holds (hierarchically organised) information
+    /// about a single CPU code
+    /// </summary>
+    struct core final {
+        typedef property_set type;
+        static constexpr auto name = u8"Core";
+    };
+
+    /// <summary>
     /// Identifies a property set that holds all information that is available
     /// via a CPUID query.
     /// </summary>
@@ -48,6 +57,24 @@ namespace cpu {
     };
 
     /// <summary>
+    /// Identifies a property that holds (hierarchically organised) information
+    /// about a NUMA node.
+    /// </summary>
+    struct numa_node final {
+        typedef property_set type;
+        static constexpr auto name = u8"NUMA Node";
+    };
+
+    /// <summary>
+    /// Identifies a property holding the ordinal number of a CPU socket, core
+    /// or NUMA node. All of these three entities have this property.
+    /// </summary>
+    struct number final {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"Number";
+    };
+
+    /// <summary>
     /// Identifies a property set that holds information about the SIMD
     /// instruction sets that are available.
     /// </summary>
@@ -55,6 +82,25 @@ namespace cpu {
         typedef property_set type;
         static constexpr auto is_immutable = true;
         static constexpr auto name = u8"SIMD";
+    };
+
+    /// <summary>
+    /// Identifies a property that holds (hierarchically organised) information
+    /// about the CPU in a specific socket.
+    /// </summary>
+    struct socket final {
+        typedef property_set type;
+        static constexpr auto name = u8"Socket";
+    };
+
+    /// <summary>
+    /// Identifies a property that holds the hierarchially organised CPU
+    /// topology of the system.
+    /// </summary>
+    struct toplogy final {
+        typedef property_set type;
+        static constexpr auto is_immutable = true;
+        static constexpr auto name = u8"Topology";
     };
 
     /// <summary>
@@ -67,12 +113,28 @@ namespace cpu {
     };
 
     /// <summary>
+    /// Gets all information that is available about the CPU.
+    /// </summary>
+    /// <param name="flags">Allows for customising the collection
+    /// behaviour.</param>
+    LYRA_API property_set get(_In_ const collection_flags flags
+        = collection_flags::none);
+
+    /// <summary>
     /// Gets the information that is available via the CPUID instruction.
     /// </summary>
     /// <param name="flags">Allows for customising the collection
     /// behaviour.</param>
     /// <returns>A property set describing the CPU.</returns>
     LYRA_API property_set get_cpuid(_In_ const collection_flags flags
+        = collection_flags::none);
+
+    /// <summary>
+    /// Gets a description of the CPU toplogy of the system.
+    /// </summary>
+    /// <param name="flags"></param>
+    /// <returns></returns>
+    LYRA_API property_set get_topology(_In_ const collection_flags flags
         = collection_flags::none);
 
 } /* namespace cpu */

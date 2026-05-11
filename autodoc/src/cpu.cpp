@@ -10,6 +10,8 @@
 #include <array>
 #include <cstring>
 #include <iomanip>
+#include <map>
+#include <set>
 #include <sstream>
 
 #include "visus/autodoc/cpu_info.h"
@@ -17,6 +19,7 @@
 #include "visus/autodoc/multi_sz.h"
 #include "visus/autodoc/simd_detector.h"
 
+#include "os_cpu_info.h"
 #include "property_set_impl.h"
 
 
@@ -28,6 +31,20 @@ template<LYRA_NAMESPACE::simd_instruction_set I>
 inline void add_simd(_Inout_ LYRA_DETAIL_NAMESPACE::property_set_impl& ps,
         _In_z_ const char *name) {
     ps.add(name, LYRA_NAMESPACE::simd_detector<I>());
+}
+
+
+/*
+ * LYRA_NAMESPACE::cpu::get
+ */
+LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get(
+        _In_ const collection_flags flags) {
+    detail::property_set_impl ps;
+
+    detail::checked_add<cpu::cpuid>(ps, flags, get_cpuid(flags));
+    ps.merge(get_topology(flags));
+
+    return property_set(std::move(ps));
 }
 
 
@@ -166,6 +183,124 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
 
         ps.add<cpu::instructions>(property_set(std::move(insts)));
     }
+
+    return property_set(std::move(ps));
+}
+
+
+/*
+ * LYRA_DETAIL_NAMESPACE::get_topology
+ */
+LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_topology(
+        _In_ const collection_flags flags) {
+    detail::property_set_impl ps;
+
+#if defined(_WIN32) && (_WIN32_WINNT >= 0x0601)
+    typedef SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX info_type;
+
+    std::map<GROUP_AFFINITY, detail::property_set_impl> cores;
+    std::map<GROUP_AFFINITY, DWORD> nodes;
+    std::vector<std::set<GROUP_AFFINITY>> sockets;
+
+    //// Enumerates the individual bits of the affinity mask 'g'.
+    //const auto enum_cores = [](GROUP_AFFINITY g, auto callback) {
+    //    constexpr auto affinity_bits = sizeof(KAFFINITY) * CHAR_BIT;
+    //    constexpr auto affinity_bit = static_cast<KAFFINITY>(1);
+    //    const auto mask = g.Mask;
+
+    //    for (KAFFINITY i = 0; i < affinity_bits; ++i) {
+    //        const auto a = affinity_bit << i;
+    //        if ((mask & a) == a) {
+    //            g.Mask = a;
+    //            callback(g);
+    //        }
+    //    }
+    //};
+
+    const auto af_eq = [](const GROUP_AFFINITY& l, const GROUP_AFFINITY& r) {
+        return ((l.Group == r.Group) && ((l.Mask & r.Mask) != 0));
+    };
+
+    detail::enumerate_cpu_info([&](const info_type& info) {
+        switch (info.Relationship) {
+            case RelationProcessorPackage:
+                // This is the relation between the socket and the cores. We
+                // remember which processor groups belong to which socket.
+                sockets.emplace_back();
+                for (WORD i = 0; i < info.Processor.GroupCount; ++i) {
+                    sockets.back().emplace(info.Processor.GroupMask[i]);
+                }
+                break;
+
+            case RelationProcessorCore:
+                // This holds the detail information about the cores.
+                assert(info.Processor.GroupCount == 1);
+                cores[info.Processor.GroupMask[0]].add(u8"Affinity Group",
+                    info.Processor.GroupMask[0].Group);
+                cores[info.Processor.GroupMask[0]].add(u8"Affinity Mask",
+                    info.Processor.GroupMask[0].Mask);
+                cores[info.Processor.GroupMask[0]].add(u8"Hyperthreading",
+                    (info.Processor.Flags & LTP_PC_SMT) != 0);
+                cores[info.Processor.GroupMask[0]].add(u8"Efficiency Class",
+                    info.Processor.EfficiencyClass);
+                break;
+
+            case RelationNumaNode:
+                // This is a relation between a NUMA node and a core, so we
+                // remember to which NUMA node the processor group belongs.
+                nodes[info.NumaNode.GroupMask] = info.NumaNode.NodeNumber;
+                for (WORD i = 1; i < info.NumaNode.GroupCount; ++i) {
+                    nodes[info.NumaNode.GroupMasks[i]]
+                        = info.NumaNode.NodeNumber;
+                }
+                break;
+
+            default:
+                // This relationship is not important for our purposes.
+                break;
+        }
+    });
+
+    // Establish the hierarcy between sockets, NUMA nodes and cores. It is not
+    // possible for us to do that during enumeration as the information may
+    // arrive in any order.
+    std::vector<std::map<DWORD, std::vector<detail::property_set_impl>>> hps(
+        sockets.size());
+    for (auto& c : cores) {
+        const auto nit = std::find_if(nodes.begin(),
+            nodes.end(),
+            [&c, af_eq](const auto& n) { return af_eq(c.first, n.first); });
+        assert(nit != nodes.end());
+
+        for (std::size_t s = 0; s < sockets.size(); ++s) {
+            for (auto& g : sockets[s]) {
+                if (af_eq(c.first, g)) {
+                    hps[s][nit->second].push_back(std::move(c.second));
+                }
+            }
+        }
+    }
+
+    // Convert the hierarchy into hierarchical property sets.
+    std::vector<detail::property_set_impl> sps;
+    sps.reserve(hps.size());
+    for (auto& s : hps) {
+        std::vector<detail::property_set_impl> nps;
+        nps.reserve(s.size());
+
+        auto& ss = sps.emplace_back();
+        for (auto& n : s) {
+            auto& nn = nps.emplace_back();
+            nn.add(u8"Node Number", n.first);
+            nn.add<core>(detail::make_property_sets(std::move(n.second)));
+        }
+
+        ss.add<numa_node>(detail::make_property_sets(std::move(nps)));
+    }
+
+    detail::checked_add<toplogy>(ps, flags, detail::make_property_sets(
+        std::move(sps)));
+#endif /* defined(_WIN32) && (_WIN32_WINNT >= 0x0601) */
 
     return property_set(std::move(ps));
 }

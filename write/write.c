@@ -15,6 +15,6 @@
 /// <param name="argv"></param>
 /// <returns></returns>
 int main(const int argc, const char **argv) {
-    autodoc_write_raw(NULL, collection_flags_none);
+    autodoc_write_raw(NULL, autodoc_collection_flags_none);
     return 0;
 }

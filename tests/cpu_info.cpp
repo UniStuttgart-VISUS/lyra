@@ -55,3 +55,16 @@ TEST(cpu_info, process_mask) {
     EXPECT_FALSE(affinity.empty());
     EXPECT_LE(affinity.size(), LYRA_DETAIL_NAMESPACE::get_os_max_cpus());
 }
+
+TEST(cpu_info, topology) {
+#if defined(_WIN32) && (_WIN32_WINNT >= 0x0601)
+    LYRA_DETAIL_NAMESPACE::enumerate_cpu_toplogy([](const auto& info) {
+        EXPECT_TRUE((info.Relationship == RelationProcessorPackage)
+            || (info.Relationship == RelationProcessorCore)
+            || (info.Relationship == RelationNumaNode));
+    });
+#endif /* defined(_WIN32) && (_WIN32_WINNT >= 0x0601) */
+
+    auto p = LYRA_NAMESPACE::cpu::get_topology();
+    EXPECT_FALSE(p.empty());
+}
