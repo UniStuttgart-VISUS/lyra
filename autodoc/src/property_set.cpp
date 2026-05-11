@@ -332,6 +332,6 @@ void LYRA_NAMESPACE::property_set::merge_to(
         if (dst.values.find(s.first) == dst.values.end()) {
             dst.values.emplace(std::move(s.first), std::move(s.second));
         }
-        this->_impl = nullptr;
     }
+    this->_impl = nullptr;
 }
