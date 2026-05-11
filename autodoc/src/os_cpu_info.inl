@@ -25,7 +25,7 @@ std::size_t LYRA_DETAIL_NAMESPACE::enumerate_cpu_info(_In_ TCallback callback) {
         ++retval;
         if constexpr (abortable) {
             if (!callback(*info)) {
-                return
+                return retval;
             }
         } else {
             callback(*info);
