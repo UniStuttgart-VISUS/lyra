@@ -18,6 +18,18 @@
 #include "property_set_impl.h"
 
 
+LYRA_DETAIL_NAMESPACE_BEGIN
+
+/// <summary>
+/// Converts a <see cref="boolean" /> to a JSON value.
+/// </summary>
+static inline void to_json(nlohmann::json& j, const boolean v) {
+    j = static_cast<bool>(v);
+}
+
+LYRA_DETAIL_NAMESPACE_END
+
+
 LYRA_NAMESPACE_BEGIN
 
 /// <summary>

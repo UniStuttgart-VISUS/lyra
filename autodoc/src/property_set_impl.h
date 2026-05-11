@@ -229,7 +229,6 @@ struct LYRA_TEST_API property_set_impl final {
     }
 #endif /* defined(_WIN32) */
 
-
     /// <summary>
     /// Convenience method for adding a new property using a property
     /// descriptor, which will enforce the expected type and set the correct
@@ -254,7 +253,8 @@ struct LYRA_TEST_API property_set_impl final {
     /// Adds a vector-valued property using the type from a property descriptor.
     /// </summary>
     template<class TProp>
-    inline void add(_In_ const std::vector<typename TProp::type>& value) {
+    inline std::enable_if_t<!std::is_same_v<typename TProp::type, bool>>
+    add(_In_ const std::vector<typename TProp::type>& value) {
         this->add(TProp::name, value);
     }
 
@@ -262,8 +262,20 @@ struct LYRA_TEST_API property_set_impl final {
     /// Adds a vector-valued property using the type from a property descriptor.
     /// </summary>
     template<class TProp>
-    inline void add(_Inout_ std::vector<typename TProp::type>&& value) {
+    inline std::enable_if_t<!std::is_same_v<typename TProp::type, bool>>
+    add(_Inout_ std::vector<typename TProp::type>&& value) {
         this->values.emplace(TProp::name, std::move(value));
+    }
+
+    /// <summary>
+    /// Adds a vector-valued Boolean property, which requires conversion to our
+    /// custom <see cref="boolean" /> type for pointer arithmetic to work.
+    /// </summary>
+    template<class TProp>
+    inline std::enable_if_t<std::is_same_v<typename TProp::type, bool>>
+    add(_In_ const std::vector<bool>& value) {
+        this->values.emplace(TProp::name, std::vector<boolean>(value.begin(),
+            value.end()));
     }
 
     /// <summary>

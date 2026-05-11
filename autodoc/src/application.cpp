@@ -11,12 +11,17 @@
 #include "visus/autodoc/environment.h"
 #include "visus/autodoc/trace.h"
 
+#include "boolean.h"
 #include "file.h"
 #include "git_environment.h"
+#include "os_cpu_info.h"
 #include "property_set_impl.h"
 #include "processes.h"
 
 
+/// <summary>
+/// Adds the file timestamps to the property set.
+/// </summary>
 static bool add_timestamps(_Inout_ LYRA_DETAIL_NAMESPACE::property_set_impl& ps,
         _In_ const LYRA_NAMESPACE::collection_flags flags,
         _In_ const std::string& path) {
@@ -75,7 +80,10 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::application::get(
         }
     }
 
-    detail::checked_add<process_id>(ps, flags, detail::get_process_id());
+    detail::checked_add<process_id>(ps, flags,
+        detail::get_process_id());
+    detail::checked_add<cpu_affinity>(ps, flags,
+        detail::get_process_cpu_affinity());
 
     try {
         detail::checked_add<size>(ps, flags, detail::file_size(exe.c_str()));

@@ -44,6 +44,15 @@ namespace application {
     };
 
     /// <summary>
+    /// Identifies the property holding the CPU affinity of the calling process
+    /// in the form of a Boolean vector.
+    /// </summary>
+    struct cpu_affinity final {
+        typedef bool type;
+        static constexpr auto name = u8"CPU Affinity";
+    };
+
+    /// <summary>
     /// Identifies the property holding the time when an executable was created.
     /// </summary>
     struct create_time final {

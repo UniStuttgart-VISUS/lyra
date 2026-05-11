@@ -17,6 +17,11 @@
 
 LYRA_DETAIL_NAMESPACE_BEGIN
 
+/// <summary>
+/// Gets the CPU affinity of the current process.
+/// </summary>
+LYRA_TEST_API std::vector<bool> get_process_cpu_affinity(void);
+
 #if defined(_WIN32) && (_WIN32_WINNT >= 0x0601)
 /// <summary>
 /// Gets the logical processor information for the specified relationship type.
@@ -28,7 +33,8 @@ LYRA_DETAIL_NAMESPACE_BEGIN
 /// <returns>A pointer to the logical processor information, or
 /// <see langword="nullptr" /> in case of an error. The pointer is only valid as
 /// long as <see cref="buffer" /> is not modified.</returns>
-SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX *get_logical_processor_info(
+LYRA_TEST_API SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX *
+get_logical_processor_info(
     _Out_ std::vector<std::uint8_t>& buffer,
     _In_ const LOGICAL_PROCESSOR_RELATIONSHIP relationship);
 #endif /* defined(_WIN32) && (_WIN32_WINNT >= 0x0601) */
@@ -38,7 +44,7 @@ SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX *get_logical_processor_info(
 /// </summary>
 /// <returns>The maximum number of CPUs that the operating system can use at the
 /// time of the call.</returns>
-std::size_t get_os_max_cpus(void);
+LYRA_TEST_API std::size_t get_os_max_cpus(void);
 
 LYRA_DETAIL_NAMESPACE_END
 

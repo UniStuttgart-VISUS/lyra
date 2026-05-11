@@ -13,6 +13,8 @@
 #include "visus/autodoc/cpu_info_detector.h"
 #include "visus/autodoc/simd_detector.h"
 
+#include "os_cpu_info.h"
+
 
 TEST(cpu_info, base) {
     std::vector<LYRA_NAMESPACE::cpu_info> infos(LYRA_NAMESPACE::get_cpu_info());
@@ -45,4 +47,11 @@ TEST(cpu_info, properties) {
 
     auto j = p.json();
     EXPECT_NE(j, nullptr);
+}
+
+TEST(cpu_info, process_mask) {
+    EXPECT_GT(LYRA_DETAIL_NAMESPACE::get_os_max_cpus(), 0);
+    const auto affinity = LYRA_DETAIL_NAMESPACE::get_process_cpu_affinity();
+    EXPECT_FALSE(affinity.empty());
+    EXPECT_LE(affinity.size(), LYRA_DETAIL_NAMESPACE::get_os_max_cpus());
 }

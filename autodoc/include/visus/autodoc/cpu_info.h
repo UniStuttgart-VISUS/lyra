@@ -14,6 +14,8 @@
 #include "visus/autodoc/api.h"
 
 
+// TODO: Add https://github.com/tpn/cpuid-topo/blob/master/cpu_topo.c
+
 LYRA_NAMESPACE_BEGIN
 
 /// <summary>
