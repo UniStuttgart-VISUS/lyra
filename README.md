@@ -1,11 +1,11 @@
-﻿# Project Lyra
-Project Lyra provides a self-contained library for obtaining a snapshot of properties of the system a process is running on for the purpose of documenting the environment for reproducability of research. The library is derived from the [TRRojan project](https://github.com/UniStuttgart-VISUS/trrojan), but intended for reuse in other projects without the rest of the project's features.
+﻿# VISUS Autodoc (formerly "Project Lyra")
+VISUS Autodoc is a self-contained library for obtaining a snapshot of the properties of the system a process is running on to document the environment for reproducibility of research. The library is derived from the [TRRojan project](https://github.com/UniStuttgart-VISUS/trrojan), but intended for reuse in other projects without the rest of the project's features. Future versions of TRRojan use VISUS Autodoc instead of their own implementation.
 
 ## Building
 The project is built using CMake. Configure and compile it to obtain a DLL that can be used in your project.
 
 ## Usage
-The interface of the library is mostly built around a class named `property_set`. A property set is a key-value store that can hold different value types that are indexed by strings as keys. The possible types for the values are identified by the `property_type` enumeration. This enumeration holds commonly used types like strings, numbers, but also property sets. The latter allow for hierarchical structuring of information.
+The interface of the library is mostly built around a class named `property_set`. A property set is a key-value store that can hold different value types that are indexed by strings as keys. The possible types for the values are identified by the `property_type` enumeration. This enumeration holds commonly used types like strings, numbers, but also property sets. The latter allows for hierarchical structuring of information.
 
 Property sets can be obtained by calling the appropriate factory functions. For instance, the following code obtains all raw data we can get:
 ```cpp
