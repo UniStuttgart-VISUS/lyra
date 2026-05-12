@@ -38,22 +38,6 @@ inline constexpr std::uint32_t cpu_info_range(
     return (cpu_info_bit(last + 1) - 1) & ~((cpu_info_bit(first) - 1));
 }
 
-/// <summary>
-/// Transforms <paramref name="value" /> in the format we expect to get from
-/// the CPUID instruction.
-/// </summary>
-/// <param name="value">The expected register value, for instance 'Auth'.
-/// </param>
-/// <returns>The expected register value.</returns>
-inline constexpr std::uint32_t cpu_info_vendor_register(
-        _In_ const std::uint32_t value) noexcept {
-    // TODO: Is this always BE?
-    return ((value & 0x000000ff) << 24)
-        | ((value & 0x0000ff00) << 8)
-        | ((value & 0x00ff0000) >> 8)
-        | ((value & 0xff000000) >> 24);
-}
-
 LYRA_DETAIL_NAMESPACE_END
 
 
@@ -192,46 +176,6 @@ private:
 
     std::uint32_t _value;
 };
-
-
-/// <summary>
-/// Runs the CPUID instruction for the signature and checks the result against
-/// the given reference values.
-/// </summary>
-/// <remarks>
-/// Note that EDX and ECX are swapped in the CPUID instruction for the vendor
-/// string, so that you can write the string more naturally. Furthermore, use
-/// something like <c>cpu_info_vendor_register('Auth')</c> to get the expected
-/// value for the the registers.
-/// </remarks>
-/// <typeparam name="Ebx">The expected value of the EBX register..</typeparam>
-/// <typeparam name="Edx">The expected value of the EDX register.</typeparam>
-/// <typeparam name="Ecx">The expected value of the ECX register.</typeparam>
-template<std::uint32_t Ebx, std::uint32_t Edx, std::uint32_t Ecx>
-class cpu_info_vendor_detector final {
-
-public:
-
-    /// <summary>
-    /// Initialises a new instance.
-    /// </summary>
-    cpu_info_vendor_detector(void);
-
-    /// <summary>
-    /// Answer whether the vendor was identified as specified in the
-    /// template parameters.
-    /// </summary>
-    /// <returns><see langword="true" /> if the vendor identifier is as in the
-    /// template parameters, <see langword="false" /> otherwise.</returns>
-    inline operator bool(void) const noexcept {
-        return this->_value;
-    }
-
-private:
-
-    bool _value;
-};
-
 
 LYRA_NAMESPACE_END
 

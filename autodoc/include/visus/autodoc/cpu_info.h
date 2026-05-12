@@ -60,7 +60,8 @@ union cpu_info {
 namespace detail {
 
     /// <summary>
-    /// Retrieves all available information for the current x86 CPU.
+    /// Retrieves up to <paramref name="cnt" /> CPUID results for the current x86
+    /// CPU.
     /// </summary>
     /// <param name="dst"></param>
     /// <param name="cnt"></param>
@@ -70,7 +71,8 @@ namespace detail {
     std::size_t LYRA_API get_cpu_info(
         _Out_writes_opt_(cnt) cpu_info *dst,
         _In_ std::size_t cnt,
-        _In_ const std::size_t base = 0x0);
+        _In_ const std::uint32_t base = 0x0,
+        _In_ const std::uint32_t subfunction = 0x0);
 
 } /* namespace detail */
 

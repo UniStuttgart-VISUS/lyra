@@ -46,19 +46,3 @@ LYRA_NAMESPACE::cpu_info_selector<Fun, Reg, Mask>::cpu_info_selector(
         this->_value = ((reg & Mask) == Mask);
     }
 }
-
-
-/*
- * ...::cpu_info_vendor_detector<Ebx, Edx, Ecx>::cpu_info_vendor_detector
- */
-template<std::uint32_t Ebx, std::uint32_t Edx, std::uint32_t Ecx>
-LYRA_NAMESPACE::cpu_info_vendor_detector<Ebx, Edx, Ecx>
-::cpu_info_vendor_detector(void) : _value(false) {
-    cpu_info info;
-
-    if (get_cpu_info(info, 0)) {
-        this->_value = ((info.registers.ebx == Ebx)
-            && (info.registers.ecx == Ecx)
-            && (info.registers.edx == Edx));
-    }
-}

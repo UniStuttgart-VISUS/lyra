@@ -47,7 +47,8 @@
 std::size_t LYRA_DETAIL_NAMESPACE::get_cpu_info(
         _Out_writes_opt_(cnt) cpu_info *dst,
         _In_ std::size_t cnt,
-        _In_ const std::size_t base) {
+        _In_ const std::uint32_t base,
+        _In_ const std::uint32_t subfunction) {
     assert((base == 0) || (base == 0x80000000));
     cpu_info info;
 
@@ -75,9 +76,29 @@ std::size_t LYRA_DETAIL_NAMESPACE::get_cpu_info(
         auto& d = dst[j];
 
 #if defined(_WIN32)
-        ::__cpuidex(reinterpret_cast<int *>(d.values), i, 0);
+        ::__cpuidex(reinterpret_cast<int *>(d.values), i, subfunction);
 #else /* defined(_WIN32) */
-        if (!::__get_cpuid(i,
+        if (subfunction != 0) {
+#if defined(__i386__) && defined(__PIC__)
+            __asm__ volatile(
+                "xchg %%ebx, %%edi\n\t"
+                "cpuid\n\t"
+                "xchg %%ebx, %%edi\n\t"
+                : "=a" (d.registers.eax),
+                  "=D" (d.registers.ebx),
+                  "=c" (d.registers.ecx),
+                  "=d" (d.registers.edx)
+                : "a" (i), "c" (subfunction));
+#else /* defined(__i386__) && defined(__PIC__) */
+            __asm__ volatile(
+                "cpuid\n\t"
+                : "=a" (d.registers.eax),
+                  "=b" (d.registers.ebx),
+                  "=c" (d.registers.ecx),
+                  "=d" (d.registers.edx)
+                : "a" (i), "c" (subfunction));
+#endif /* defined(__i386__) && defined(__PIC__) */
+        } else if (!::__get_cpuid(i,
                 &d.registers.eax,
                 &d.registers.ebx,
                 &d.registers.ecx,

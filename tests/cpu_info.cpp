@@ -11,7 +11,7 @@
 #include "visus/autodoc/cpu.h"
 #include "visus/autodoc/cpu_info.h"
 #include "visus/autodoc/cpu_info_detector.h"
-#include "visus/autodoc/cpu_vendor_detectors.h"
+#include "visus/autodoc/cpu_vendor.h"
 #include "visus/autodoc/simd_detector.h"
 
 #include "os_cpu_info.h"
@@ -71,13 +71,53 @@ TEST(cpu_info, topology) {
 }
 
 TEST(cpu_info, vendor) {
+    LYRA_NAMESPACE::cpu_info info;
+    EXPECT_TRUE(LYRA_NAMESPACE::get_cpu_info(info, 0));
+
     bool value;
-    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor_detectors::amd());
-    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor_detectors::centaur());
-    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor_detectors::cyrix());
-    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor_detectors::hyperv());
-    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor_detectors::intel());
-    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor_detectors::virtual_box());
-    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor_detectors::virtual_pc());
-    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor_detectors::vmware());
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor::amd::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor::ao486::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor::centaur::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor::fx32::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor::connectix::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor::cyrix::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor::elbrus::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor::hygon::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor::insignia::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor::intel::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor::neko_project::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor::nexgen::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor::nsc::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor::power_vm::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor::rdc::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor::rise::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor::sis::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor::transmeta::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor::via::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor::virtual_pc::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor::vortex::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_vendor::zhaoxin::check(info));
+}
+
+TEST(cpu_info, hypervisor) {
+    LYRA_NAMESPACE::cpu_info info;
+    LYRA_NAMESPACE::get_cpu_info(info, 0x40000000);
+
+    bool value;
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::hypervisor::acrn::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::hypervisor::bhyve::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::hypervisor::fex_emu::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::hypervisor::hyperv::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::hypervisor::lmhs::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::hypervisor::napoca::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::hypervisor::nvmm::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::hypervisor::open_bsd_vmm::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::hypervisor::parallels::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::hypervisor::qemu::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::hypervisor::siemens::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::hypervisor::trusty::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::hypervisor::unisys::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::hypervisor::virtual_box::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::hypervisor::vmware::check(info));
+    EXPECT_NO_THROW(value = LYRA_NAMESPACE::hypervisor::xen::check(info));
 }
