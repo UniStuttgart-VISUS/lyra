@@ -321,6 +321,13 @@ struct LYRA_TEST_API property_set_impl final {
     inline void merge(_In_ property_set&& other) {
         other.merge_to(*this);
     }
+
+    /// <summary>
+    /// Merge the proeprties in <paramref name="other" /> into this property
+    /// set, overwriting any existing data in this set.
+    /// </summary>
+    /// <param name="other"></param>
+    void overwrite(_In_ property_set&& other);
 };
 
 

@@ -58,6 +58,19 @@ LYRA_DETAIL_NAMESPACE::property_set_impl::find(
 }
 
 
+/*
+ * LYRA_DETAIL_NAMESPACE::property_set_impl::overwrite
+ */
+void LYRA_DETAIL_NAMESPACE::property_set_impl::overwrite(
+        _In_ property_set&& other) {
+    if (other._impl != nullptr) {
+        for (auto& s : other._impl->values) {
+            this->values[s.first] = std::move(s.second);
+        }
+    }
+}
+
+
 
 /*
  * LYRA_DETAIL_NAMESPACE::make_property_sets
