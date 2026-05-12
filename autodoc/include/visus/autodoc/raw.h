@@ -42,6 +42,16 @@ namespace raw {
     };
 
     /// <summary>
+    /// Identifies a block containing the information about the graphics
+    /// environment.
+    /// </summary>
+    struct graphics final {
+        typedef property_set type;
+        static constexpr auto name = u8"Graphics";
+    };
+
+
+    /// <summary>
     /// Identifies a block containing the hardware.
     /// </summary>
     struct hardware final {

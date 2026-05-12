@@ -332,6 +332,15 @@ struct LYRA_TEST_API property_set_impl final {
 
 
 /// <summary>
+/// Checks whether the property <typeparamref name="TProp" /> should be
+/// collected under the given <paramref name="flags" />.
+/// </summary>
+template<class TProp> bool check_flags(_In_ const collection_flags flags) {
+    return check_sensitive<TProp>(flags) && check_immutable<TProp>(flags);
+}
+
+
+/// <summary>
 /// Checks whether adding the property <typeparamref name="TProp" /> is allowed
 /// based on the given <paramref name="flags" /> and adds it
 /// <paramref name="ps" /> if this is the case.
@@ -340,8 +349,7 @@ template<class TProp, class... TArgs> bool checked_add(
         _Inout_ property_set_impl& ps,
         _In_ const collection_flags flags,
         _In_ TArgs&&... args) {
-    const auto retval = check_sensitive<TProp>(flags)
-        && check_immutable<TProp>(flags);
+    const auto retval = check_flags<TProp>(flags);
     if (retval) {
         ps.add<TProp>(std::forward<TArgs>(args)...);
     }

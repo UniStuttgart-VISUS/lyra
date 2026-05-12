@@ -29,60 +29,50 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::raw::get(
     detail::property_set_impl ps;
 
     // First, add the timestamp.
-    if (detail::check_sensitive<timestamp>(flags)) {
+    if (detail::check_flags<timestamp>(flags)) {
         const auto now = LYRA_NAMESPACE::timestamp::now();
         ps.add<timestamp>(now);
     }
 
     // Add all the actual information.
-    if (detail::check_sensitive<application>(flags)
-            && detail::check_immutable<application>(flags)) {
+    if (detail::check_flags<application>(flags)) {
         ps.add<application>(LYRA_NAMESPACE::application::get(flags));
     }
 
-    if (detail::check_sensitive<cpu>(flags)
-            && detail::check_immutable<cpu>(flags)) {
+    if (detail::check_flags<cpu>(flags)) {
         ps.add<cpu>(LYRA_NAMESPACE::cpu::get(flags));
     }
 
-    if (detail::check_sensitive<environment>(flags)
-            && detail::check_immutable<environment>(flags)) {
+    if (detail::check_flags<environment>(flags)) {
         ps.add<environment>(LYRA_NAMESPACE::environment::get(flags));
     }
 
-    if (detail::check_sensitive<hardware>(flags)
-            && detail::check_immutable<hardware>(flags)) {
+    if (detail::check_flags<graphics>(flags)) {
+        ps.merge(LYRA_NAMESPACE::graphics::get(flags));
+    }
+
+    if (detail::check_flags<hardware>(flags)) {
         ps.add<hardware>(LYRA_NAMESPACE::hardware::get(flags));
     }
 
-    if (detail::check_sensitive<memory>(flags)
-            && detail::check_immutable<memory>(flags)) {
+    if (detail::check_flags<memory>(flags)) {
         ps.add<memory>(LYRA_NAMESPACE::memory::get(flags));
     }
 
-    if (detail::check_sensitive<mounts>(flags)
-            && detail::check_immutable<mounts>(flags)) {
+    if (detail::check_flags<mounts>(flags)) {
         ps.add<mounts>(LYRA_NAMESPACE::mounts::get(flags));
     }
 
-    if (detail::check_sensitive<network>(flags)
-            && detail::check_immutable<network>(flags)) {
+    if (detail::check_flags<network>(flags)) {
         ps.add<network>(LYRA_NAMESPACE::network::get(flags));
     }
 
-    if (detail::check_sensitive<operating_system>(flags)
-            && detail::check_immutable<operating_system>(flags)) {
+    if (detail::check_flags<operating_system>(flags)) {
         ps.add<operating_system>(LYRA_NAMESPACE::operating_system::get(
             flags));
     }
 
-    if (detail::check_sensitive<graphics::dxgi_adapter>(flags)
-            && detail::check_immutable<graphics::dxgi_adapter>(flags)) {
-        ps.merge(graphics::get_dxgi_adapters(flags));
-    }
-
-    if (detail::check_sensitive<smbios>(flags)
-            && detail::check_immutable<smbios>(flags)) {
+    if (detail::check_flags<smbios>(flags)) {
         ps.add<smbios>(LYRA_NAMESPACE::smbios::get(flags));
     }
 
