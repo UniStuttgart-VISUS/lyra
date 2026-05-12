@@ -25,45 +25,6 @@ namespace graphics {
         static constexpr auto name = u8"DXGI Adapter";
     };
 
-    struct tdr_ddi_delay final {
-        typedef std::uint32_t type;
-        static constexpr auto name = u8"TDR DDI Delay";
-    };
-
-    struct tdr_debug_mode final {
-        typedef std::uint32_t type;
-        static constexpr auto name = u8"TDR Debug Mode";
-    };
-
-    struct tdr_delay final {
-        typedef std::uint32_t type;
-        static constexpr auto name = u8"TDR Delay";
-    };
-
-    struct tdr_level final {
-        typedef std::uint32_t type;
-        static constexpr auto name = u8"TDR Level";
-    };
-
-    struct tdr_limit_count final {
-        typedef std::uint32_t type;
-        static constexpr auto name = u8"TDR Limit Count";
-    };
-
-    struct tdr_limit_time final {
-        typedef std::uint32_t type;
-        static constexpr auto name = u8"TDR Limit Time";
-    };
-
-    /// <summary>
-    /// Identifies the property holding the Windows TDR (Timeout Detection and
-    /// Recovery) settings.
-    /// </summary>
-    struct tdr_settings final {
-        typedef property_set type;
-        static constexpr auto name = u8"TDR Settings";
-    };
-
     /// <summary>
     /// Gets all graphics-related information.
     /// </summary>
@@ -79,15 +40,6 @@ namespace graphics {
     /// <param name="flags"></param>
     /// <returns></returns>
     LYRA_API property_set get_dxgi_adapters(_In_ const collection_flags flags
-        = collection_flags::none);
-
-    /// <summary>
-    /// Gets the registry settings related to the Windows TDR (Timeout Detection
-    /// and Recovery) mechanism.
-    /// </summary>
-    /// <param name="flags"></param>
-    /// <returns></returns>
-    LYRA_API property_set get_tdr_settings(_In_ const collection_flags flags
         = collection_flags::none);
 
 } /* namespace graphics */

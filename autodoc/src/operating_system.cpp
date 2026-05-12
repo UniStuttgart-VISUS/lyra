@@ -15,8 +15,11 @@
 #include <lmcons.h>
 #include <tchar.h>
 #include <Windows.h>
+
+#include <wil/registry.h>
 #else /* _WIN32 */
 #include <unistd.h>
+
 
 #include <sys/utsname.h>
 #include <sys/sysinfo.h>
@@ -47,12 +50,65 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::operating_system::get(
 #endif /* defined(_WIN32) */
     }
 
-    if (detail::check_sensitive<version::version>(flags)) {
+    ps.merge(get_tdr_settings(flags));
+
+    if (detail::check_flags<version::version>(flags)) {
         ps.add<version::version>(get_version(flags));
     }
 
     return property_set(std::move(ps));
 }
+
+/*
+ * LYRA_NAMESPACE::operating_system::get_tdr_settings
+ */
+LYRA_NAMESPACE::property_set LYRA_NAMESPACE::operating_system::get_tdr_settings(
+        _In_ const collection_flags flags) {
+#if defined(_WIN32)
+    detail::property_set_impl ps;
+
+    wil::unique_hkey key;
+    if (SUCCEEDED(wil::reg::open_unique_key_nothrow(HKEY_LOCAL_MACHINE,
+            L"System\\CurrentControlSet\\Control\\GraphicsDrivers", key))) {
+        DWORD value;
+
+        if (SUCCEEDED(wil::reg::get_value_dword_nothrow(key.get(),
+                L"TdrDdiDelay", &value))) {
+            detail::checked_add<tdr_ddi_delay>(ps, flags, value);
+        }
+
+        if (SUCCEEDED(wil::reg::get_value_dword_nothrow(key.get(),
+                L"TdrDebugMode", &value))) {
+            detail::checked_add<tdr_debug_mode>(ps, flags, value);
+        }
+
+        if (SUCCEEDED(wil::reg::get_value_dword_nothrow(key.get(),
+                L"TdrDelay", &value))) {
+            detail::checked_add<tdr_delay>(ps, flags, value);
+        }
+
+        if (SUCCEEDED(wil::reg::get_value_dword_nothrow(key.get(),
+                L"TdrLevel", &value))) {
+            detail::checked_add<tdr_level>(ps, flags, value);
+        }
+
+        if (SUCCEEDED(wil::reg::get_value_dword_nothrow(key.get(),
+                L"TdrLimitCount", &value))) {
+            detail::checked_add<tdr_limit_count>(ps, flags, value);
+        }
+
+        if (SUCCEEDED(wil::reg::get_value_dword_nothrow(key.get(),
+                L"TdrLimitTime", &value))) {
+            detail::checked_add<tdr_limit_time>(ps, flags, value);
+        }
+    }
+
+    return property_set(std::move(ps));
+#endif /* defined(_WIN32) */
+
+    return property_set();
+}
+
 
 
 /*
