@@ -16,6 +16,11 @@ LYRA_NAMESPACE_BEGIN
 namespace consolidated {
 
     /// <summary>
+    /// Identifies the block of meta data about the calling application.
+    /// </summary>
+    typedef raw::application application;
+
+    /// <summary>
     /// Identifies a property holding the timestamp when the information was
     /// collected.
     /// </summary>

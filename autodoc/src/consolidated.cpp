@@ -29,10 +29,17 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::consolidated::get(
     detail::property_set_impl ps;
 
     // First, add the timestamp.
-    if (detail::check_sensitive<timestamp>(flags)) {
+    if (detail::check_flags<timestamp>(flags)) {
         const auto now = LYRA_NAMESPACE::timestamp::now();
         ps.add<timestamp>(now);
     }
+
+    // Get all the actual content and select the best representation for
+    // each property.
+    if (detail::check_flags<application>(flags)) {
+            ps.add<application>(LYRA_NAMESPACE::application::get(flags));
+    }
+
 
     throw "TODO";
 
