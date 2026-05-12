@@ -82,8 +82,17 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::application::get(
 
     detail::checked_add<process_id>(ps, flags,
         detail::get_process_id());
-    detail::checked_add<cpu_affinity>(ps, flags,
-        detail::get_process_cpu_affinity());
+
+    {
+        const auto affinity = detail::get_process_cpu_affinity();
+        std::string value(affinity.size(), '0');
+        for (std::size_t i = 0; i < affinity.size(); ++i) {
+            if (affinity[i]) {
+                value[i] = '1';
+            }
+        }
+        detail::checked_add<cpu_affinity>(ps, flags, value);
+    }
 
     try {
         detail::checked_add<size>(ps, flags, detail::file_size(exe.c_str()));

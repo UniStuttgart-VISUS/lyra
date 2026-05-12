@@ -21,6 +21,7 @@
 #include <SetupAPI.h>
 #include <devguid.h>
 
+#include "visus/autodoc/guid.h"
 #include "visus/autodoc/trace.h"
 
 

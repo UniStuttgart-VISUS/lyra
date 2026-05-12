@@ -107,12 +107,19 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::mounts::get(
                 detail::property_set_impl ps;
                 detail::checked_add<source>(ps, flags,
                     to_utf8(r.lpRemoteName));
-                detail::checked_add<target>(ps, flags,
-                    multi_sz::for_string(to_utf8(r.lpLocalName)));
-                detail::checked_add("Comment", ps, flags,
-                    to_utf8(r.lpComment));
-                detail::checked_add("Provider", ps, flags,
-                    to_utf8(r.lpProvider));
+                if (!detail::empty_string(r.lpLocalName)) {
+                    detail::checked_add<target>(ps, flags,
+                        multi_sz::for_string(to_utf8(r.lpLocalName)));
+                }
+                if (!detail::empty_string(r.lpComment)) {
+                    detail::checked_add("Comment", ps, flags,
+                        to_utf8(r.lpComment));
+                }
+                if (!detail::empty_string(r.lpProvider)) {
+                    detail::checked_add("Provider", ps, flags,
+                        to_utf8(r.lpProvider));
+                }
+
                 pss.push_back(property_set(std::move(ps)));
             }
         });

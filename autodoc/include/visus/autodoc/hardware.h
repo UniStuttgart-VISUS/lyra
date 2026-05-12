@@ -108,6 +108,15 @@ namespace hardware {
     };
 
     /// <summary>
+    /// Identifies a property holding the position of the device in the device
+    /// tree.
+    /// </summary>
+    struct location_path final {
+        typedef multi_sz type;
+        static constexpr auto name = u8"Location Path";
+    };
+
+    /// <summary>
     /// Identifies a property holding the path of the device.
     /// </summary>
     struct path final {

@@ -19,6 +19,7 @@
 
 #include "is_immutable.h"
 #include "is_sensitive.h"
+#include "is_uncommon.h"
 #include "property_variant.h"
 
 
@@ -55,6 +56,18 @@ struct LYRA_TEST_API property_set_impl final {
     /// Stores the properties.
     /// </summary>
     std::map<key_type, value_type> values;
+
+    /// <summary>
+    /// Initialises a new instance.
+    /// </summary>
+    property_set_impl(void) = default;
+
+    /// <summary>
+    /// Initialises a new instance.
+    /// </summary>
+    /// <param name="other">A <see cref="property_set" /> that is to be 
+    /// converted back to its implementation.</param>
+    explicit property_set_impl(_In_ property_set&& other);
 
     /// <summary>
     /// Convenience method for adding a new property to the set.
@@ -336,7 +349,8 @@ struct LYRA_TEST_API property_set_impl final {
 /// collected under the given <paramref name="flags" />.
 /// </summary>
 template<class TProp> bool check_flags(_In_ const collection_flags flags) {
-    return check_sensitive<TProp>(flags) && check_immutable<TProp>(flags);
+    return check_immutable<TProp>(flags) && check_sensitive<TProp>(flags)
+        && check_uncommon<TProp>(flags);
 }
 
 

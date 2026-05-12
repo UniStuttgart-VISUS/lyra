@@ -33,6 +33,7 @@ namespace network {
     struct anycast_address final {
         typedef const char *type;
         static constexpr auto is_sensitive = true;
+        static constexpr auto is_uncommon = true;
         static constexpr const char *name = "Anycast Address";
     };
 
@@ -43,6 +44,7 @@ namespace network {
     struct broadcast_address final {
         typedef const char *type;
         static constexpr auto is_sensitive = true;
+        static constexpr auto is_uncommon = true;
         static constexpr const char *name = "Broadcast Address";
     };
 
@@ -61,6 +63,7 @@ namespace network {
     /// </summary>
     struct interface_index final {
         typedef std::uint64_t type;
+        static constexpr auto is_uncommon = true;
         static constexpr const char *name = "Interface Index";
     };
 
@@ -88,6 +91,7 @@ namespace network {
     struct multicast_address final {
         typedef const char *type;
         static constexpr auto is_sensitive = true;
+        static constexpr auto is_uncommon = true;
         static constexpr const char *name = "Multicast Address";
     };
 
@@ -106,6 +110,7 @@ namespace network {
     struct p2p_address final {
         typedef const char *type;
         static constexpr auto is_sensitive = true;
+        static constexpr auto is_uncommon = true;
         static constexpr const char *name = "Point-to-Point Address";
     };
 

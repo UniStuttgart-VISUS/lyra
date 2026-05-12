@@ -60,6 +60,12 @@ LYRA_ENUM(collection_flags) {
     /// over time.
     /// </summary>
     _LYRA_COLLECTION_FLAG(no_immutable) = 0x00000004,
+
+    /// <summary>
+    /// Instructs the library to not collect any properties that are marked as
+    /// uncommon.
+    /// </summary>
+    _LYRA_COLLECTION_FLAG(no_uncommon) = 0x00000008,
 };
 
 #undef _LYRA_COLLECTION_FLAG

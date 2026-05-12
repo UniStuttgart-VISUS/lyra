@@ -37,6 +37,23 @@ template<class TContainer, class TValue> inline bool contains(
 }
 
 /// <summary>
+/// Answer whether the given null-terminated string is empty, i.e. either a
+/// <see langword="nullptr" /> or a string with zero length.
+/// </summary>
+template<class TChar>
+inline constexpr bool empty_string(_In_z_ const TChar *str) noexcept {
+    return ((str == nullptr) || (*str == 0));
+}
+
+/// <summary>
+/// Answer whether the given string is empty.
+/// </summary>
+template<class TChar, class TTraits, class TAlloc> inline bool empty_string(
+        _In_ const std::basic_string<TChar, TTraits, TAlloc>& str) noexcept {
+    return str.empty();
+}
+
+/// <summary>
 /// Makes sure that the given string is null-terminated.
 /// </summary>
 /// <typeparam name="TChar"></typeparam>

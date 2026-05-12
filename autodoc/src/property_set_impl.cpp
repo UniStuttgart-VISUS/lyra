@@ -12,6 +12,19 @@
 
 
 /*
+ * LYRA_DETAIL_NAMESPACE::property_set_impl::property_set_impl
+ */
+LYRA_DETAIL_NAMESPACE::property_set_impl::property_set_impl(
+        _In_ property_set&& other) {
+    if (other._impl != nullptr) {
+        this->values = std::move(other._impl->values);
+        delete other._impl;
+        other._impl = nullptr;
+    }
+}
+
+
+/*
  * LYRA_DETAIL_NAMESPACE::property_set_impl::add
  */
 void LYRA_DETAIL_NAMESPACE::property_set_impl::add(

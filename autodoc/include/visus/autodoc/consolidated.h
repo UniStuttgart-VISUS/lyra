@@ -21,6 +21,36 @@ namespace consolidated {
     typedef raw::application application;
 
     /// <summary>
+    /// Identifies a block containing the environment.
+    /// </summary>
+    typedef raw::environment environment;
+
+    /// <summary>
+    /// Identifies a block containing the hardware.
+    /// </summary>
+    typedef raw::hardware hardware;
+
+    /// <summary>
+    /// Identifies a block containing information about network interfaces and
+    /// network shares.
+    /// </summary>
+    typedef raw::network network;
+
+    /// <summary>
+    /// Identifies a block containing information about the operating system.
+    /// </summary>
+    typedef raw::operating_system operating_system;
+
+    /// <summary>
+    /// Identifies a block containing the information about a network share
+    /// mounted on the system.
+    /// </summary>
+    struct share final {
+        typedef property_set type;
+        static constexpr auto name = u8"Share";
+    };
+
+    /// <summary>
     /// Identifies a property holding the timestamp when the information was
     /// collected.
     /// </summary>

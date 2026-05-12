@@ -50,7 +50,6 @@ namespace raw {
         static constexpr auto name = u8"Graphics";
     };
 
-
     /// <summary>
     /// Identifies a block containing the hardware.
     /// </summary>

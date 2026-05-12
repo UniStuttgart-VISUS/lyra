@@ -15,6 +15,7 @@
 
 #include "property_set_impl.h"
 #include "setup_api.h"
+#include "string_manipulation.h"
 #include "sysfs_device.h"
 #include "systemd_device.h"
 
@@ -157,12 +158,19 @@ static void try_add_driver(
 /// </summary>
 static LYRA_NAMESPACE::guid try_get_clsid(_In_ HDEVINFO handle,
         _In_ SP_DEVINFO_DATA& data) {
+    constexpr std::array<wchar_t, 2> braces { L'{', L'}' };
+
     LYRA_NAMESPACE::guid retval;
     try {
-        const auto value = LYRA_DETAIL_NAMESPACE::get_device_registry_property(
-            handle, data, SPDRP_CLASSGUID);
+        // Cf. https://learn.microsoft.com/en-us/windows/win32/api/setupapi/nf-setupapi-setupdigetdeviceregistrypropertyw
+        // "The function retrieves a REG_SZ string that contains the GUID that
+        // represents the device setup class of a device."
+        auto value = LYRA_DETAIL_NAMESPACE::get_device_registry_property(handle,
+            data, SPDRP_CLASSGUID);
         if (!value.empty()) {
-            retval = LYRA_NAMESPACE::guid(value.data());
+            auto v = reinterpret_cast<wchar_t *>(value.data());
+            v = LYRA_DETAIL_NAMESPACE::trim(v, braces);
+            retval = LYRA_NAMESPACE::guid::parse(v);
         }
     } catch (const std::exception& ex) {
         LYRA_TRACE("Failed to retrieve device class: %s", ex.what());
@@ -203,6 +211,8 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::hardware::get(
                 SPDRP_FRIENDLYNAME);
             ::try_add_string_prop<location>(dps, flags, handle, data,
                 SPDRP_LOCATION_INFORMATION);
+            ::try_add_multi_sz_prop<location_path>(dps, flags, handle, data,
+                SPDRP_LOCATION_PATHS);
             ::try_add_string_prop<manufacturer>(dps, flags, handle, data,
                 SPDRP_MFG);
             ::try_add_string_prop<path>(dps, flags, handle, data,

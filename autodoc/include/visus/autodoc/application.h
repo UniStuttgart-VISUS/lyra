@@ -22,6 +22,7 @@ namespace application {
     /// </summary>
     struct access_time final {
         typedef timestamp type;
+        static constexpr auto is_uncommon = true;
         static constexpr auto name = u8"Last Access Time";
     };
 
@@ -31,6 +32,7 @@ namespace application {
     /// </summary>
     struct change_time final {
         typedef timestamp type;
+        static constexpr auto is_uncommon = true;
         static constexpr auto name = u8"Last Change Time";
     };
 
@@ -45,10 +47,10 @@ namespace application {
 
     /// <summary>
     /// Identifies the property holding the CPU affinity of the calling process
-    /// in the form of a Boolean vector.
+    /// in the form of binary mask.
     /// </summary>
     struct cpu_affinity final {
-        typedef bool type;
+        typedef const char *type;
         static constexpr auto name = u8"CPU Affinity";
     };
 
