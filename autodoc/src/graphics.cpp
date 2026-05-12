@@ -110,7 +110,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::graphics::get_tdr_settings(
         }
 
         if (SUCCEEDED(wil::reg::get_value_dword_nothrow(key.get(),
-                L"", &value))) {
+                L"TdrDebugMode", &value))) {
             detail::checked_add<graphics::tdr_debug_mode>(ps, flags, value);
         }
 
