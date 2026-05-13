@@ -4,6 +4,7 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 #include <vector>
@@ -14,6 +15,7 @@
 #include "visus/autodoc/cpu_vendor.h"
 #include "visus/autodoc/simd_detector.h"
 
+#include "affinity_scope.h"
 #include "os_cpu_info.h"
 
 
@@ -120,4 +122,33 @@ TEST(cpu_info, hypervisor) {
     EXPECT_NO_THROW(value = LYRA_NAMESPACE::hypervisor::virtual_box::check(info));
     EXPECT_NO_THROW(value = LYRA_NAMESPACE::hypervisor::vmware::check(info));
     EXPECT_NO_THROW(value = LYRA_NAMESPACE::hypervisor::xen::check(info));
+}
+
+TEST(cpu_info, affinity_scope) {
+    const auto affinity = LYRA_DETAIL_NAMESPACE::get_thread_cpu_affinity();
+
+    {
+#if defined(_WIN32) && (_WIN32_WINNT >= 0x0601)
+        GROUP_AFFINITY mask { };
+        mask.Mask = static_cast<DWORD_PTR>(1) << 1;
+        LYRA_DETAIL_NAMESPACE::affinity_scope scope(mask);
+
+#elif defined(_WIN32)
+        const auto mask = static_cast<DWORD_PTR>(1) << 1;
+        LYRA_DETAIL_NAMESPACE::affinity_scope scope(mask);
+
+#else /* defined(_WIN32) && (_WIN32_WINNT >= 0x0601) */
+        cpu_set_t mask;
+        CPU_ZERO(&mask);
+        CPU_SET(1, &mask);
+        LYRA_DETAIL_NAMESPACE::affinity_scope scope(&mask, sizeof(mask));
+#endif /* defined(_WIN32) && (_WIN32_WINNT >= 0x0601) */
+        EXPECT_TRUE(scope);
+
+        const auto changed = LYRA_DETAIL_NAMESPACE::get_thread_cpu_affinity();
+        EXPECT_FALSE(std::equal(affinity.begin(), affinity.end(), changed.begin(), changed.end()));
+    }
+
+    const auto reverted = LYRA_DETAIL_NAMESPACE::get_thread_cpu_affinity();
+    EXPECT_TRUE(std::equal(affinity.begin(), affinity.end(), reverted.begin(), reverted.end()));
 }

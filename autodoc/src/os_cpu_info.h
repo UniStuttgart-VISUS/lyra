@@ -64,6 +64,13 @@ LYRA_TEST_API std::vector<bool> get_process_cpu_affinity(void);
 LYRA_TEST_API std::vector<bool> get_thread_cpu_affinity(
     _In_ const thread_handle thread);
 
+/// <summary>
+/// Gets the CPU affinity for the calling thread.
+/// </summary>
+/// <returns>A vector of Booleans representing the CPU affinity of the calling
+/// thread.</returns>
+LYRA_TEST_API std::vector<bool> get_thread_cpu_affinity(void);
+
 #if defined(_WIN32) && (_WIN32_WINNT >= 0x0601)
 /// <summary>
 /// Gets the logical processor information for the specified relationship type.

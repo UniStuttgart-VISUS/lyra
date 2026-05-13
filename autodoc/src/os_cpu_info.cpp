@@ -117,7 +117,8 @@ std::vector<bool> LYRA_DETAIL_NAMESPACE::get_thread_cpu_affinity(
             for (std::size_t i = 0; i < cnt_groups; ++i) {
                 if (i == affinity.Group) {
                     // Convert the mask to Booleans.
-                    for (auto j = 0; j < sizeof(KAFFINITY) * CHAR_BIT; ++j) {
+                    auto& g = info->Group.GroupInfo[i];
+                    for (auto j = 0; j < g.ActiveProcessorCount; ++j) {
                         const auto bit = static_cast<KAFFINITY>(1) << j;
                         retval.push_back((affinity.Mask & bit) != 0);
                     }
@@ -135,7 +136,7 @@ std::vector<bool> LYRA_DETAIL_NAMESPACE::get_thread_cpu_affinity(
     } /* if (cnt_groups > 0) */
 
 #endif /* (_WIN32_WINNT >= 0x0601) */
-    {
+    if (retval.empty()) {
         DWORD_PTR probe = 1;
 
         while (probe != 0) {
@@ -179,6 +180,18 @@ std::vector<bool> LYRA_DETAIL_NAMESPACE::get_thread_cpu_affinity(
 #endif /* defined(_WIN32) */
 
     return retval;
+}
+
+
+/*
+ * LYRA_DETAIL_NAMESPACE::get_thread_cpu_affinity
+ */
+std::vector<bool> LYRA_DETAIL_NAMESPACE::get_thread_cpu_affinity(void) {
+#if defined(_WIN32)
+    return get_thread_cpu_affinity(::GetCurrentThread());
+#else /* defined(_WIN32) */
+    return get_thread_cpu_affinity(::gettid());
+#endif /* defined(_WIN32) */
 }
 
 
