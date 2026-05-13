@@ -67,12 +67,13 @@ namespace detail {
     /// <param name="cnt"></param>
     /// <param name="base">Controls whether the basic CPU information (0) or the
     /// extended information (0x80000000) are to be retrieved.</param>
+    /// <param name="subleaf"></param>
     /// <returns>The number of <see cref="cpu_info" /> entries available.</returns>
     std::size_t LYRA_API get_cpu_info(
         _Out_writes_opt_(cnt) cpu_info *dst,
         _In_ std::size_t cnt,
         _In_ const std::uint32_t base = 0x0,
-        _In_ const std::uint32_t subfunction = 0x0);
+        _In_ const std::uint32_t subleaf = 0x0);
 
 } /* namespace detail */
 
@@ -97,9 +98,12 @@ std::size_t LYRA_API get_cpu_info(
 /// The function will determine whether the function index is an extended one on
 /// its own and select the appropriate base for the query.
 /// </remarks>
-/// <param name="index"></param>
+/// <param name="leaf"></param>
+/// <param name="subleaf"></param>
 /// <returns></returns>
-bool LYRA_API get_cpu_info(_Out_ cpu_info& info, _In_ const std::uint32_t idx);
+bool LYRA_API get_cpu_info(_Out_ cpu_info& info,
+    _In_ const std::uint32_t leaf,
+    _In_ const std::uint32_t subleaf = 0x0);
 
 
 /// <summary>

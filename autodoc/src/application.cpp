@@ -85,10 +85,10 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::application::get(
 
     {
         const auto affinity = detail::get_process_cpu_affinity();
-        std::string value(affinity.size(), '0');
+        std::string value(affinity.size(), '-');
         for (std::size_t i = 0; i < affinity.size(); ++i) {
             if (affinity[i]) {
-                value[i] = '1';
+                value[i] = '*';
             }
         }
         detail::checked_add<cpu_affinity>(ps, flags, value);

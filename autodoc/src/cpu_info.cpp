@@ -8,6 +8,7 @@
 
 #include <cassert>
 #include <cerrno>
+#include <cstring>
 #include <system_error>
 
 #if defined(_WIN32)
@@ -27,6 +28,8 @@
 #include <cpuid.h>
 #endif /* defined(_WIN32) */
 
+#include "visus/autodoc/trace.h"
+
 
 // List of derived from
 // https://stackoverflow.com/questions/152016/detecting-cpu-architecture-compile-time
@@ -41,6 +44,45 @@
 #endif /* defined(__x86_64__) || ... */
 
 
+#if !defined(_WIN32)
+/// <summary>
+/// Port of Windows's __cpuidex function for Linux.
+/// </summary>
+static void __cpuidex(_Out_writes_(4) int retval[4],
+        _In_ const int leaf, _In_ const int subleaf) noexcept {
+    if (subleaf != 0) {
+#if defined(__i386__) && defined(__PIC__)
+        __asm__ volatile(
+            "xchg %%ebx, %%edi\n\t"
+            "cpuid\n\t"
+            "xchg %%ebx, %%edi\n\t"
+            : "=a" (retval[0]),
+              "=D" (retval[1]),
+              "=c" (retval[2]),
+              "=d" (retval[3])
+            : "a" (leaf), "c" (subleaf));
+#else /* defined(__i386__) && defined(__PIC__) */
+        __asm__ volatile(
+            "cpuid\n\t"
+            : "=a" (retval[0]),
+              "=b" (retval[1]),
+              "=c" (retval[2]),
+              "=d" (retval[3])
+            : "a" (leaf), "c" (subleaf));
+#endif /* defined(__i386__) && defined(__PIC__) */
+    } else if (!::__get_cpuid(leaf,
+            reinterpret_cast<unsigned int *>(retval + 0),
+            reinterpret_cast<unsigned int *>(retval + 1),
+            reinterpret_cast<unsigned int *>(retval + 2),
+            reinterpret_cast<unsigned int *>(retval + 3))) {
+        LYRA_TRACE("CPUID 0x%x failed.", leaf);
+        ::memset(retval, 0, 4 * sizeof(*retval));
+    }
+}
+#endif /* !defined(_WIN32) */
+
+
+
 /*
  * LYRA_DETAIL_NAMESPACE::get_cpu_info
  */
@@ -48,7 +90,7 @@ std::size_t LYRA_DETAIL_NAMESPACE::get_cpu_info(
         _Out_writes_opt_(cnt) cpu_info *dst,
         _In_ std::size_t cnt,
         _In_ const std::uint32_t base,
-        _In_ const std::uint32_t subfunction) {
+        _In_ const std::uint32_t subleaf) {
     assert((base == 0) || (base == 0x80000000));
     cpu_info info;
 
@@ -74,38 +116,7 @@ std::size_t LYRA_DETAIL_NAMESPACE::get_cpu_info(
     // Make all queries that are available and for which we have storage.
     for (std::uint32_t i = base, j = 0; (i < retval) && (j < cnt); ++i, ++j) {
         auto& d = dst[j];
-
-#if defined(_WIN32)
-        ::__cpuidex(reinterpret_cast<int *>(d.values), i, subfunction);
-#else /* defined(_WIN32) */
-        if (subfunction != 0) {
-#if defined(__i386__) && defined(__PIC__)
-            __asm__ volatile(
-                "xchg %%ebx, %%edi\n\t"
-                "cpuid\n\t"
-                "xchg %%ebx, %%edi\n\t"
-                : "=a" (d.registers.eax),
-                  "=D" (d.registers.ebx),
-                  "=c" (d.registers.ecx),
-                  "=d" (d.registers.edx)
-                : "a" (i), "c" (subfunction));
-#else /* defined(__i386__) && defined(__PIC__) */
-            __asm__ volatile(
-                "cpuid\n\t"
-                : "=a" (d.registers.eax),
-                  "=b" (d.registers.ebx),
-                  "=c" (d.registers.ecx),
-                  "=d" (d.registers.edx)
-                : "a" (i), "c" (subfunction));
-#endif /* defined(__i386__) && defined(__PIC__) */
-        } else if (!::__get_cpuid(i,
-                &d.registers.eax,
-                &d.registers.ebx,
-                &d.registers.ecx,
-                &d.registers.edx)) {
-            throw std::system_error(EFAULT, std::system_category());
-        }
-#endif /* defined(_WIN32) */
+        ::__cpuidex(reinterpret_cast<int *>(d.values), i, subleaf);
     }
 
     return (retval - base);
@@ -131,22 +142,15 @@ std::size_t LYRA_NAMESPACE::get_cpu_info(
  */
 bool LYRA_API LYRA_NAMESPACE::get_cpu_info(
         _Out_ cpu_info& info,
-        _In_ const std::uint32_t idx) {
+        _In_ const std::uint32_t leaf,
+        _In_ const std::uint32_t subleaf) {
     constexpr auto threshold = 0x80000000;
-    const auto base = (idx >= threshold) ? threshold : 0;
+    const auto base = (leaf >= threshold) ? threshold : 0;
     const auto available = detail::get_cpu_info(nullptr, 0, base);
-    auto retval = (idx < base + available);
+    auto retval = (leaf < base + available);
 
     if (retval) {
-#if defined(_WIN32)
-        ::__cpuidex(reinterpret_cast<int *>(info.values), idx, 0);
-#else /* defined(_WIN32) */
-        retval = ::__get_cpuid(idx,
-            &info.registers.eax,
-            &info.registers.ebx,
-            &info.registers.ecx,
-            &info.registers.edx);
-#endif /* defined(_WIN32) */
+        ::__cpuidex(reinterpret_cast<int *>(info.values), leaf, subleaf);
     }
 
     return retval;

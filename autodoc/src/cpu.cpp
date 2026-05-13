@@ -24,6 +24,67 @@
 
 
 /// <summary>
+/// Adds the CPU topology from CPUID queries to <paramref name="ps" />.
+/// </summary>
+/// <remarks>See https://docs.kernel.org/arch/x86/topology.html</remarks>
+bool add_amd_topology(_Inout_ LYRA_DETAIL_NAMESPACE::property_set_impl& ps) {
+    using namespace LYRA_NAMESPACE;
+    const instruction_detectors::topology_leaf_b leaf_b;
+    const instruction_detectors::topology_extensions topo_ext;
+    cpu_info info;
+
+    if (get_cpu_info(info, 0x80000026)) {
+        // Extended CPU Topology is supported.
+    }
+
+    if (leaf_b && get_cpu_info(info, 0x0000000b)) {
+        // Extended Topology Enumeration is supported.
+    }
+
+    if (get_cpu_info(info, 0x80000008)) {
+        // Size Identifiers is supported.
+    }
+
+    if (topo_ext && get_cpu_info(info, 0x8000001e)) {
+        // Extended APIC ID, Core Identifiers, Node Identifiers is supported.
+    }
+
+    return false;
+}
+
+
+/// <summary>
+/// Adds the CPU topology from CPUID queries to <paramref name="ps" />.
+/// </summary>
+/// <remarks>
+/// <para>See https://docs.kernel.org/arch/x86/topology.html. This function can
+/// also be used for Centaur and Zhaoxin CPUs.</para>
+/// </remarks>
+bool add_intel_topology(_Inout_ LYRA_DETAIL_NAMESPACE::property_set_impl& ps) {
+    using namespace LYRA_NAMESPACE;
+    const instruction_detectors::extended_toplogy_enumeration ext_topo;
+    const instruction_detectors::topology_leaf_b leaf_b;
+    const instruction_detectors::topology_extensions topo_ext;
+    cpu_info info;
+
+    if (ext_topo && get_cpu_info(info, 0x0000001f)) {
+
+    }
+
+    if (leaf_b && get_cpu_info(info, 0x0000000b)) {
+    }
+
+    if (get_cpu_info(info, 0x00000004)) {
+    }
+
+    if (get_cpu_info(info, 0x00000001)) {
+    }
+
+    return false;
+}
+
+
+/// <summary>
 /// Tests whether <typeparamref name="I" /> is supported and adds the result to
 /// <paramref name="ps" />.
 /// </summary>
@@ -74,13 +135,13 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
             }
         }
 
-        if (detail::check_sensitive<cpu::brand_string>(flags)
+        if (detail::check_flags<cpu::brand_string>(flags)
                 && (i == brand_comps)) {
             ps.add<cpu::brand_string>(brand.data());
         }
     }
 
-    if (detail::check_sensitive<cpu::cpuid>(flags)) {
+    if (detail::check_flags<cpu::cpuid>(flags)) {
         std::vector<cpu_info> infos(get_cpu_info());
         get_cpu_info(infos.data(), infos.size());
         std::vector<cpu_info> ex_infos(get_extended_cpu_info());
@@ -134,7 +195,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
         }
     }
 
-    if (detail::check_sensitive<cpu::instructions>(flags)) {
+    if (detail::check_flags<cpu::instructions>(flags)) {
         detail::property_set_impl insts;
 
         insts.add(u8"POPCNT", instruction_detectors::popcnt());
@@ -356,6 +417,8 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_topology(
 
     detail::checked_add<cache>(ps, flags, property_set(std::move(cps)));
 #endif /* defined(_WIN32) && (_WIN32_WINNT >= 0x0601) */
+
+    auto x = add_amd_topology(ps);
 
     return property_set(std::move(ps));
 }
