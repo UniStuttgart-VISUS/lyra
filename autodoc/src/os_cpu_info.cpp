@@ -82,7 +82,7 @@ std::vector<bool> LYRA_DETAIL_NAMESPACE::get_process_cpu_affinity(void) {
     } /* if (cnt_groups > 0) */
 
 #endif /* (_WIN32_WINNT >= 0x0601) */
-    {
+    if (retval.empty()){
         DWORD_PTR mask, dummy;
         if (::GetProcessAffinityMask(::GetCurrentProcess(), &mask, &dummy)) {
             retval = to_booleans(mask, get_os_max_cpus());
@@ -100,11 +100,10 @@ std::vector<bool> LYRA_DETAIL_NAMESPACE::get_process_cpu_affinity(void) {
  * LYRA_DETAIL_NAMESPACE::get_thread_cpu_affinity
  */
 std::vector<bool> LYRA_DETAIL_NAMESPACE::get_thread_cpu_affinity(
-        _In_ const thread_handle thread) {
+        _In_ const affinity_mask::thread_handle thread) {
     std::vector<bool> retval;
 
-#if defined(_WIN32)
-#if (_WIN32_WINNT >= 0x0601)
+#if defined(_WIN32) && (_WIN32_WINNT >= 0x0601)
     auto cnt_groups = ::GetActiveProcessorGroupCount();
 
     if (cnt_groups > 0) {
@@ -134,50 +133,23 @@ std::vector<bool> LYRA_DETAIL_NAMESPACE::get_thread_cpu_affinity(
             return retval;
         }
     } /* if (cnt_groups > 0) */
+#elif defined(_WIN32)
+    try {
+        const auto mask = affinity_mask::thread(thread);
+        const auto bits = static_cast<DWORD_PTR>(mask);
+        retval = to_booleans(bits, get_os_max_cpus());
+    } catch (...) { /* Ignore this and leave result empty. */ }
+#else /* defined(_WIN32) && (_WIN32_WINNT >= 0x0601) */
+    try {
+        const auto cnt = get_os_max_cpus();
+        const auto mask = affinity_mask::thread(thread);
 
-#endif /* (_WIN32_WINNT >= 0x0601) */
-    if (retval.empty()) {
-        DWORD_PTR probe = 1;
-
-        while (probe != 0) {
-            const auto mask = ::SetThreadAffinityMask(thread, probe);
-
-            if (mask != 0) {
-                // If we were able to set the affinity mask, the return value
-                // was the previous mask, which is what we want to know. Reset
-                // the mask and exit the loop.
-                ::SetThreadAffinityMask(thread, mask);
-                retval = to_booleans(mask, get_os_max_cpus());
-                probe = 0;
-
-            } else if (::GetLastError() == ERROR_INVALID_PARAMETER) {
-                // Our probe was invalid as is included a CPU that is not
-                // available to the process. Therefore, we try the next.
-                 probe <<= 1;
-
-            } else {
-                // This is a fatal error, we will not able to determine the
-                // thread affinity.
-                probe = 0;
-            }
+        for (std::size_t i = 0; i < cnt; ++i) {
+            retval.push_back(CPU_ISSET(i, mask.get()) != 0);
         }
-    }
-#else /* defined(_WIN32) */
-    const auto cnt = get_os_max_cpus();
 
-    auto cpus = CPU_ALLOC(cnt);
-    if (cpus != nullptr) {
-        LYRA_ON_EXIT([cpus](void) { CPU_FREE(cpus); });
-        const auto size = CPU_ALLOC_SIZE(cnt);
-        CPU_ZERO_S(size, cpus);
-
-        if (::sched_getaffinity(thread, size, cpus) == 0) {
-            for (std::size_t i = 0; i < cnt; ++i) {
-                retval.push_back(CPU_ISSET(i, cpus) != 0);
-            }
-        }
-    }
-#endif /* defined(_WIN32) */
+    } catch (...) { /* Ignore this and leave result empty. */ }
+#endif /* defined(_WIN32) && (_WIN32_WINNT >= 0x0601) */
 
     return retval;
 }
@@ -264,3 +236,26 @@ std::size_t LYRA_DETAIL_NAMESPACE::get_os_max_cpus(void) {
     return static_cast<std::size_t>(::sysconf(_SC_NPROCESSORS_CONF));
 #endif /* defined(_WIN32) */
 }
+
+
+#if defined(_WIN32) && (_WIN32_WINNT >= 0x0601)
+/*
+ * LYRA_DETAIL_NAMESPACE::get_processor_groups
+ */
+std::vector<PROCESSOR_GROUP_INFO> LYRA_DETAIL_NAMESPACE::get_processor_groups(
+        void) {
+    const auto groups = ::GetActiveProcessorGroupCount();
+    std::vector<std::uint8_t> buffer(groups * sizeof(PROCESSOR_GROUP_INFO));
+    std::vector<PROCESSOR_GROUP_INFO> retval;
+
+    auto info = get_logical_processor_info(buffer, RelationGroup);
+    if (info != nullptr) {
+        retval.reserve(groups);
+        std::copy_n(info->Group.GroupInfo,
+            info->Group.ActiveGroupCount,
+            std::back_inserter(retval));
+    }
+
+    return retval;
+}
+#endif /* defined(_WIN32) && (_WIN32_WINNT >= 0x0601) */

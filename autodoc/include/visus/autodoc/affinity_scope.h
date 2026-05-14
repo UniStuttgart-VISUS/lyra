@@ -8,46 +8,25 @@
 #define _LYRA_AFFINITY_SCOPE_H
 #pragma once
 
-#include <cstdlib>
-#include <type_traits>
-
-#if defined(_WIN32)
-#include <Windows.h>
-#else /* defined(_WIN32) */
-#include <sched.h>
-#include <unistd.h>
-#endif /* defined(_WIN32) */
-
-#include "visus/autodoc/api.h"
+#include "visus/autodoc/affinity_mask.h"
 
 
-LYRA_DETAIL_NAMESPACE_BEGIN
+LYRA_NAMESPACE_BEGIN
 
 /// <summary>
 /// A RAII scope for changing the thread affinity.
 /// </summary>
-class LYRA_TEST_API affinity_scope final {
+class LYRA_API affinity_scope final {
 
 public:
-
-#if defined(_WIN32)
-#if (_WIN32_WINNT >= 0x0601)
-    typedef GROUP_AFFINITY& mask_type;
-#else /* (_WIN32_WINNT >= 0x0601) */
-    typedef DWORD_PTR mask_type;
-#endif /* (_WIN32_WINNT >= 0x0601) */
-#else /* defined(_WIN32) */
-    typedef cpu_set_t *mask_type;
-#endif /* defined(_WIN32) */
 
     /// <summary>
     /// Changes the thread affinity.
     /// </summary>
     /// <param name="mask">The affinity mask to set.</param>
-    /// <param name="size">The size of the mask. This parameter is irrelevant
-    /// on Windows.</param>
-    affinity_scope(_In_ const mask_type mask,
-        _In_ const std::size_t size = 0) noexcept;
+    explicit inline affinity_scope(_In_ const affinity_mask& mask) noexcept {
+        this->set(mask);
+    }
 
     affinity_scope(const affinity_scope& rhs) = delete;
 
@@ -64,21 +43,17 @@ public:
     /// </summary>
     /// <returns></returns>
     inline operator bool(void) const noexcept {
-        return this->_valid;
+        return this->_mask;
     }
 
 private:
 
-    void set(_In_ const mask_type mask, _In_ const std::size_t size) noexcept;
+    void set(_In_ const affinity_mask& mask) noexcept;
 
-    std::decay_t<mask_type> _mask;
-#if !defined(_WIN32)
-    std::size_t _size;
-#endif /* !defined(_WIN32) */
-    bool _valid;
+    affinity_mask _mask;
 
 };
 
-LYRA_DETAIL_NAMESPACE_END
+LYRA_NAMESPACE_END
 
 #endif /* !defined(_LYRA_AFFINITY_SCOPE_H) */

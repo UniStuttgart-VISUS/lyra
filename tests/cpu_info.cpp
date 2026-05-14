@@ -9,13 +9,13 @@
 
 #include <vector>
 
+#include "visus/autodoc/affinity_scope.h"
 #include "visus/autodoc/cpu.h"
 #include "visus/autodoc/cpu_info.h"
 #include "visus/autodoc/cpu_info_detector.h"
 #include "visus/autodoc/cpu_vendor.h"
 #include "visus/autodoc/simd_detector.h"
 
-#include "affinity_scope.h"
 #include "os_cpu_info.h"
 
 
@@ -124,26 +124,84 @@ TEST(cpu_info, hypervisor) {
     EXPECT_NO_THROW(value = LYRA_NAMESPACE::hypervisor::xen::check(info));
 }
 
+TEST(cpu_info, affinity_mask) {
+    {
+        LYRA_NAMESPACE::affinity_mask m;
+        EXPECT_FALSE(m);
+        EXPECT_FALSE(m.test(1));
+        EXPECT_TRUE(m == m);
+        EXPECT_FALSE(m != m);
+    }
+    {
+        std::size_t s;
+        LYRA_NAMESPACE::affinity_mask m(&s, 0);
+        EXPECT_FALSE(m);
+        EXPECT_FALSE(m.test(1));
+        EXPECT_TRUE(m == m);
+        EXPECT_FALSE(m != m);
+    }
+    {
+        LYRA_NAMESPACE::affinity_mask m(static_cast<std::size_t>(0));
+        EXPECT_TRUE(m);
+        EXPECT_TRUE(m.test(0));
+        EXPECT_FALSE(m.test(1));
+        EXPECT_TRUE(m == m);
+        EXPECT_FALSE(m != m);
+    }
+    {
+        std::size_t s[] = { 0, 2 };
+        LYRA_NAMESPACE::affinity_mask m(s, 2);
+        EXPECT_TRUE(m);
+        EXPECT_TRUE(m.test(0));
+        EXPECT_FALSE(m.test(1));
+        EXPECT_TRUE(m.test(2));
+        EXPECT_TRUE(m == m);
+        EXPECT_FALSE(m != m);
+    }
+    {
+        LYRA_NAMESPACE::affinity_mask n;
+        LYRA_NAMESPACE::affinity_mask m(n);
+        EXPECT_FALSE(m);
+        EXPECT_FALSE(m.test(1));
+        EXPECT_TRUE(m == m);
+        EXPECT_FALSE(m != m);
+        EXPECT_TRUE(n == m);
+        EXPECT_FALSE(n != m);
+    }
+    {
+        LYRA_NAMESPACE::affinity_mask n(static_cast<std::size_t>(0));
+        LYRA_NAMESPACE::affinity_mask m(n);
+        EXPECT_TRUE(m);
+        EXPECT_TRUE(m.test(0));
+        EXPECT_FALSE(m.test(1));
+        EXPECT_TRUE(m == m);
+        EXPECT_FALSE(m != m);
+        EXPECT_TRUE(n == m);
+        EXPECT_FALSE(n != m);
+    }
+    {
+        auto current = LYRA_NAMESPACE::affinity_mask::thread();
+        EXPECT_TRUE(current);
+        LYRA_NAMESPACE::affinity_mask m;
+        EXPECT_FALSE(m);
+        EXPECT_FALSE(m == current);
+        EXPECT_TRUE(m != current);
+        m = current;
+        EXPECT_TRUE(m);
+        EXPECT_TRUE(m == current);
+        EXPECT_FALSE(m != current);
+        current = std::move(m);
+        EXPECT_TRUE(current);
+    }
+}
+
 TEST(cpu_info, affinity_scope) {
     const auto affinity = LYRA_DETAIL_NAMESPACE::get_thread_cpu_affinity();
 
     {
-#if defined(_WIN32) && (_WIN32_WINNT >= 0x0601)
-        GROUP_AFFINITY mask { };
-        mask.Mask = static_cast<DWORD_PTR>(1) << 1;
-        LYRA_DETAIL_NAMESPACE::affinity_scope scope(mask);
-
-#elif defined(_WIN32)
-        const auto mask = static_cast<DWORD_PTR>(1) << 1;
-        LYRA_DETAIL_NAMESPACE::affinity_scope scope(mask);
-
-#else /* defined(_WIN32) && (_WIN32_WINNT >= 0x0601) */
-        cpu_set_t mask;
-        CPU_ZERO(&mask);
-        CPU_SET(1, &mask);
-        LYRA_DETAIL_NAMESPACE::affinity_scope scope(&mask, sizeof(mask));
-#endif /* defined(_WIN32) && (_WIN32_WINNT >= 0x0601) */
-        EXPECT_TRUE(scope);
+        LYRA_NAMESPACE::affinity_mask mask(static_cast<std::size_t>(0));
+        LYRA_NAMESPACE::affinity_scope scope(mask);
+        EXPECT_TRUE(static_cast<bool>(scope));
 
         const auto changed = LYRA_DETAIL_NAMESPACE::get_thread_cpu_affinity();
         EXPECT_FALSE(std::equal(affinity.begin(), affinity.end(), changed.begin(), changed.end()));

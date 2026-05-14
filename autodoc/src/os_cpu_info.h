@@ -17,15 +17,11 @@
 #include <sys/types.h>
 #endif /* !defined(_WIN32) */
 
+#include "visus/autodoc/affinity_mask.h"
 #include "visus/autodoc/fnv1a.h"
 
 LYRA_DETAIL_NAMESPACE_BEGIN
 
-#if defined(_WIN32)
-typedef HANDLE thread_handle;
-#else /* defined(_WIN32) */
-typedef pid_t thread_handle;
-#endif /* !defined(_WIN32) */
 
 #if defined(_WIN32) && (_WIN32_WINNT >= 0x0601)
 /// <summary>
@@ -62,7 +58,7 @@ LYRA_TEST_API std::vector<bool> get_process_cpu_affinity(void);
 /// <returns>A vector of Booleans representing the CPU affinity of the specified
 /// thread.</returns>
 LYRA_TEST_API std::vector<bool> get_thread_cpu_affinity(
-    _In_ const thread_handle thread);
+    _In_ const affinity_mask::thread_handle thread);
 
 /// <summary>
 /// Gets the CPU affinity for the calling thread.
@@ -94,6 +90,15 @@ get_logical_processor_info(
 /// <returns>The maximum number of CPUs that the operating system can use at the
 /// time of the call.</returns>
 LYRA_TEST_API std::size_t get_os_max_cpus(void);
+
+#if defined(_WIN32) && (_WIN32_WINNT >= 0x0601)
+/// <summary>
+/// Gets the processor groups of the system.
+/// </summary>
+/// <returns>A vector of <see cref="PROCESSOR_GROUP_INFO" /> structures describing
+/// the processor groups of the system.</returns>
+LYRA_TEST_API std::vector<PROCESSOR_GROUP_INFO> get_processor_groups(void);
+#endif /* defined(_WIN32) && (_WIN32_WINNT >= 0x0601) */
 
 LYRA_DETAIL_NAMESPACE_END
 

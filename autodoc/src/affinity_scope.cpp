@@ -4,7 +4,7 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
-#include "affinity_scope.h"
+#include "visus/autodoc/affinity_scope.h"
 
 #include <cassert>
 
@@ -15,89 +15,55 @@
 
 
 /*
- * LYRA_DETAIL_NAMESPACE::affinity_scope::affinity_scope
+ * LYRA_NAMESPACE::affinity_scope::~affinity_scope
  */
-LYRA_DETAIL_NAMESPACE::affinity_scope::affinity_scope(
-        _In_ const mask_type mask,
-        _In_ const std::size_t size) noexcept
-        : _valid(false) {
-#if !defined(_WIN32)
-    this->_mask = nullptr;
-    this->_size = 0;
-#endif /* !defined(_WIN32) */
-    this->set(mask, size);
+LYRA_NAMESPACE::affinity_scope::~affinity_scope(void) noexcept {
+    if (*this) {
+        this->set(this->_mask);
+    }
 }
 
 
 /*
- * LYRA_DETAIL_NAMESPACE::affinity_scope::~affinity_scope
+ * LYRA_NAMESPACE::affinity_scope::set
  */
-LYRA_DETAIL_NAMESPACE::affinity_scope::~affinity_scope(void) noexcept {
-    if (this->_valid) {
-#if defined(_WIN32)
-        this->set(this->_mask, 0);
-#else /* defined(_WIN32) */
-        this->set(this->_mask, this->_size);
-#endif /* defined(_WIN32) */
-        assert(this->_valid);
-    }
+void LYRA_NAMESPACE::affinity_scope::set(
+        _In_ const affinity_mask& mask) noexcept {
+#if defined(_WIN32) && (_WIN32_WINNT >= 0x0601)
+    GROUP_AFFINITY prev;
 
-#if !defined(_WIN32)
-    if (this->_mask != nullptr) {
-        CPU_FREE(this->_mask);
-    }
-#endif /* !defined(_WIN32) */
-}
-
-
-/*
- * LYRA_DETAIL_NAMESPACE::affinity_scope::set
- */
-void LYRA_DETAIL_NAMESPACE::affinity_scope::set(
-        _In_ const mask_type mask,
-        _In_ const std::size_t size) noexcept {
-#if defined(_WIN32)
-#if (_WIN32_WINNT >= 0x0601)
-    this->_valid = (::SetThreadGroupAffinity(::GetCurrentThread(), &mask,
-        &this->_mask) != FALSE);
-    if (!this->_valid) {
+    if (::SetThreadGroupAffinity(::GetCurrentThread(), mask, &prev)) {
+        this->_mask = affinity_mask(prev);
+    } else {
         LYRA_TRACE(_T("Failed to set thread group affinity: 0x%x"),
             ::GetLastError());
+        this->_mask.clear();
     }
 
-#else /* (_WIN32_WINNT >= 0x0601) */
-    this->_mask = ::SetThreadAffinityMask(::GetCurrentThread(), mask);
-    this->_valid = (this->_mask != 0);
-#endif /* (_WIN32_WINNT >= 0x0601) */
+#elif defined(_WIN32)
+    const auto prev = ::SetThreadAffinityMask(::GetCurrentThread(), mask);
+    if (prev != 0) {
+        this->_mask = affinity_mask(prev);
+    } else {
+        LYRA_TRACE(_T("Failed to set thread affinity mask: 0x%x"),
+            ::GetLastError());
+        this->_mask.clear();
+    }
 
-#else /* defined(_WIN32) */
-    // Clear any previous allocation. The reason why we preserve the pointer
-    // until we leave the scope is that the destructor calls us with the old
-    // mask stored in the instance. If we free that right away, the call to
-    // sched_setaffinity at the end will use invalid memory.
-    auto prev_mask = this->_mask;
-    LYRA_ON_EXIT([prev_mask](void) {
-        if (prev_mask != nullptr) {
-            CPU_FREE(prev_mask);
+#else /* defined(_WIN32) && (_WIN32_WINNT >= 0x0601) */
+    try {
+        this->_mask = affinity_mask::thread();
+        assert(this->_mask);
+    } catch (...) {
+        LYRA_TRACE(_T("Failed to get current thread affinity mask."));
+        this->_mask.clear();
+    }
+
+    if (this->_mask) {
+        if (::sched_setaffinity(::gettid(), mask.size(), mask.get()) != 0) {
+            LYRA_TRACE(_T("Failed to set thread affinity mask: 0x%x"), errno);
+            this->_mask.clear();
         }
-    });
-
-    // Allocate space to preserve the old mask.
-    const auto cnt = get_os_max_cpus();
-    this->_mask = CPU_ALLOC(cnt);
-    this->_valid = (this->_mask != nullptr);
-
-    // Preserve the old mask.
-    if (this->_valid) {
-        this->_size = CPU_ALLOC_SIZE(cnt);
-        CPU_ZERO_S(this->_size, this->_mask);
-        this->_valid = (::sched_getaffinity(::gettid(), this->_size,
-            this->_mask) == 0);
     }
-
-    // Set the new mask, but only if we were able to preserve the old one.
-    if (this->_valid) {
-        this->_valid = (::sched_setaffinity(::gettid(), size, mask) == 0);
-    }
-#endif /* defined(_WIN32) */
+#endif /* defined(_WIN32) && (_WIN32_WINNT >= 0x0601) */
 }
