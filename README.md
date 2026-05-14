@@ -1,4 +1,4 @@
-﻿# VISUS Autodoc (formerly "Project Lyra")
+﻿# VISUS AutoDoc (formerly "Project Lyra")
 VISUS Autodoc is a self-contained library for obtaining a snapshot of the properties of the system a process is running on to document the environment for reproducibility of research. The library is derived from the [TRRojan project](https://github.com/UniStuttgart-VISUS/trrojan), but intended for reuse in other projects without the rest of the project's features. Future versions of TRRojan use VISUS Autodoc instead of their own implementation.
 
 ## Building
