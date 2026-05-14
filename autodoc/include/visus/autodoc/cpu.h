@@ -57,14 +57,14 @@ namespace cpu {
     };
 
     /// <summary>
-    /// Identifies a property set that holds information about specific
-    /// instruction sets the CPU might support.
+    /// Identifies a property set that holds information about specific features
+    /// the CPU might support.
     /// </summary>
-    struct instructions final {
+    struct features final {
         typedef property_set type;
         static constexpr auto is_immutable = true;
         static constexpr auto is_uncommon = true;
-        static constexpr auto name = u8"Instructions";
+        static constexpr auto name = u8"Features";
     };
 
     /// <summary>

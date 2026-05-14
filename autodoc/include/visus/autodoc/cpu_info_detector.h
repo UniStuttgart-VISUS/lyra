@@ -8,6 +8,7 @@
 #define _LYRA_CPU_INFO_DETECTOR_H
 #pragma once
 
+#include <climits>
 #include <vector>
 
 #include "visus/autodoc/cpu_info.h"
@@ -25,18 +26,18 @@ inline constexpr std::uint32_t cpu_info_bit(
     return static_cast<std::size_t>(1) << bit;
 }
 
-/// <summary>
-/// Creates a mask for selecting the bits in the range
-/// [<paramref name="first" />, <paramref name="last" />].
-/// </summary>
-/// <param name="first">The zero-based index of the first bit to select.</param>
-/// <param name="last">The zero-based index of the last bit to select.</param>
-/// <returns>The bitmask for the selected range of bits.</returns>
-inline constexpr std::uint32_t cpu_info_range(
-        _In_ const std::uint32_t first,
-        _In_ const std::uint32_t last) noexcept {
-    return (cpu_info_bit(last + 1) - 1) & ~((cpu_info_bit(first) - 1));
-}
+///// <summary>
+///// Creates a mask for selecting the bits in the range
+///// [<paramref name="first" />, <paramref name="last" />].
+///// </summary>
+///// <param name="first">The zero-based index of the first bit to select.</param>
+///// <param name="last">The zero-based index of the last bit to select.</param>
+///// <returns>The bitmask for the selected range of bits.</returns>
+//inline constexpr std::uint32_t cpu_info_range(
+//        _In_ const std::uint32_t first,
+//        _In_ const std::uint32_t last) noexcept {
+//    return (cpu_info_bit(last + 1) - 1) & ~((cpu_info_bit(first) - 1));
+//}
 
 LYRA_DETAIL_NAMESPACE_END
 
@@ -150,10 +151,15 @@ private:
 /// <see langword="false" />.</typeparam>
 /// <typeparam name="Reg">The zero-based index of the register to be checked,
 /// which must be within [0, 4[.</typeparam>
-/// <typeparam name="Mask">The bitmask to extract.</typeparam>
-template<std::size_t Fun, std::size_t Reg, std::uint32_t Mask>
+/// <typeparam name="From">The index of the first bit to extract.</typeparam>
+/// <typeparam name="Tp">The index of the last bit to extract.</typeparam>
+template<std::size_t Fun, std::size_t Reg, std::uint32_t From, std::uint32_t To>
 class cpu_info_selector {
     static_assert(Reg < 4, "The register must be within [0, 4[.");
+    static_assert(From < To, "The index of the first bit must be smaller than "
+        "the index of the last bit.");
+    static_assert(To < sizeof(cpu_info::registers.eax) * CHAR_BIT, "The "
+        "selected range must not exceed 32 bits.");
 
 public:
 

@@ -89,6 +89,15 @@ namespace application {
     };
 
     /// <summary>
+    /// Identifies the property holding the size of a pointer in bytes.
+    /// </summary>
+    struct pointer_size final {
+        typedef std::uint8_t type;
+        static constexpr auto is_immutable = true;
+        static constexpr auto name = u8"Pointer Size";
+    };
+
+    /// <summary>
     /// Identifies the property holding the process ID.
     /// </summary>
     struct process_id final {

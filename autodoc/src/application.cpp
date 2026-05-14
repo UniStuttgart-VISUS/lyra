@@ -61,6 +61,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::application::get(
     detail::checked_add<command_line>(ps, flags, cmd_line.c_str());
     const auto exe = detail::get_executable_path();
     detail::checked_add<executable>(ps, flags, exe.c_str());
+    detail::checked_add<pointer_size>(ps, flags, sizeof(void *));
 
     try {
         const auto exe_hash = detail::file_hash(exe.c_str());

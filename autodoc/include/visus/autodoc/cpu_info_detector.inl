@@ -34,15 +34,16 @@ LYRA_NAMESPACE::cpu_info_detector<Fun, Reg, Mask>::cpu_info_detector(
 
 
 /*
- * LYRA_NAMESPACE::cpu_info_selector<Fun, Reg, Mask>::cpu_info_selector
+ * LYRA_NAMESPACE::cpu_info_selector<Fun, Reg, From, To>::cpu_info_selector
  */
-template<std::size_t Fun, std::size_t Reg, std::uint32_t Mask>
-LYRA_NAMESPACE::cpu_info_selector<Fun, Reg, Mask>::cpu_info_selector(
+template<std::size_t Fun, std::size_t Reg, std::uint32_t From, std::uint32_t To>
+LYRA_NAMESPACE::cpu_info_selector<Fun, Reg, From, To>::cpu_info_selector(
         void) : _value(0) {
     cpu_info info;
 
     if (get_cpu_info(info, Fun)) {
+        constexpr auto mask = (detail::cpu_info_bit(To - From + 1) - 1);
         const auto reg = static_cast<std::uint32_t>(info.values[Reg]);
-        this->_value = ((reg & Mask) == Mask);
+        this->_value = ((reg >> From) & mask);
     }
 }

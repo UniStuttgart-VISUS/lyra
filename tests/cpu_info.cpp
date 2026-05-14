@@ -11,8 +11,10 @@
 
 #include "visus/autodoc/affinity_scope.h"
 #include "visus/autodoc/cpu.h"
+#include "visus/autodoc/cpu_features.h"
 #include "visus/autodoc/cpu_info.h"
 #include "visus/autodoc/cpu_info_detector.h"
+#include "visus/autodoc/cpu_states.h"
 #include "visus/autodoc/cpu_vendor.h"
 #include "visus/autodoc/simd_detector.h"
 
@@ -43,7 +45,59 @@ TEST(cpu_info, simd) {
     EXPECT_TRUE(LYRA_NAMESPACE::simd_detector<LYRA_NAMESPACE::simd_instruction_set::sse4_1>());
 }
 
-TEST(cpu_info, properties) {
+TEST(cpu_info, features) {
+    LYRA_NAMESPACE::affinity_scope(LYRA_NAMESPACE::affinity_mask(std::size_t(0)));
+    {
+        std::uint32_t value;
+        EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_features::stepping_id());
+    }
+    {
+        std::uint32_t value;
+        EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_features::model());
+    }
+    {
+        std::uint32_t value;
+        EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_features::family_id());
+    }
+    {
+        std::uint32_t value;
+        EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_features::processor_type());
+    }
+    {
+        std::uint32_t value;
+        EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_features::extended_model());
+    }
+    {
+        std::uint32_t value;
+        EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_features::extended_family_id());
+    }
+    {
+        std::uint32_t value;
+        EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_features::brand());
+    }
+    {
+        std::uint32_t value;
+        EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_features::clflush_size());
+    }
+    {
+        std::uint32_t value;
+        EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_features::max_cpu_id());
+    }
+    {
+        std::uint32_t value;
+        EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_features::apic_id());
+    }
+    {
+        std::uint32_t value;
+        EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_features::sse3());
+    }
+    {
+        std::uint32_t value;
+        EXPECT_NO_THROW(value = LYRA_NAMESPACE::cpu_features::pclmulqdq());
+    }
+}
+
+TEST(cpu_info, get) {
     auto p = LYRA_NAMESPACE::cpu::get_cpuid();
     EXPECT_FALSE(p.empty());
     EXPECT_TRUE(p.contains(LYRA_NAMESPACE::cpu::vendor::name));

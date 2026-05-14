@@ -14,8 +14,8 @@
 #include <set>
 #include <sstream>
 
+#include "visus/autodoc/cpu_features.h"
 #include "visus/autodoc/cpu_info.h"
-#include "visus/autodoc/instruction_detectors.h"
 #include "visus/autodoc/multi_sz.h"
 #include "visus/autodoc/simd_detector.h"
 
@@ -29,8 +29,8 @@
 /// <remarks>See https://docs.kernel.org/arch/x86/topology.html</remarks>
 bool add_amd_topology(_Inout_ LYRA_DETAIL_NAMESPACE::property_set_impl& ps) {
     using namespace LYRA_NAMESPACE;
-    const instruction_detectors::topology_leaf_b leaf_b;
-    const instruction_detectors::topology_extensions topo_ext;
+    const cpu_features::topology_leaf_b leaf_b;
+    const cpu_features::topology_extensions topo_ext;
     cpu_info info;
 
     if (get_cpu_info(info, 0x80000026)) {
@@ -62,9 +62,9 @@ bool add_amd_topology(_Inout_ LYRA_DETAIL_NAMESPACE::property_set_impl& ps) {
 /// </remarks>
 bool add_intel_topology(_Inout_ LYRA_DETAIL_NAMESPACE::property_set_impl& ps) {
     using namespace LYRA_NAMESPACE;
-    const instruction_detectors::extended_toplogy_enumeration ext_topo;
-    const instruction_detectors::topology_leaf_b leaf_b;
-    const instruction_detectors::topology_extensions topo_ext;
+    const cpu_features::extended_toplogy_enumeration ext_topo;
+    const cpu_features::topology_leaf_b leaf_b;
+    const cpu_features::topology_extensions topo_ext;
     cpu_info info;
 
     if (ext_topo && get_cpu_info(info, 0x0000001f)) {
@@ -195,13 +195,25 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
         }
     }
 
-    if (detail::check_flags<cpu::instructions>(flags)) {
-        detail::property_set_impl insts;
+    if (detail::check_flags<cpu::features>(flags)) {
+        detail::property_set_impl props;
 
-        insts.add(u8"POPCNT", instruction_detectors::popcnt());
-        insts.add(u8"XGETBV", instruction_detectors::xgetbv());
-        insts.add(u8"Topology Leaf B",
-            instruction_detectors::topology_leaf_b());
+        props.add(u8"Stepping", cpu_features::stepping_id());
+        props.add(u8"Model", (cpu_features::extended_model() << 4)
+            | cpu_features::model());
+        props.add(u8"Family", cpu_features::extended_family_id()
+            + cpu_features::family_id());
+        props.add(u8"Processor Type", cpu_features::processor_type());
+        props.add(u8"Brand ID", cpu_features::brand());
+        props.add(u8"Cache Line Flush Size", cpu_features::clflush_size() * 8);
+        props.add(u8"Maximum CPUs per package", cpu_features::max_cpu_id());
+        props.add(u8"APIC ID", cpu_features::apic_id());
+
+        props.add(u8"POPCNT", cpu_features::popcnt());
+        props.add(u8"XGETBV", cpu_features::xgetbv());
+
+        props.add(u8"Topology Leaf B", cpu_features::topology_leaf_b());
+        props.add(u8"Topology Extensions", cpu_features::topology_extensions());
 
         if (detail::check_sensitive<cpu::simd_instructions>(flags)) {
             detail::property_set_impl simds;
@@ -240,11 +252,11 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
                 u8"AVX 512 Vector Neural Network Instructions");
             ::add_simd<simd_instruction_set::avx512bitalg>(simds,
                 u8"AVX 512 Bit Algorithms");
-            insts.add<cpu::simd_instructions>(property_set(
+            props.add<cpu::simd_instructions>(property_set(
                 std::move(simds)));
         }
 
-        ps.add<cpu::instructions>(property_set(std::move(insts)));
+        ps.add<cpu::features>(property_set(std::move(props)));
     }
 
     return property_set(std::move(ps));
