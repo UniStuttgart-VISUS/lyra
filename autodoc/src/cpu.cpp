@@ -209,7 +209,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
         props.add(u8"Maximum CPUs per package", cpu_features::max_cpu_id());
         props.add(u8"APIC ID", cpu_features::apic_id());
         props.add(u8"PCLMULQDQ", cpu_features::pclmulqdq());
-        props.add(u8"64-bit Debug Store", cpu_features::dtes64());
+        props.add(u8"64-bit Debug Store (dtes64)", cpu_features::dtes64());
         props.add(u8"MONITOR/MWAIT", cpu_features::monitor());
         props.add(u8"CPL-Qualified Debug Store (ds-cpl)",
             cpu_features::ds_cpl());
