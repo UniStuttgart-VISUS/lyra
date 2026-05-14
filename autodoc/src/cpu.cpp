@@ -208,9 +208,74 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
         props.add(u8"Cache Line Flush Size", cpu_features::clflush_size() * 8);
         props.add(u8"Maximum CPUs per package", cpu_features::max_cpu_id());
         props.add(u8"APIC ID", cpu_features::apic_id());
-
+        props.add(u8"PCLMULQDQ", cpu_features::pclmulqdq());
+        props.add(u8"64-bit Debug Store", cpu_features::dtes64());
+        props.add(u8"MONITOR/MWAIT", cpu_features::monitor());
+        props.add(u8"CPL-Qualified Debug Store (ds-cpl)",
+            cpu_features::ds_cpl());
+        props.add(u8"Virtual Machine Extensions (vmx)", cpu_features::vmx());
+        props.add(u8"Safer Mode Extensions (smx)", cpu_features::smx());
+        props.add(u8"Enhanced Intel SpeedStep Technology (est)",
+            cpu_features::est());
+        props.add(u8"Thermal Monitor 2 (tm2)", cpu_features::tm2());
+        props.add(u8"L1 context ID (cnxt-id)", cpu_features::cnxt_id());
+        props.add(u8"Silicon Debug interface (sdbg)", cpu_features::sdbg());
+        props.add(u8"Fused multiply add (fma)", cpu_features::fma());
+        props.add(u8"CMPXCHG16B", cpu_features::cx16());
+        props.add(u8"Task Priority Messages (xtpr)", cpu_features::xtpr());
+        props.add(u8"Performance and Debug Capability (pdcm)",
+            cpu_features::pdcm());
+        props.add(u8"Process Context Identifiers (pcid)", cpu_features::pcid());
+        props.add(u8"Direct Cache Access (dca)", cpu_features::dca());
+        props.add(u8"Enhanced APIC (x2apic)", cpu_features::x2apic());
+        props.add(u8"MOVBE", cpu_features::movbe());
         props.add(u8"POPCNT", cpu_features::popcnt());
-        props.add(u8"XGETBV", cpu_features::xgetbv());
+        props.add(u8"TSC Deadline (tsc-deadline)",
+            cpu_features::tsc_deadline());
+        props.add(u8"AES (aes-ni)", cpu_features::aes());
+        props.add(u8"Extensible Processor Save/Restore (xsave)",
+            cpu_features::xsave());
+        props.add(u8"Extensible Processor Save/Restore enabled (osxsave)",
+            cpu_features::osxsave());
+        props.add(u8"FP16 Conversion (f16c)", cpu_features::f16c());
+        props.add(u8"On-Chip Random Number Generator (rdrnd)",
+            cpu_features::rdrnd());
+        props.add(u8"Hypervisor Present (hypervisor)",
+            cpu_features::hypervisor());
+        props.add(u8"On-board x87 Floating-Point Unit (fpu)",
+            cpu_features::fpu());
+        props.add(u8"Virtual 8086 Mode Extensions (vme)", cpu_features::vme());
+        props.add(u8"Debugging Extensions (de)", cpu_features::de());
+        props.add(u8"Large Pages (pse)", cpu_features::pse());
+        props.add(u8"Time Stamp Counter and RDSTC (tsc)", cpu_features::tsc());
+        props.add(u8"Machine-Specific Registers (msr)", cpu_features::msr());
+        props.add(u8"Physical Address Extension (pae)", cpu_features::pae());
+        props.add(u8"Machine Check Exception (mce)", cpu_features::mce());
+        props.add(u8"CMPXCHG8B", cpu_features::cx8());
+        props.add(u8"APIC", cpu_features::apic());
+        props.add(u8"Fast System Call Instructions (sep)", cpu_features::sep());
+        props.add(u8"Memory Type Range Registers (mtrr)", cpu_features::mtrr());
+        props.add(u8"Page Global Enable (pge)", cpu_features::pge());
+        props.add(u8"Machine Check Architecture (mca)", cpu_features::mca());
+        props.add(u8"Conditional Move Instructions (cmov)",
+            cpu_features::cmov());
+        props.add(u8"Page Attribute Table (pat)", cpu_features::pat());
+        props.add(u8"36-bit Page Size Extensions (pse-36)",
+            cpu_features::pse36());
+        props.add(u8"Processor Serial Number (psn)", cpu_features::psn());
+        props.add(u8"CLFLUSH", cpu_features::clfsh());
+        props.add(u8"No-Execute Bit (nx)", cpu_features::nx());
+        props.add(u8"Debug Store (ds)", cpu_features::ds());
+        props.add(u8"Advanced Configuration and Power Interface (acpi)",
+            cpu_features::acpi());
+        props.add(u8"FXSAVE/FXSTOR", cpu_features::fxsr());
+        props.add(u8"CPU Cache implements self-snoop (ss)", cpu_features::ss());
+        props.add(u8"Maximum APIC IDs Reserved Field (htt)",
+            cpu_features::htt());
+        props.add(u8"Thermal Monitor Automatically Limits Temperature (tm)",
+            cpu_features::tm());
+        props.add(u8"Itanium Processor (ia64)", cpu_features::ia64());
+        props.add(u8"Pending Break Enable (pbe)", cpu_features::pbe());
 
         props.add(u8"Topology Leaf B", cpu_features::topology_leaf_b());
         props.add(u8"Topology Extensions", cpu_features::topology_extensions());

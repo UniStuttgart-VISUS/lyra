@@ -34,6 +34,12 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::raw::get(
         ps.add<timestamp>(now);
     }
 
+    // Second, the version of AutoDoc itself.
+    if (detail::check_flags<autodoc_version>(flags)) {
+        ps.add<autodoc_version>(LYRA_NAMESPACE::version::make(
+            LYRA_ABI_MAJOR, LYRA_ABI_MINOR, __DATE__, __TIME__));
+    }
+
     // Add all the actual information.
     if (detail::check_flags<application>(flags)) {
         ps.add<application>(LYRA_NAMESPACE::application::get(flags));

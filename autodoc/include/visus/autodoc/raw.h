@@ -26,6 +26,15 @@ namespace raw {
     };
 
     /// <summary>
+    /// Identifies the block of meta data holding the version of the AutoDoc
+    /// library used to generate the data.
+    /// </summary>
+    struct autodoc_version final {
+        typedef property_set type;
+        static constexpr auto name = u8"AutoDoc Version";
+    };
+
+    /// <summary>
     /// Identifies a block containing information about the CPU.
     /// </summary>
     struct cpu final {

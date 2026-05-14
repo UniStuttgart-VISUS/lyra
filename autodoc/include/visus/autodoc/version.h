@@ -90,6 +90,20 @@ namespace version {
     LYRA_API property_set make(_In_ const std::uint32_t major,
         _In_ const std::uint32_t minor);
 
+    /// <summary>
+    /// Constructs a new property set creating a version from the built-in
+    /// compiler macros.
+    /// </summary>
+    /// <param name="major">The major version component.</param>
+    /// <param name="minor">The minor version component.</param>
+    /// <param name="date">Use the <c>__DATE__</c> macro.</param>
+    /// <param name="time">Use the <c>__TIME__</c> macro.</param>
+    /// <returns>A property set representing the specified version.</returns>
+    LYRA_API property_set make(_In_ const std::uint32_t major,
+        _In_ const std::uint32_t minor,
+        _In_z_ const char *date,
+        _In_z_ const char *time);
+
 } /* namespace version */
 
 LYRA_NAMESPACE_END
