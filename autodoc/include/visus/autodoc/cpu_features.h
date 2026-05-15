@@ -22,449 +22,687 @@ namespace cpu_features {
     /// <summary>
     /// Gets the stepping ID.
     /// </summary>
-    typedef cpu_info_selector<0x00000001, cpu_info_register::eax, 0, 3> stepping_id;
+    struct stepping_id final : cpu_info_selector<
+            0x00000001, cpu_info_register::eax, 0, 3> {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"Stepping";
+    };
 
     /// <summary>
     /// Gets the model number.
     /// </summary>
-    typedef cpu_info_selector<0x00000001, cpu_info_register::eax, 4, 7> model;
+    struct model final : cpu_info_selector<
+            0x00000001, cpu_info_register::eax, 4, 7> {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"Model";
+    };
 
     /// <summary>
     /// Gets the family ID.
     /// </summary>
-    typedef cpu_info_selector<0x00000001, cpu_info_register::eax, 8, 11> family_id;
+    struct family_id final : cpu_info_selector<
+            0x00000001, cpu_info_register::eax, 8, 11> {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"Family";
+    };
 
     /// <summary>
     /// Gets the processor type.
     /// </summary>
-    typedef cpu_info_selector<0x00000001, cpu_info_register::eax, 12, 13>
-        processor_type;
+    struct processor_type final : cpu_info_selector<
+           0x00000001, cpu_info_register::eax, 12, 13> {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"Processor Type";
+    };
 
     /// <summary>
     /// Gets the extended model ID.
     /// </summary>
-    typedef cpu_info_selector<0x00000001, cpu_info_register::eax, 16, 19>
-        extended_model;
+    struct extended_model final : cpu_info_selector<
+            0x00000001, cpu_info_register::eax, 16, 19> {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"Extended Model";
+    };
 
     /// <summary>
     /// Gets the extended family ID.
     /// </summary>
-    typedef cpu_info_selector<0x00000001, cpu_info_register::eax, 20, 27>
-        extended_family_id;
+    struct extended_family_id final : cpu_info_selector<
+            0x00000001, cpu_info_register::eax, 20, 27> {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"Extended Family";
+    };
 
     /// <summary>
     /// Gets the brand index.
     /// </summary>
-    typedef cpu_info_selector<0x00000001, cpu_info_register::ebx, 0, 7>
-        brand;
+    struct brand final : cpu_info_selector<
+            0x00000001, cpu_info_register::ebx, 0, 7> {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"Brand ID";
+    };
 
     /// <summary>
     /// Gets the cache line flush size (value * 8 bytes).
     /// </summary>
-    typedef cpu_info_selector<0x00000001, cpu_info_register::ebx, 8, 15>
-        clflush_size;
+    struct clflush_size final : cpu_info_selector<
+            0x00000001, cpu_info_register::ebx, 8, 15> {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"Cache Line Flush Size";
+    };
+
 
     /// <summary>
     /// Gets the maximum addressable logical processor ID in the physical
     /// package.
     /// </summary>
-    typedef cpu_info_selector<0x00000001, cpu_info_register::ebx, 16, 23>
-        max_cpu_id;
+    struct max_cpu_id final : cpu_info_selector<
+            0x00000001, cpu_info_register::ebx, 16, 23> {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"Maximum CPUs per Package";
+    };
 
     /// <summary>
     /// Gets the initial APIC ID of the processor.
     /// </summary>
-    typedef cpu_info_selector<0x00000001, cpu_info_register::ebx, 24, 31>
-        apic_id;
+    struct apic_id final : cpu_info_selector<
+            0x00000001, cpu_info_register::ebx, 24, 31> {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"APIC ID";
+    };
 
     /// <summary>
     /// Detect SSE3 support.
     /// </summary>
-    typedef simd_detector<simd_instruction_set::sse3> sse3;
+    struct sse3 final : simd_detector<simd_instruction_set::sse3> {
+        typedef bool type;
+        static constexpr auto name = u8"SSE 3";
+    };
 
     /// <summary>
     /// Checks whether the PCLMULQDQ instruction is supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::ecx,
-        detail::cpu_info_bit(1)> pclmulqdq;
+    struct pclmulqdq final : cpu_info_detector<
+            0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(1)> {
+        typedef bool type;
+        static constexpr auto name = u8"PCLMULQDQ";
+    };
 
     /// <summary>
     /// Checks whether the DS area uses a 64-bit layout.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::ecx,
-        detail::cpu_info_bit(2)> dtes64;
+    struct dtes64 final : cpu_info_detector<
+            0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(2)> {
+        typedef bool type;
+        static constexpr auto name = u8"64-bit Debug Store (dtes64)";
+    };
 
     /// <summary>
     /// Checks whether MONITOR/MWAIT instructions are supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::ecx,
-        detail::cpu_info_bit(3)> monitor;
+    struct monitor final : cpu_info_detector<
+            0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(3)> {
+        typedef bool type;
+        static constexpr auto name = u8"MONITOR and MWAIT (monitor)";
+    };
 
     /// <summary>
     /// Checks whether CPL qualified debug store is supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::ecx,
-        detail::cpu_info_bit(4)> ds_cpl;
+    struct ds_cpl final : cpu_info_detector<
+            0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(4)> {
+        typedef bool type;
+        static constexpr auto name = u8"CPL-Qualified Debug Store (ds-cpl)";
+    };
 
     /// <summary>
     /// Checks whether Virtual Machine Extensions (VMX) are supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::ecx,
-        detail::cpu_info_bit(5)> vmx;
+    struct vmx final : cpu_info_detector<
+            0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(5)> {
+        typedef bool type;
+        static constexpr auto name = u8"Virtual Machine Extensions (vmx)";
+    };
 
     /// <summary>
     /// Checks whether Safer Mode Extensions (SMX) are supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::ecx,
-        detail::cpu_info_bit(6)> smx;
+    struct smx final : cpu_info_detector<
+            0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(6)> {
+        typedef bool type;
+        static constexpr auto name = u8"Safer Mode Extensions (smx)";
+    };
 
     /// <summary>
     /// Checks whether Enhanced Intel SpeedStep Technology (EIST) is supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::ecx,
-        detail::cpu_info_bit(7)> est;
+    struct est final : cpu_info_detector<
+            0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(7)> {
+        typedef bool type;
+        static constexpr auto name = u8"Enhanced Intel SpeedStep Technology "
+            u8"(est)";
+    };
 
     /// <summary>
     /// Checks whether Thermal Monitor 2 (TM2) is supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::ecx,
-        detail::cpu_info_bit(8)> tm2;
+    struct tm2 final : cpu_info_detector<
+            0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(8)> {
+        typedef bool type;
+        static constexpr auto name = u8"Thermal Monitor 2 (tm2)";
+    };
 
     /// <summary>
     /// Checks whether Supplemental SSE3 (SSSE3) is supported.
     /// </summary>
-    typedef simd_detector<simd_instruction_set::ssse3> ssse3;
+    struct ssse3 final : simd_detector<simd_instruction_set::ssse3> {
+        typedef bool type;
+        static constexpr auto name = u8"SSSE3";
+    };
 
     /// <summary>
     /// Checks the L1 context ID.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::ecx,
-        detail::cpu_info_bit(10)> cnxt_id;
+    struct cnxt_id final : cpu_info_detector<
+            0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(10)> {
+        typedef bool type;
+        static constexpr auto name = u8"L1 context ID (cnxt-id)";
+    };
 
     /// <summary>
     /// Checks whether the Silicon Debug interface is supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::ecx,
-        detail::cpu_info_bit(11)> sdbg;
+    struct sdbg final : cpu_info_detector<
+            0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(11)> {
+        typedef bool type;
+        static constexpr auto name = u8"Silicon Debug interface (sdbg)";
+    };
 
     /// <summary>
     /// Checks whether fused-multiply-add (FMA) instructions are supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::ecx,
-        detail::cpu_info_bit(12)> fma;
+    struct fma final : cpu_info_detector<
+            0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(12)> {
+        typedef bool type;
+        static constexpr auto name = u8"Fused Multiply-Add (fma)";
+    };
 
     /// <summary>
     /// Checks whether the CMPXCHG16B instruction is supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::ecx,
-        detail::cpu_info_bit(13)> cx16;
+    struct cx16 final : cpu_info_detector<0x00000001, cpu_info_register::ecx,
+        detail::cpu_info_bit(13)> {
+        typedef bool type;
+        static constexpr auto name = u8"CMPXCHG16B";
+    };
 
     /// <summary>
     /// Checks whether sending task priority messages can be disabled.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::ecx,
-        detail::cpu_info_bit(14)> xtpr;
+    struct xtpr final : cpu_info_detector<
+            0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(14)> {
+        typedef bool type;
+        static constexpr auto name = u8"Task Priority Messages (xtpr)";
+    };
 
     /// <summary>
     /// Checks whether Performance and Debug Capability is supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::ecx,
-        detail::cpu_info_bit(15)> pdcm;
+    struct pdcm final : cpu_info_detector<
+            0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(15)> {
+        typedef bool type;
+        static constexpr auto name = u8"Performance and Debug Capability "
+            u8"(pdcm)";
+    };
 
     /// <summary>
     /// Checks whether process context identifiers (PCID) are supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::ecx,
-        detail::cpu_info_bit(17)> pcid;
+    struct pcid final : cpu_info_detector<
+            0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(17)> {
+        typedef bool type;
+        static constexpr auto name = u8"Process Context Identifiers (pcid)";
+    };
 
     /// <summary>
     /// Checks whether direct cache access (DCA) for DMA writes is supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::ecx,
-        detail::cpu_info_bit(18)> dca;
+    struct dca final : cpu_info_detector<
+            0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(18)> {
+        typedef bool type;
+        static constexpr auto name = u8"Direct Cache Access (dca)";
+    };
 
     /// <summary>
     /// Checks whether SSE 4.1 is supported.
     /// </summary>
-    typedef simd_detector<simd_instruction_set::sse4_1> sse4_1;
+    struct sse4_1 final : simd_detector<simd_instruction_set::sse4_1> {
+        typedef bool type;
+        static constexpr auto name = u8"SSE 4.1";
+    };
 
     /// <summary>
     /// Checks whether SSE 4.2 is supported.
     /// </summary>
-    typedef simd_detector<simd_instruction_set::sse4_2> sse4_2;
+    struct sse4_2 final : simd_detector<simd_instruction_set::sse4_2> {
+        typedef bool type;
+        static constexpr auto name = u8"SSE 4.2";
+    };
 
     /// <summary>
     /// Checks whether enhanced APIC is supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::ecx,
-        detail::cpu_info_bit(21)> x2apic;
+    struct x2apic final : cpu_info_detector<
+        0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(21)> {
+        typedef bool type;
+        static constexpr auto name = u8"Extended APIC (x2apic)";
+    };
 
     /// <summary>
     /// Checks whether the MOVBE instruction is supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::ecx,
-        detail::cpu_info_bit(22)> movbe;
+    struct movbe final : cpu_info_detector<
+            0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(22)> {
+        typedef bool type;
+        static constexpr auto name = u8"MOVBE";
+    };
 
     /// <summary>
     /// Checks whether the POPCNT instruction is supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::ecx,
-        detail::cpu_info_bit(23)> popcnt;
+    struct popcnt final : cpu_info_detector<
+            0x00000001, cpu_info_register::ecx,detail::cpu_info_bit(23)> {
+        typedef bool type;
+        static constexpr auto name = u8"POPCNT";
+    };
 
     /// <summary>
     /// Checks whether APIC implements one-shot operation using a TSC deadline.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::ecx,
-        detail::cpu_info_bit(24)> tsc_deadline;
+    struct tsc_deadline final : cpu_info_detector<
+            0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(24)> {
+        typedef bool type;
+        static constexpr auto name = u8"TSC Deadline (tsc-deadline)";
+    };
 
     /// <summary>
     /// Checks whether the AES instruction set is supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::ecx,
-        detail::cpu_info_bit(25)> aes;
+    struct aes final : cpu_info_detector<
+            0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(25)> {
+        typedef bool type;
+        static constexpr auto name = u8"AES (aes-ni)";
+    };
 
     /// <summary>
     /// Checks whether extensible processor save/restore instructions XSAVE,
     /// XRSTOR, XSETBV and XGETBV are supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::ecx,
-        detail::cpu_info_bit(26)> xsave;
+    struct xsave final : cpu_info_detector<
+            0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(26)> {
+        typedef bool type;
+        static constexpr auto name = u8"Extensible Processor Save/Restore "
+            u8"(xsave)";
+    };
 
     /// <summary>
     /// Checks whether XSAVE is enabled by the operating system.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::ecx,
-        detail::cpu_info_bit(27)> osxsave;
+    struct osxsave final : cpu_info_detector<
+            0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(27)> {
+        typedef bool type;
+        static constexpr auto name = u8"Extensible Processor Save/Restore "
+            u8"Enabled by Operating System (osxsave)";
+    };
 
     /// <summary>
     /// Checks whether AVX (256-bit SIMD) instructions are supported.
     /// </summary>
-    typedef simd_detector<simd_instruction_set::avx> avx;
+    struct avx final : simd_detector<simd_instruction_set::avx> {
+        typedef bool type;
+        static constexpr auto name = u8"AVX";
+    };
 
     /// <summary>
     /// Checks whether conversion from and to FP16 (half-precision floating
     /// point numbers) is supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::ecx,
-        detail::cpu_info_bit(29)> f16c;
+    struct f16c final : cpu_info_detector<
+            0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(29)> {
+        typedef bool type;
+        static constexpr auto name = u8"FP16 Conversion (f16c)";
+    };
 
     /// <summary>
     /// Checks whether the on-chip RNG operation RDRAND is supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::ecx,
-        detail::cpu_info_bit(30)> rdrnd;
+    struct rdrnd final : cpu_info_detector<
+            0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(30)> {
+        typedef bool type;
+        static constexpr auto name = u8"On-board Random Number Generator "
+            u8"(rdrnd)";
+    };
 
     /// <summary>
     /// Indicates whether a hypervisor is present (zero for physical CPUs).
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::ecx,
-        detail::cpu_info_bit(31)> hypervisor;
+    struct hypervisor final : cpu_info_detector<
+            0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(31)> {
+        typedef bool type;
+        static constexpr auto name = u8"Hypervisor Present (hypervisor)";
+    };
 
     /// <summary>
     /// Indicates whether an on-board x87 FPU is supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::edx,
-        detail::cpu_info_bit(0)> fpu;
+    struct fpu final : cpu_info_detector<
+            0x00000001, cpu_info_register::edx, detail::cpu_info_bit(0)> {
+        typedef bool type;
+        static constexpr auto name = u8"On-board x87 Floating-Point Unit (fpu)";
+    };
 
     /// <summary>
     /// Indicates whether virtual 8086 mode extensions are supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::edx,
-        detail::cpu_info_bit(1)> vme;
+    struct vme final : cpu_info_detector<
+            0x00000001, cpu_info_register::edx, detail::cpu_info_bit(1)> {
+        typedef bool type;
+        static constexpr auto name = u8"Virtual 8086 Mode Extensions (vme)";
+    };
 
     /// <summary>
     /// Indicates whether debugging extensions are present.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::edx,
-        detail::cpu_info_bit(2)> de;
+    struct de final : cpu_info_detector<
+            0x00000001, cpu_info_register::edx, detail::cpu_info_bit(2)> {
+        typedef bool type;
+        static constexpr auto name = u8"Debugging Extensions (de)";
+    };
 
     /// <summary>
     /// Indicates whether pages larger than 4MB are supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::edx,
-        detail::cpu_info_bit(3)> pse;
+    struct pse final : cpu_info_detector<
+            0x00000001, cpu_info_register::edx, detail::cpu_info_bit(3)> {
+        typedef bool type;
+        static constexpr auto name = u8"Page Size Extension (pse)";
+    };
 
     /// <summary>
     /// Indicates whether the time stamp counter and the RDSTC instruction are
     /// supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::edx,
-        detail::cpu_info_bit(4)> tsc;
+    struct tsc final : cpu_info_detector<
+            0x00000001, cpu_info_register::edx, detail::cpu_info_bit(4)> {
+        typedef bool type;
+        static constexpr auto name = u8"Time Stamp Counter and RDSTC (tsc)";
+    };
 
     /// <summary>
     /// Indicates whether RDMSR and WRMSR instructions are supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::edx,
-        detail::cpu_info_bit(5)> msr;
+    struct msr final : cpu_info_detector<
+            0x00000001, cpu_info_register::edx, detail::cpu_info_bit(5)> {
+        typedef bool type;
+        static constexpr auto name = u8"Model-Specific Registers (msr)";
+    };
 
     /// <summary>
     /// Indicates whether physical address extension (PAE) is supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::edx,
-        detail::cpu_info_bit(6)> pae;
+    struct pae final : cpu_info_detector<
+            0x00000001, cpu_info_register::edx, detail::cpu_info_bit(6)> {
+        typedef bool type;
+        static constexpr auto name = u8"Physical Address Extension (pae)";
+    };
 
     /// <summary>
     /// Indicates whether machine check exception (MCE) is supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::edx,
-        detail::cpu_info_bit(7)> mce;
+    struct mce final : cpu_info_detector<
+            0x00000001, cpu_info_register::edx, detail::cpu_info_bit(7)> {
+        typedef bool type;
+        static constexpr auto name = u8"Machine Check Exception (mce)";
+    };
 
     /// <summary>
     /// Indicates the CMPXCHG8B instruction is supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::edx,
-        detail::cpu_info_bit(8)> cx8;
+    struct cx8 final : cpu_info_detector<
+            0x00000001, cpu_info_register::edx, detail::cpu_info_bit(8)> {
+        typedef bool type;
+        static constexpr auto name = u8"CMPXCHG8B";
+    };
 
     /// <summary>
     /// Indicates whether an APIC is present.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::edx,
-        detail::cpu_info_bit(9)> apic;
+    struct apic final : cpu_info_detector<
+            0x00000001, cpu_info_register::edx, detail::cpu_info_bit(9)> {
+        typedef bool type;
+        static constexpr auto name = u8"Advanced Programmable Interrupt "
+            u8"Controller (apic)";
+    };
 
     /// <summary>
     /// Indicates whether the SYSENTER and SYSEXIT instructions are supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::edx,
-        detail::cpu_info_bit(11)> sep;
+    struct sep final : cpu_info_detector<
+            0x00000001, cpu_info_register::edx, detail::cpu_info_bit(11)> {
+        typedef bool type;
+        static constexpr auto name = u8"Fast System Call Instructions (sep)";
+    };
 
     /// <summary>
     /// Indicates whether memory type range registers (MTRR) are present.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::edx,
-        detail::cpu_info_bit(12)> mtrr;
+    struct mtrr final : cpu_info_detector<
+            0x00000001, cpu_info_register::edx, detail::cpu_info_bit(12)> {
+        typedef bool type;
+        static constexpr auto name = u8"Memory Type Range Registers (mtrr)";
+    };
 
     /// <summary>
     /// Indicates whether the Page Global Enable (PGE) feature is supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::edx,
-        detail::cpu_info_bit(13)> pge;
+    struct pge final : cpu_info_detector<
+            0x00000001, cpu_info_register::edx, detail::cpu_info_bit(13)> {
+        typedef bool type;
+        static constexpr auto name = u8"Page Global Enable (pge)";
+    };
 
     /// <summary>
     /// Indicates whether the Machine Check Architecture (MCA) is supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::edx,
-        detail::cpu_info_bit(14)> mca;
+    struct mca final : cpu_info_detector<0x00000001, cpu_info_register::edx,
+        detail::cpu_info_bit(14)> {
+        typedef bool type;
+        static constexpr auto name = u8"Machine Check Architecture (mca)";
+    };
 
     /// <summary>
     /// Indicates whether the conditional move instructions CMOV, FCMOV and
     /// FCOMI are supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::edx,
-        detail::cpu_info_bit(15)> cmov;
+    struct cmov final : cpu_info_detector<
+            0x00000001, cpu_info_register::edx, detail::cpu_info_bit(15)> {
+        typedef bool type;
+        static constexpr auto name = u8"Conditional Move Instructions (cmov)";
+    };
 
     /// <summary>
     /// Indicates whether the page attribute table (PAT) is supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::edx,
-        detail::cpu_info_bit(16)> pat;
+    struct pat final : cpu_info_detector<
+            0x00000001, cpu_info_register::edx, detail::cpu_info_bit(16)> {
+        typedef bool type;
+        static constexpr auto name = u8"Page Attribute Table (pat)";
+    };
 
     /// <summary>
     /// Indicates whether 36-bit page size extensions (PSE-36) are supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::edx,
-        detail::cpu_info_bit(17)> pse36;
+    struct pse36 final : cpu_info_detector<
+            0x00000001, cpu_info_register::edx, detail::cpu_info_bit(17)> {
+        typedef bool type;
+        static constexpr auto name = u8"36-bit Page Size Extensions (pse-36)";
+    };
 
     /// <summary>
     /// Indicates whether processor serial number (PSN) is supported and
     /// enabled.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::edx,
-        detail::cpu_info_bit(18)> psn;
+    struct psn final : cpu_info_detector<
+            0x00000001, cpu_info_register::edx, detail::cpu_info_bit(18)> {
+        typedef bool type;
+        static constexpr auto name = u8"Processor Serial Number (psn)";
+    };
 
     /// <summary>
     /// Indicates whether CLFLUSH instruction is supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::edx,
-        detail::cpu_info_bit(19)> clfsh;
+    struct clfsh final : cpu_info_detector<
+            0x00000001, cpu_info_register::edx, detail::cpu_info_bit(19)> {
+        typedef bool type;
+        static constexpr auto name = u8"CLFLUSH";
+    };
 
     /// <summary>
     /// Indicates whether the no-execute bit on Itanium is supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::edx,
-        detail::cpu_info_bit(20)> nx;
+    struct nx final : cpu_info_detector<
+            0x00000001, cpu_info_register::edx, detail::cpu_info_bit(20)> {
+        typedef bool type;
+        static constexpr auto name = u8"No-Execute Bit (nx)";
+    };
 
     /// <summary>
     /// Indicates whether debug store is supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::edx,
-        detail::cpu_info_bit(21)> ds;
+    struct ds final : cpu_info_detector<
+            0x00000001, cpu_info_register::edx, detail::cpu_info_bit(21)> {
+        typedef bool type;
+        static constexpr auto name = u8"Debug Store (ds)";
+    };
 
     /// <summary>
     /// Indicates whether on-board thermal control MSRs for ACPI are supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::edx,
-        detail::cpu_info_bit(22)> acpi;
+    struct acpi final : cpu_info_detector<
+            0x00000001, cpu_info_register::edx, detail::cpu_info_bit(22)> {
+        typedef bool type;
+        static constexpr auto name = u8"On-Board Thermal Control MSRs for ACPI "
+            u8"(acpi)";
+    };
 
     /// <summary>
     /// Indicates whether the MMX instruction set is supported.
     /// </summary>
-    typedef simd_detector<simd_instruction_set::mmx> mmx;
+    struct mmx final : simd_detector<simd_instruction_set::mmx> {
+        typedef bool type;
+        static constexpr auto name = u8"MMX";
+    };
 
     /// <summary>
     /// Indicates whether the FXSAVE and FXSTOR instructions are supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::edx,
-        detail::cpu_info_bit(24)> fxsr;
+    struct fxsr final : cpu_info_detector<
+            0x00000001, cpu_info_register::edx, detail::cpu_info_bit(24)> {
+        typedef bool type;
+        static constexpr auto name = u8"FXSAVE and FXSTOR (fxsr)";
+    };
 
     /// <summary>
     /// Indicates whether the SSE instruction set is supported.
     /// </summary>
-    typedef simd_detector<simd_instruction_set::sse> sse;
+    struct sse final : simd_detector<simd_instruction_set::sse> {
+        typedef bool type;
+        static constexpr auto name = u8"SSE";
+    };
 
     /// <summary>
     /// Indicates whether the SSE2 instruction set is supported.
     /// </summary>
-    typedef simd_detector<simd_instruction_set::sse2> sse2;
+    struct sse2 final : simd_detector<simd_instruction_set::sse2> {
+        typedef bool type;
+        static constexpr auto name = u8"SSE 2";
+    };
 
     /// <summary>
     /// Indicates whether the CPU cache implements self-snoop.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::edx,
-        detail::cpu_info_bit(27)> ss;
+    struct ss final : cpu_info_detector<
+            0x00000001, cpu_info_register::edx, detail::cpu_info_bit(27)> {
+        typedef bool type;
+        static constexpr auto name = u8"CPU Cache implements self-snoop (ss)";
+    };
 
     /// <summary>
     /// Indicates whether the maximum APIC IDs reserved field is valid.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::edx,
-        detail::cpu_info_bit(28)> htt;
+    struct htt final : cpu_info_detector<
+            0x00000001, cpu_info_register::edx, detail::cpu_info_bit(28)> {
+        typedef bool type;
+        static constexpr auto name = u8"Maximum APIC IDs Reserved Field (htt)";
+    };
 
     /// <summary>
     /// Indicates whether thermal monitor automatically limits temperature.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::edx,
-        detail::cpu_info_bit(29)> tm;
+    struct tm final : cpu_info_detector<
+            0x00000001, cpu_info_register::edx, detail::cpu_info_bit(29)> {
+        typedef bool type;
+        static constexpr auto name = u8"Thermal Monitor (tm)";
+    };
 
     /// <summary>
     /// Indicates whether the CPU is an Itanium processor emulating x86.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::edx,
-        detail::cpu_info_bit(30)> ia64;
+    struct ia64 final : cpu_info_detector<
+            0x00000001, cpu_info_register::edx, detail::cpu_info_bit(30)> {
+        typedef bool type;
+        static constexpr auto name = u8"Itanium Processor Emulating x86 (ia64)";
+    };
 
     /// <summary>
     /// Indicates whether the pending break enable (PBE) feature is supported.
     /// </summary>
-    typedef cpu_info_detector<0x00000001, cpu_info_register::edx,
-        detail::cpu_info_bit(31)> pbe;
+    struct pbe final : cpu_info_detector<
+            0x00000001, cpu_info_register::edx, detail::cpu_info_bit(31)> {
+        typedef bool type;
+        static constexpr auto name = u8"Pending Break Enable (pbe)";
+    };
 
     /// <summary>
     /// Checks whether the V2 extended topology enumeration leaf 0x1F is supported.
     /// </summary>
-    typedef cpu_info_any<0x0000001F, cpu_info_register::ebx>
-        extended_toplogy_enumeration;
+    struct extended_toplogy_enumeration final : cpu_info_any<
+            0x0000001F, cpu_info_register::ebx> {
+        typedef bool type;
+        static constexpr auto name = u8"Extended Topology Enumeration "
+            u8"(leaf 0x1F)";
+    };
 
     /// <summary>
     /// Test for extended APIC ID. See also
     /// https://docs.kernel.org/arch/x86/topology.html
     /// </summary>
-    typedef cpu_info_detector<0x80000001, cpu_info_register::ecx,
-        detail::cpu_info_bit(22)> topology_extensions;
+    struct topology_extensions final : cpu_info_detector<
+            0x80000001, cpu_info_register::ecx, detail::cpu_info_bit(22)> {
+        typedef bool type;
+        static constexpr auto name = u8"Extended APIC ID (topology_extensions)";
+    };
 
     /// <summary>
     /// Answer whether the CPU supports leaf B of the CPUID instruction, which
     /// contains information about the topology of the CPU. See also
     /// https://github.com/tpn/cpuid-topo/blob/f9b24d25220965087c1d855f716c52d75bc7bbe0/cpu_topo.c#L1009-L1057
     /// </summary>
-    typedef cpu_info_any<0x0000000b, cpu_info_register::ebx> topology_leaf_b;
+    struct topology_leaf_b final : cpu_info_any<
+            0x0000000b, cpu_info_register::ebx> {
+        typedef bool type;
+        static constexpr auto name = u8"Topology Leaf B (leaf 0xB)";
+    };
 
 } /* namespace cpu_features */
 

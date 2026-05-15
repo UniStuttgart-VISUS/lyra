@@ -25,7 +25,7 @@ template<simd_instruction_set Instructions> class simd_detector;
 /// Specialisation for <see cref="simd_instruction_set::none" />, which will
 /// always yield <see langword="true" />.
 /// </summary>
-template<> class simd_detector<simd_instruction_set::none> final {
+template<> class simd_detector<simd_instruction_set::none> {
 public:
 
     inline constexpr operator bool(void) const noexcept {
@@ -36,112 +36,112 @@ public:
 /// <summary>
 /// Specialisation for MMX, which is stored in EDX bit 23 of function 1.
 /// </summary>
-template<> class simd_detector<simd_instruction_set::mmx> final
+template<> class simd_detector<simd_instruction_set::mmx>
         : public cpu_info_detector<
     0x00000001, cpu_info_register::edx, detail::cpu_info_bit(23)> { };
 
 /// <summary>
 /// Specialisation for SSE, which is stored in EDX bit 25 of function 1.
 /// </summary>
-template<> class simd_detector<simd_instruction_set::sse> final
+template<> class simd_detector<simd_instruction_set::sse>
         : public cpu_info_detector<
     0x00000001, cpu_info_register::edx, detail::cpu_info_bit(25)> { };
 
 /// <summary>
 /// Specialisation for SSE2, which is stored in EDX bit 26 of function 1.
 /// </summary>
-template<> class simd_detector<simd_instruction_set::sse2> final
+template<> class simd_detector<simd_instruction_set::sse2>
         : public cpu_info_detector<
     0x00000001, cpu_info_register::edx, detail::cpu_info_bit(26)> { };
 
 /// <summary>
 /// Specialisation for SSE3, which is stored in ECX bit 0 of function 1.
 /// </summary>
-template<> class simd_detector<simd_instruction_set::sse3> final
+template<> class simd_detector<simd_instruction_set::sse3>
         : public cpu_info_detector<
     0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(0)> { };
 
 /// <summary>
 /// Specialisation for SSSE3, which is stored in ECX bit 9 of function 1.
 /// </summary>
-template<> class simd_detector<simd_instruction_set::ssse3> final
+template<> class simd_detector<simd_instruction_set::ssse3>
         : public cpu_info_detector<
     0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(9)> { };
 
 /// <summary>
 /// Specialisation for SSE 4.1, which is stored in ECX bit 19 of function 1.
 /// </summary>
-template<> class simd_detector<simd_instruction_set::sse4_1> final
+template<> class simd_detector<simd_instruction_set::sse4_1>
         : public cpu_info_detector<
     0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(19)> { };
 
 /// <summary>
 /// Specialisation for SSE 4.1, which is stored in ECX bit 20 of function 1.
 /// </summary>
-template<> class simd_detector<simd_instruction_set::sse4_2> final
+template<> class simd_detector<simd_instruction_set::sse4_2>
         : public cpu_info_detector<
     0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(20)> { };
 
 /// <summary>
 /// Specialisation for AVX, which is stored in EDX bit 28 of function 1.
 /// </summary>
-template<> class simd_detector<simd_instruction_set::avx> final
+template<> class simd_detector<simd_instruction_set::avx>
         : public cpu_info_detector<
     0x00000001, cpu_info_register::edx, detail::cpu_info_bit(28)> { };
 
 /// <summary>
 /// Specialisation for AVX2, which is stored in EBX bit 5 of function 7.
 /// </summary>
-template<> class simd_detector<simd_instruction_set::avx2> final
+template<> class simd_detector<simd_instruction_set::avx2>
         : public cpu_info_detector<
     0x00000007, cpu_info_register::ebx, detail::cpu_info_bit(5)> { };
 
 /// <summary>
 /// Specialisation for AVX-512F, which is stored in EBX bit 16 of function 7.
 /// </summary>
-template<> class simd_detector<simd_instruction_set::avx512f> final
+template<> class simd_detector<simd_instruction_set::avx512f>
         : public cpu_info_detector<
     0x00000007, cpu_info_register::ebx, detail::cpu_info_bit(16)> { };
 
 /// <summary>
 /// Specialisation for AVX-512PF, which is stored in EBX bit 26 of function 7.
 /// </summary>
-template<> class simd_detector<simd_instruction_set::avx512_prefetch> final
+template<> class simd_detector<simd_instruction_set::avx512_prefetch>
         : public cpu_info_detector<
     0x00000007, cpu_info_register::ebx, detail::cpu_info_bit(26)> { };
 
 /// <summary>
 /// Specialisation for AVX-512DQ, which is stored in EBX bit 17 of function 7.
 /// </summary>
-template<> class simd_detector<simd_instruction_set::avx512dq> final
+template<> class simd_detector<simd_instruction_set::avx512dq>
         : public cpu_info_detector<
     0x00000007, cpu_info_register::ebx, detail::cpu_info_bit(17)> { };
 
 /// <summary>
 /// Specialisation for AVX-512BW, which is stored in EBX bit 30 of function 7.
 /// </summary>
-template<> class simd_detector<simd_instruction_set::avx512bw> final
+template<> class simd_detector<simd_instruction_set::avx512bw>
         : public cpu_info_detector<
     0x00000007, cpu_info_register::ebx, detail::cpu_info_bit(30)> { };
 
 /// <summary>
 /// Specialisation for AVX-512VL, which is stored in EBX bit 31 of function 7.
 /// </summary>
-template<> class simd_detector<simd_instruction_set::avx512vl> final
+template<> class simd_detector<simd_instruction_set::avx512vl>
         : public cpu_info_detector<
     0x00000007, cpu_info_register::ebx, detail::cpu_info_bit(31)> { };
 
 /// <summary>
 /// Specialisation for AVX-512CD, which is stored in EBX bit 28 of function 7.
 /// </summary>
-template<> class simd_detector<simd_instruction_set::avx512cd> final
+template<> class simd_detector<simd_instruction_set::avx512cd>
         : public cpu_info_detector<
     0x00000007, cpu_info_register::ebx, detail::cpu_info_bit(28)> { };
 
 /// <summary>
 /// Specialisation for AVX-512ER, which is stored in EBX bit 27 of function 7.
 /// </summary>
-template<> class simd_detector<simd_instruction_set::avx512er> final
+template<> class simd_detector<simd_instruction_set::avx512er>
         : public cpu_info_detector<
     0x00000007, cpu_info_register::ebx, detail::cpu_info_bit(27)> { };
 
@@ -149,7 +149,7 @@ template<> class simd_detector<simd_instruction_set::avx512er> final
 /// Specialisation for AVX-512IFMA, which is stored in EBX bit 21 of function 7.
 /// </summary>
 template<>
-class simd_detector<simd_instruction_set::avx512ifma> final
+class simd_detector<simd_instruction_set::avx512ifma>
         : public cpu_info_detector<
     0x00000007, cpu_info_register::ebx, detail::cpu_info_bit(21)> { };
 
@@ -157,7 +157,7 @@ class simd_detector<simd_instruction_set::avx512ifma> final
 /// Specialisation for AVX-512VBMI, which is stored in ECX bit 1 of function 7.
 /// </summary>
 template<>
-class simd_detector<simd_instruction_set::avx512vbmi> final
+class simd_detector<simd_instruction_set::avx512vbmi>
         : public cpu_info_detector<
     0x00000007, cpu_info_register::ecx, detail::cpu_info_bit(1)> { };
 
@@ -165,7 +165,7 @@ class simd_detector<simd_instruction_set::avx512vbmi> final
 /// Specialisation for AVX-512VBMI2, which is stored in ECX bit 6 of function 7.
 /// </summary>
 template<>
-class simd_detector<simd_instruction_set::avx512vbmi2> final
+class simd_detector<simd_instruction_set::avx512vbmi2>
         : public cpu_info_detector<
     0x00000007, cpu_info_register::ecx, detail::cpu_info_bit(6)> { };
 
@@ -174,7 +174,7 @@ class simd_detector<simd_instruction_set::avx512vbmi2> final
 /// function 7.
 /// </summary>
 template<>
-class simd_detector<simd_instruction_set::avx5124fmaps> final
+class simd_detector<simd_instruction_set::avx5124fmaps>
     : public cpu_info_detector<
     0x00000007, cpu_info_register::edx, detail::cpu_info_bit(3)> { };
 
@@ -183,7 +183,7 @@ class simd_detector<simd_instruction_set::avx5124fmaps> final
 /// function 7.
 /// </summary>
 template<>
-class simd_detector<simd_instruction_set::avx5124vnniw> final
+class simd_detector<simd_instruction_set::avx5124vnniw>
     : public cpu_info_detector<
     0x00000007, cpu_info_register::edx, detail::cpu_info_bit(2)> { };
 
@@ -192,7 +192,7 @@ class simd_detector<simd_instruction_set::avx5124vnniw> final
 /// function 7.
 /// </summary>
 template<>
-class simd_detector<simd_instruction_set::avx512vpopcntdq> final
+class simd_detector<simd_instruction_set::avx512vpopcntdq>
     : public cpu_info_detector<
     0x00000007, cpu_info_register::ecx, detail::cpu_info_bit(14)> { };
 
@@ -201,7 +201,7 @@ class simd_detector<simd_instruction_set::avx512vpopcntdq> final
 /// function 7.
 /// </summary>
 template<>
-class simd_detector<simd_instruction_set::avx512vnni> final
+class simd_detector<simd_instruction_set::avx512vnni>
     : public cpu_info_detector<
     0x00000007, cpu_info_register::ecx, detail::cpu_info_bit(11)> { };
 
@@ -210,7 +210,7 @@ class simd_detector<simd_instruction_set::avx512vnni> final
 /// function 7.
 /// </summary>
 template<>
-class simd_detector<simd_instruction_set::avx512bitalg> final
+class simd_detector<simd_instruction_set::avx512bitalg>
     : public cpu_info_detector<
     0x00000007, cpu_info_register::ecx, detail::cpu_info_bit(12)> { };
 

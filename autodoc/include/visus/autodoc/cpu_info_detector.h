@@ -8,6 +8,7 @@
 #define _LYRA_CPU_INFO_DETECTOR_H
 #pragma once
 
+#include <cinttypes>
 #include <climits>
 #include <vector>
 

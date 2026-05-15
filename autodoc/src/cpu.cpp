@@ -198,87 +198,75 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
     if (detail::check_flags<cpu::features>(flags)) {
         detail::property_set_impl props;
 
-        props.add(u8"Stepping", cpu_features::stepping_id());
+        const auto add_feature = [&props](const auto& feature) {
+            typedef std::decay_t<decltype(feature)> feature_type;
+            props.add<feature_type>(feature);
+        };
+
+        add_feature(cpu_features::stepping_id());
         props.add(u8"Model", (cpu_features::extended_model() << 4)
             | cpu_features::model());
         props.add(u8"Family", cpu_features::extended_family_id()
             + cpu_features::family_id());
-        props.add(u8"Processor Type", cpu_features::processor_type());
-        props.add(u8"Brand ID", cpu_features::brand());
-        props.add(u8"Cache Line Flush Size", cpu_features::clflush_size() * 8);
-        props.add(u8"Maximum CPUs per package", cpu_features::max_cpu_id());
-        props.add(u8"APIC ID", cpu_features::apic_id());
-        props.add(u8"PCLMULQDQ", cpu_features::pclmulqdq());
-        props.add(u8"64-bit Debug Store (dtes64)", cpu_features::dtes64());
-        props.add(u8"MONITOR/MWAIT", cpu_features::monitor());
-        props.add(u8"CPL-Qualified Debug Store (ds-cpl)",
-            cpu_features::ds_cpl());
-        props.add(u8"Virtual Machine Extensions (vmx)", cpu_features::vmx());
-        props.add(u8"Safer Mode Extensions (smx)", cpu_features::smx());
-        props.add(u8"Enhanced Intel SpeedStep Technology (est)",
-            cpu_features::est());
-        props.add(u8"Thermal Monitor 2 (tm2)", cpu_features::tm2());
-        props.add(u8"L1 context ID (cnxt-id)", cpu_features::cnxt_id());
-        props.add(u8"Silicon Debug interface (sdbg)", cpu_features::sdbg());
-        props.add(u8"Fused multiply add (fma)", cpu_features::fma());
-        props.add(u8"CMPXCHG16B", cpu_features::cx16());
-        props.add(u8"Task Priority Messages (xtpr)", cpu_features::xtpr());
-        props.add(u8"Performance and Debug Capability (pdcm)",
-            cpu_features::pdcm());
-        props.add(u8"Process Context Identifiers (pcid)", cpu_features::pcid());
-        props.add(u8"Direct Cache Access (dca)", cpu_features::dca());
-        props.add(u8"Enhanced APIC (x2apic)", cpu_features::x2apic());
-        props.add(u8"MOVBE", cpu_features::movbe());
-        props.add(u8"POPCNT", cpu_features::popcnt());
-        props.add(u8"TSC Deadline (tsc-deadline)",
-            cpu_features::tsc_deadline());
-        props.add(u8"AES (aes-ni)", cpu_features::aes());
-        props.add(u8"Extensible Processor Save/Restore (xsave)",
-            cpu_features::xsave());
-        props.add(u8"Extensible Processor Save/Restore enabled (osxsave)",
-            cpu_features::osxsave());
-        props.add(u8"FP16 Conversion (f16c)", cpu_features::f16c());
-        props.add(u8"On-Chip Random Number Generator (rdrnd)",
-            cpu_features::rdrnd());
-        props.add(u8"Hypervisor Present (hypervisor)",
-            cpu_features::hypervisor());
-        props.add(u8"On-board x87 Floating-Point Unit (fpu)",
-            cpu_features::fpu());
-        props.add(u8"Virtual 8086 Mode Extensions (vme)", cpu_features::vme());
-        props.add(u8"Debugging Extensions (de)", cpu_features::de());
-        props.add(u8"Large Pages (pse)", cpu_features::pse());
-        props.add(u8"Time Stamp Counter and RDSTC (tsc)", cpu_features::tsc());
-        props.add(u8"Machine-Specific Registers (msr)", cpu_features::msr());
-        props.add(u8"Physical Address Extension (pae)", cpu_features::pae());
-        props.add(u8"Machine Check Exception (mce)", cpu_features::mce());
-        props.add(u8"CMPXCHG8B", cpu_features::cx8());
-        props.add(u8"APIC", cpu_features::apic());
-        props.add(u8"Fast System Call Instructions (sep)", cpu_features::sep());
-        props.add(u8"Memory Type Range Registers (mtrr)", cpu_features::mtrr());
-        props.add(u8"Page Global Enable (pge)", cpu_features::pge());
-        props.add(u8"Machine Check Architecture (mca)", cpu_features::mca());
-        props.add(u8"Conditional Move Instructions (cmov)",
-            cpu_features::cmov());
-        props.add(u8"Page Attribute Table (pat)", cpu_features::pat());
-        props.add(u8"36-bit Page Size Extensions (pse-36)",
-            cpu_features::pse36());
-        props.add(u8"Processor Serial Number (psn)", cpu_features::psn());
-        props.add(u8"CLFLUSH", cpu_features::clfsh());
-        props.add(u8"No-Execute Bit (nx)", cpu_features::nx());
-        props.add(u8"Debug Store (ds)", cpu_features::ds());
-        props.add(u8"Advanced Configuration and Power Interface (acpi)",
-            cpu_features::acpi());
-        props.add(u8"FXSAVE/FXSTOR", cpu_features::fxsr());
-        props.add(u8"CPU Cache implements self-snoop (ss)", cpu_features::ss());
-        props.add(u8"Maximum APIC IDs Reserved Field (htt)",
-            cpu_features::htt());
-        props.add(u8"Thermal Monitor Automatically Limits Temperature (tm)",
-            cpu_features::tm());
-        props.add(u8"Itanium Processor (ia64)", cpu_features::ia64());
-        props.add(u8"Pending Break Enable (pbe)", cpu_features::pbe());
-
-        props.add(u8"Topology Leaf B", cpu_features::topology_leaf_b());
-        props.add(u8"Topology Extensions", cpu_features::topology_extensions());
+        add_feature(cpu_features::processor_type());
+        add_feature(cpu_features::brand());
+        add_feature(cpu_features::clflush_size());
+        add_feature(cpu_features::max_cpu_id());
+        add_feature(cpu_features::apic_id());
+        add_feature(cpu_features::pclmulqdq());
+        add_feature(cpu_features::dtes64());
+        add_feature(cpu_features::monitor());
+        add_feature(cpu_features::ds_cpl());
+        add_feature(cpu_features::vmx());
+        add_feature(cpu_features::smx());
+        add_feature(cpu_features::est());
+        add_feature(cpu_features::tm2());
+        add_feature(cpu_features::cnxt_id());
+        add_feature(cpu_features::sdbg());
+        add_feature(cpu_features::fma());
+        add_feature(cpu_features::cx16());
+        add_feature(cpu_features::xtpr());
+        add_feature(cpu_features::pdcm());
+        add_feature(cpu_features::pcid());
+        add_feature(cpu_features::dca());
+        add_feature(cpu_features::x2apic());
+        add_feature(cpu_features::movbe());
+        add_feature(cpu_features::popcnt());
+        add_feature(cpu_features::tsc_deadline());
+        add_feature(cpu_features::aes());
+        add_feature(cpu_features::xsave());
+        add_feature(cpu_features::osxsave());
+        add_feature(cpu_features::f16c());
+        add_feature(cpu_features::rdrnd());
+        add_feature(cpu_features::hypervisor());
+        add_feature(cpu_features::fpu());
+        add_feature(cpu_features::vme());
+        add_feature(cpu_features::de());
+        add_feature(cpu_features::pse());
+        add_feature(cpu_features::tsc());
+        add_feature(cpu_features::msr());
+        add_feature(cpu_features::pae());
+        add_feature(cpu_features::mce());
+        add_feature(cpu_features::cx8());
+        add_feature(cpu_features::apic());
+        add_feature(cpu_features::sep());
+        add_feature(cpu_features::mtrr());
+        add_feature(cpu_features::pge());
+        add_feature(cpu_features::mca());
+        add_feature(cpu_features::cmov());
+        add_feature(cpu_features::pse36());
+        add_feature(cpu_features::psn());
+        add_feature(cpu_features::clfsh());
+        add_feature(cpu_features::nx());
+        add_feature(cpu_features::ds());
+        add_feature(cpu_features::acpi());
+        add_feature(cpu_features::fxsr());
+        add_feature(cpu_features::ss());
+        add_feature(cpu_features::htt());
+        add_feature(cpu_features::ia64());
+        add_feature(cpu_features::pbe());
+        add_feature(cpu_features::topology_leaf_b());
+        add_feature(cpu_features::topology_extensions());
 
         if (detail::check_sensitive<cpu::simd_instructions>(flags)) {
             detail::property_set_impl simds;
