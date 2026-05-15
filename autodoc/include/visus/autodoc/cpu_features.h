@@ -1217,7 +1217,8 @@ namespace cpu_features {
     /// </summary>
     struct avx_ifma : simd_detector<simd_instruction_set::avxifma> {
         typedef bool type;
-        static constexpr auto name = u8"AVX Integer Fused Multiply Add";
+        static constexpr auto name = u8"AVX Integer Fused Multiply Add "
+            u8"(avx-ifma)";
     };
 
     /// <summary>
