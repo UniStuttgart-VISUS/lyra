@@ -240,6 +240,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
         add_feature(cpu_features::aes());
         add_feature(cpu_features::xsave());
         add_feature(cpu_features::osxsave());
+        add_feature(cpu_features::avx());
         add_feature(cpu_features::f16c());
         add_feature(cpu_features::rdrnd());
         add_feature(cpu_features::hypervisor());
@@ -347,7 +348,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
             //::add_simd<simd_instruction_set::ssse3>(simds, u8"SSSE 3");
             //::add_simd<simd_instruction_set::sse4_1>(simds, u8"SSE 4.1");
             //::add_simd<simd_instruction_set::sse4_2>(simds, u8"SSE 4.2");
-            ::add_simd<simd_instruction_set::avx>(simds, u8"AVX");
+            //::add_simd<simd_instruction_set::avx>(simds, u8"AVX");
             //::add_simd<simd_instruction_set::avxvnni>(simds, u8"AVX VNNI");
             //::add_simd<simd_instruction_set::avxifma>(simds, u8"AVX IFMA");
             ::add_simd<simd_instruction_set::avx2>(simds, u8"AVX 2");

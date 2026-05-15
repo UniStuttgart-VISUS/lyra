@@ -12,7 +12,7 @@
 #include <climits>
 #include <vector>
 
-#include "visus/autodoc/cpu_info.h"
+#include "visus/autodoc/cpu_vendor.h"
 
 
 LYRA_DETAIL_NAMESPACE_BEGIN

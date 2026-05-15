@@ -116,7 +116,7 @@ namespace cpu_features {
     /// </summary>
     struct sse3 final : simd_detector<simd_instruction_set::sse3> {
         typedef bool type;
-        static constexpr auto name = u8"SSE 3";
+        static constexpr auto name = u8"Streaming SIMD Extensions 3 (sse3)";
     };
 
     /// <summary>
@@ -197,7 +197,7 @@ namespace cpu_features {
     /// </summary>
     struct ssse3 final : simd_detector<simd_instruction_set::ssse3> {
         typedef bool type;
-        static constexpr auto name = u8"SSSE3";
+        static constexpr auto name = u8"Supplemental SIMD Extensions 3 (ssse3)";
     };
 
     /// <summary>
@@ -278,7 +278,7 @@ namespace cpu_features {
     /// </summary>
     struct sse4_1 final : simd_detector<simd_instruction_set::sse4_1> {
         typedef bool type;
-        static constexpr auto name = u8"SSE 4.1";
+        static constexpr auto name = u8"Streaming SIMD Extensions 4.1 (sse4.1)";
     };
 
     /// <summary>
@@ -286,7 +286,7 @@ namespace cpu_features {
     /// </summary>
     struct sse4_2 final : simd_detector<simd_instruction_set::sse4_2> {
         typedef bool type;
-        static constexpr auto name = u8"SSE 4.2";
+        static constexpr auto name = u8"Streaming SIMD Extensions 4.2 (sse4.2)";
     };
 
     /// <summary>
@@ -360,7 +360,7 @@ namespace cpu_features {
     /// </summary>
     struct avx final : simd_detector<simd_instruction_set::avx> {
         typedef bool type;
-        static constexpr auto name = u8"AVX";
+        static constexpr auto name = u8"Advanced Vector Extensions (avx)";
     };
 
     /// <summary>
@@ -617,7 +617,7 @@ namespace cpu_features {
     /// </summary>
     struct sse final : simd_detector<simd_instruction_set::sse> {
         typedef bool type;
-        static constexpr auto name = u8"SSE";
+        static constexpr auto name = u8"Streaming SIMD Extensions (sse)";
     };
 
     /// <summary>
@@ -625,7 +625,7 @@ namespace cpu_features {
     /// </summary>
     struct sse2 final : simd_detector<simd_instruction_set::sse2> {
         typedef bool type;
-        static constexpr auto name = u8"SSE 2";
+        static constexpr auto name = u8"Streaming SIMD Extensions 2 (sse2)";
     };
 
     /// <summary>

@@ -96,6 +96,16 @@ public:
     static constexpr bool check(const cpu_info& info) noexcept {
         return chk(info, std::make_index_sequence<sizeof...(TIdentifiers)>());
     }
+
+    /// <summary>
+    /// Retrieves the CPUID information and checks whether the vendor string 
+    /// vendor strinch matches the <see cref="value" />s of this type.
+    /// </summary>
+    /// <returns></returns>
+    static constexpr bool check(void) noexcept {
+        cpu_info info;
+        return (get_cpu_info(info, 0) && check(info));
+    }
 };
 
 LYRA_DETAIL_NAMESPACE_END
