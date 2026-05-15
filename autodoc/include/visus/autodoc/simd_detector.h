@@ -90,6 +90,20 @@ template<> class simd_detector<simd_instruction_set::avx>
     0x00000001, cpu_info_register::edx, detail::cpu_info_bit(28)> { };
 
 /// <summary>
+/// Specialisation for AVX VNNI, which is stored in EAX bit 4 of function 7.
+/// </summary>
+template<> class simd_detector<simd_instruction_set::avxvnni>
+        : public cpu_info_detector<
+    0x00000007, cpu_info_register::eax, detail::cpu_info_bit(4)> { };
+
+/// <summary>
+/// Specialisation for AVX IFMA, which is stored in EAX bit 23 of function 7.
+/// </summary>
+template<> class simd_detector<simd_instruction_set::avxifma>
+        : public cpu_info_detector<
+    0x00000007, cpu_info_register::eax, detail::cpu_info_bit(23)> { };
+
+/// <summary>
 /// Specialisation for AVX2, which is stored in EBX bit 5 of function 7.
 /// </summary>
 template<> class simd_detector<simd_instruction_set::avx2>
@@ -213,6 +227,16 @@ template<>
 class simd_detector<simd_instruction_set::avx512bitalg>
     : public cpu_info_detector<
     0x00000007, cpu_info_register::ecx, detail::cpu_info_bit(12)> { };
+
+/// <summary>
+/// Specialisation for AVX-512 BFLOAT16, which is stored in EAX bit 5 of
+/// function 7.
+/// </summary>
+template<>
+class simd_detector<simd_instruction_set::avx512bf16>
+        : public cpu_info_detector<
+    0x00000007, cpu_info_register::eax, detail::cpu_info_bit(5)> {
+};
 
 LYRA_NAMESPACE_END
 

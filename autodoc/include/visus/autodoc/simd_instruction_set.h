@@ -75,6 +75,36 @@ enum class simd_instruction_set {
     avx,
 
     /// <summary>
+    /// AVX Vector Neural Network Instructions (VNNI) is supported.
+    /// </summary>
+    avx_vector_neural_network_instructions,
+
+    /// <summary>
+    /// AVX Vector Neural Network Instructions (VNNI) is supported.
+    /// </summary>
+    avxvnni = avx_vector_neural_network_instructions,
+
+    /// <summary>
+    /// AVX IFMA is supported.
+    /// </summary>
+    avx_integer_fused_multiply_add,
+
+    /// <summary>
+    /// AVX IFMA is supported.
+    /// </summary>
+    avx_integer_fused_madd = avx_integer_fused_multiply_add,
+
+    /// <summary>
+    /// AVX IFMA is supported.
+    /// </summary>
+    avx_integer_fmadd = avx_integer_fused_multiply_add,
+
+    /// <summary>
+    /// AVX IFMA is supported.
+    /// </summary>
+    avxifma = avx_integer_fused_multiply_add,
+
+    /// <summary>
     /// AVX2 is supported.
     /// </summary>
     avx2,

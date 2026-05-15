@@ -213,6 +213,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
         add_feature(cpu_features::clflush_size());
         add_feature(cpu_features::max_cpu_id());
         add_feature(cpu_features::apic_id());
+        //add_feature(cpu_features::sse3());
         add_feature(cpu_features::pclmulqdq());
         add_feature(cpu_features::dtes64());
         add_feature(cpu_features::monitor());
@@ -221,6 +222,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
         add_feature(cpu_features::smx());
         add_feature(cpu_features::est());
         add_feature(cpu_features::tm2());
+        //add_feature(cpu_features::ssse3());
         add_feature(cpu_features::cnxt_id());
         add_feature(cpu_features::sdbg());
         add_feature(cpu_features::fma());
@@ -229,6 +231,8 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
         add_feature(cpu_features::pdcm());
         add_feature(cpu_features::pcid());
         add_feature(cpu_features::dca());
+        //add_feature(cpu_features::sse4_1());
+        //add_feature(cpu_features::sse4_2());
         add_feature(cpu_features::x2apic());
         add_feature(cpu_features::movbe());
         add_feature(cpu_features::popcnt());
@@ -260,13 +264,79 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
         add_feature(cpu_features::nx());
         add_feature(cpu_features::ds());
         add_feature(cpu_features::acpi());
+        //add_feature(cpu_features::mmx());
         add_feature(cpu_features::fxsr());
+        //add_feature(cpu_features::sse());
+        //add_feature(cpu_features::sse2());
         add_feature(cpu_features::ss());
         add_feature(cpu_features::htt());
         add_feature(cpu_features::ia64());
         add_feature(cpu_features::pbe());
         add_feature(cpu_features::topology_leaf_b());
         add_feature(cpu_features::topology_extensions());
+        {
+            const cpu_features::emx emx;
+            add_feature(emx);
+            if (emx) {
+                add_feature(cpu_features::min_monitor_size());
+                add_feature(cpu_features::max_monitor_size());
+                add_feature(cpu_features::ibe());
+                add_feature(cpu_features::monitorless_mwait());
+                add_feature(cpu_features::c0_sub_states());
+                add_feature(cpu_features::c1_sub_states());
+                add_feature(cpu_features::c2_sub_states());
+                add_feature(cpu_features::c3_sub_states());
+                add_feature(cpu_features::c4_sub_states());
+                add_feature(cpu_features::c5_sub_states());
+                add_feature(cpu_features::c6_sub_states());
+                add_feature(cpu_features::c7_sub_states());
+            }
+        }
+        add_feature(cpu_features::dts());
+        add_feature(cpu_features::turbo_boost());
+        add_feature(cpu_features::arat());
+        add_feature(cpu_features::pln());
+        add_feature(cpu_features::ecmd());
+        add_feature(cpu_features::ptm());
+        add_feature(cpu_features::hwp());
+        add_feature(cpu_features::hwp_notification());
+        add_feature(cpu_features::hwp_activity_window());
+        add_feature(cpu_features::hwp_epp());
+        add_feature(cpu_features::hwp_pkg());
+        add_feature(cpu_features::hdc());
+        add_feature(cpu_features::turbo_boost_max());
+        add_feature(cpu_features::hwp_capabilities());
+        add_feature(cpu_features::hwp_peci_override());
+        add_feature(cpu_features::flexible_hwp());
+        add_feature(cpu_features::hwp_request_fast_access());
+        add_feature(cpu_features::hw_feedback_interface());
+        add_feature(cpu_features::hwp_request_ignore_idle());
+        add_feature(cpu_features::hwp_control_msr());
+        add_feature(cpu_features::thread_director());
+        // TODO
+        add_feature(cpu_features::sha512());
+        add_feature(cpu_features::sm3());
+        add_feature(cpu_features::sm4());
+        add_feature(cpu_features::rao_int());
+        //add_feature(cpu_features::avx_vnni());
+        //add_feature(cpu_features::avx512_bf16());
+        add_feature(cpu_features::lass());
+        add_feature(cpu_features::cmpccxadd());
+        add_feature(cpu_features::architectural_performance_monitoring());
+        add_feature(cpu_features::fzrm());
+        add_feature(cpu_features::fsrs());
+        add_feature(cpu_features::rsrcs());
+        add_feature(cpu_features::fred());
+        add_feature(cpu_features::lkgs());
+        add_feature(cpu_features::non_serialising_wrmsr());
+        add_feature(cpu_features::nmi_source_reporting());
+        add_feature(cpu_features::amx_fp16());
+        add_feature(cpu_features::hreset());
+        //add_feature(cpu_features::avx_ifma());
+        add_feature(cpu_features::linear_address_masking());
+        add_feature(cpu_features::msr_list());
+        add_feature(cpu_features::invd());
+        add_feature(cpu_features::movrs());
 
         if (detail::check_sensitive<cpu::simd_instructions>(flags)) {
             detail::property_set_impl simds;
@@ -278,6 +348,8 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
             ::add_simd<simd_instruction_set::sse4_1>(simds, u8"SSE 4.1");
             ::add_simd<simd_instruction_set::sse4_2>(simds, u8"SSE 4.2");
             ::add_simd<simd_instruction_set::avx>(simds, u8"AVX");
+            ::add_simd<simd_instruction_set::avxvnni>(simds, u8"AVX VNNI");
+            ::add_simd<simd_instruction_set::avxifma>(simds, u8"AVX IFMA");
             ::add_simd<simd_instruction_set::avx2>(simds, u8"AVX 2");
             ::add_simd<simd_instruction_set::avx512>(simds,
                 u8"AVX 512 Foundation");
@@ -305,6 +377,14 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
                 u8"AVX 512 Vector Neural Network Instructions");
             ::add_simd<simd_instruction_set::avx512bitalg>(simds,
                 u8"AVX 512 Bit Algorithms");
+            //::add_simd<simd_instruction_set::avx512gfni>(simds,
+            //    u8"AVX 512 Galois Field New Instructions");
+            //::add_simd<simd_instruction_set::avx512vpclmulqdq>(simds,
+            //    u8"AVX 512 ");
+            //::add_simd<simd_instruction_set::avx512vaes>(simds,
+            //    u8"AVX 512 ");
+            ::add_simd<simd_instruction_set::avx512bf16>(simds,
+                u8"AVX 512 Instructions for bfloat16 Numbers");
             props.add<cpu::simd_instructions>(property_set(
                 std::move(simds)));
         }

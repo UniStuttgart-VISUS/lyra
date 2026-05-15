@@ -673,6 +673,591 @@ namespace cpu_features {
         static constexpr auto name = u8"Pending Break Enable (pbe)";
     };
 
+    ///// <summary>
+    ///// Indicates whether a cache type is instruction (2), data (1) or
+    ///// unified (3).
+    ///// </summary>
+    //struct cache_type final : cpu_info_selector<
+    //        0x00000004, cpu_info_register::eax, 0, 4> {
+    //    typedef std::uint32_t type;
+    //    static constexpr auto name = u8"Cache Type";
+    //};
+
+    ///// <summary>
+    ///// Gets the cache level starting with 1 for L1, 2 for L2, etc.
+    ///// </summary>
+    //struct cache_level final : cpu_info_selector<
+    //        0x00000004, cpu_info_register::eax, 5, 7> {
+    //    typedef std::uint32_t type;
+    //    static constexpr auto name = u8"Cache Level";
+    //};
+
+    ///// <summary>
+    ///// Indicates whether the cache is self-initialising.
+    ///// </summary>
+    //struct cache_self_initialising final : cpu_info_detector<
+    //        0x00000004, cpu_info_register::eax, detail::cpu_info_bit(8)> {
+    //    typedef bool type;
+    //    static constexpr auto name = u8"Self-Initialising Cache Level";
+    //};
+
+    ///// <summary>
+    ///// Indicates whether the cache is fully associative.
+    ///// </summary>
+    //struct cache_fully_associative final : cpu_info_detector<
+    //        0x00000004, cpu_info_register::eax, detail::cpu_info_bit(9)> {
+    //    typedef bool type;
+    //    static constexpr auto name = u8"Fully Associative Cache";
+    //};
+
+    /// <summary>
+    /// Gets the smallest monitor line size in bytes.
+    /// </summary>
+    struct min_monitor_size final : cpu_info_selector<
+            0x00000005, cpu_info_register::eax, 0, 15> {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"Minimum Monitor Line Size";
+    };
+
+    /// <summary>
+    /// Gets the largest monitor line size in bytes.
+    /// </summary>
+    struct max_monitor_size final : cpu_info_selector<
+            0x00000005, cpu_info_register::ebx, 0, 15> {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"Maximum Monitor Line Size";
+    };
+
+    /// <summary>
+    /// Indicates whether enumeration of MONITOR/MWAIT extensions in
+    /// ECX and EDX is supported.
+    /// </summary>
+    struct emx final : cpu_info_detector<
+            0x00000005, cpu_info_register::ecx, detail::cpu_info_bit(0)> {
+        typedef bool type;
+        static constexpr auto name = u8"Monitor Enumeration (emx)";
+    };
+
+    /// <summary>
+    /// Indicates whether interrups are treated as break events for MWAIT even
+    /// when interrupts are disabled.
+    /// </summary>
+    struct ibe final : cpu_info_detector<
+            0x00000005, cpu_info_register::ecx, detail::cpu_info_bit(1)> {
+        typedef bool type;
+        static constexpr auto name = u8"Interrupts as Break Events (ibe)";
+    };
+
+    /// <summary>
+    /// Indicates whether MWAIT can be used for power management without setting
+    /// up memory monitoring with MONITOR beforehand.
+    /// </summary>
+    struct monitorless_mwait final : cpu_info_detector<
+            0x00000005, cpu_info_register::ecx, detail::cpu_info_bit(3)> {
+        typedef bool type;
+        static constexpr auto name = u8"Monitor-less MWAIT";
+    };
+
+    /// <summary>
+    /// Gets the number of C0 sub-states supported for MWAIT.
+    /// </summary>
+    struct c0_sub_states final : cpu_info_selector<
+            0x00000005, cpu_info_register::edx, 0, 3> {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"C0 Sub-States for MWAIT";
+    };
+
+    /// <summary>
+    /// Gets the number of C1 sub-states supported for MWAIT.
+    /// </summary>
+    struct c1_sub_states final : cpu_info_selector<
+            0x00000005, cpu_info_register::edx, 4, 7> {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"C1 Sub-States for MWAIT";
+    };
+
+    /// <summary>
+    /// Gets the number of C2 sub-states supported for MWAIT.
+    /// </summary>
+    struct c2_sub_states final : cpu_info_selector<
+            0x00000005, cpu_info_register::edx, 8, 11> {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"C2 Sub-States for MWAIT";
+    };
+
+    /// <summary>
+    /// Gets the number of C3 sub-states supported for MWAIT.
+    /// </summary>
+    struct c3_sub_states final : cpu_info_selector<
+            0x00000005, cpu_info_register::edx, 12, 15> {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"C3 Sub-States for MWAIT";
+    };
+
+    /// <summary>
+    /// Gets the number of C4 sub-states supported for MWAIT.
+    /// </summary>
+    struct c4_sub_states final : cpu_info_selector<
+            0x00000005, cpu_info_register::edx, 16, 19> {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"C4 Sub-States for MWAIT";
+    };
+
+    /// <summary>
+    /// Gets the number of C5 sub-states supported for MWAIT.
+    /// </summary>
+    struct c5_sub_states final : cpu_info_selector<
+            0x00000005, cpu_info_register::edx, 20, 23> {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"C5 Sub-States for MWAIT";
+    };
+
+    /// <summary>
+    /// Gets the number of C6 sub-states supported for MWAIT.
+    /// </summary>
+    struct c6_sub_states final : cpu_info_selector<
+            0x00000005, cpu_info_register::edx, 24, 27> {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"C6 Sub-States for MWAIT";
+    };
+
+    /// <summary>
+    /// Gets the number of C7 sub-states supported for MWAIT.
+    /// </summary>
+    struct c7_sub_states final : cpu_info_selector<
+            0x00000005, cpu_info_register::edx, 28, 31> {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"C7 Sub-States for MWAIT";
+    };
+
+    /// <summary>
+    /// Indicates whether the digital thermal sensor is supported.
+    /// </summary>
+    struct dts final : cpu_info_detector<
+            0x00000006, cpu_info_register::eax, detail::cpu_info_bit(0)> {
+        typedef bool type;
+        static constexpr auto name = u8"Digital Thermal Sensor (dts)";
+    };
+
+    /// <summary>
+    /// Indicates whether the Intel Turbo Boost Technology is supported.
+    /// </summary>
+    struct turbo_boost final : cpu_info_detector<
+            0x00000006, cpu_info_register::eax, detail::cpu_info_bit(1)> {
+        typedef bool type;
+        static constexpr auto name = u8"Turbo Boost Technology (turbo-boost)";
+    };
+
+    /// <summary>
+    /// Indicates whether the APIC timer implements the always running mode.
+    /// </summary>
+    struct arat final : cpu_info_detector<
+            0x00000006, cpu_info_register::eax, detail::cpu_info_bit(2)> {
+        typedef bool type;
+        static constexpr auto name = u8"Always Running APIC Timer (arat)";
+    };
+
+    /// <summary>
+    /// Indicates whether the CPU supports power limit notification (PLN).
+    /// </summary>
+    struct pln final : cpu_info_detector<
+            0x00000006, cpu_info_register::eax, detail::cpu_info_bit(4)> {
+        typedef bool type;
+        static constexpr auto name = u8"Power Limit Notification (pln)";
+    };
+
+    /// <summary>
+    /// Indicates whether Clock-modulation duty cycle extensions are available.
+    /// </summary>
+    struct ecmd final : cpu_info_detector<
+            0x00000006, cpu_info_register::eax, detail::cpu_info_bit(5)> {
+        typedef bool type;
+        static constexpr auto name = u8"Extended Clock Modulation Duty "
+            u8"Capability (ecmd)";
+    };
+
+    /// <summary>
+    /// Indicates whether the package thermal management capability is
+    /// supported.
+    /// </summary>
+    struct ptm final : cpu_info_detector<
+            0x00000006, cpu_info_register::eax, detail::cpu_info_bit(6)> {
+        typedef bool type;
+        static constexpr auto name = u8"Package Thermal Management Capability "
+            u8"(ptm)";
+    };
+
+    /// <summary>
+    /// Indicates whether hardware-controlled performance states are supported.
+    /// </summary>
+    struct hwp final : cpu_info_detector<
+            0x00000006, cpu_info_register::eax, detail::cpu_info_bit(7)> {
+        typedef bool type;
+        static constexpr auto name = u8"Hardware-Controlled Performance States "
+            u8"(hwp)";
+    };
+
+    /// <summary>
+    /// Indicates whether the IA32_HWP_INTERRUPT MSR is supported.
+    /// </summary>
+    struct hwp_notification final : cpu_info_detector<
+            0x00000006, cpu_info_register::eax, detail::cpu_info_bit(8)> {
+        typedef bool type;
+        static constexpr auto name = u8"Hardware-Controlled Performance States "
+            u8"Notification (hwp-notification)";
+    };
+
+    /// <summary>
+    /// Indicates whether the IA32_HWP_REQUEST MSR is supported.
+    /// </summary>
+    struct hwp_activity_window final : cpu_info_detector<
+            0x00000006, cpu_info_register::eax, detail::cpu_info_bit(9)> {
+        typedef bool type;
+        static constexpr auto name = u8"Hardware-Controlled Performance States "
+            u8"Activity Window Control (hwp-activity-window)";
+    };
+
+    /// <summary>
+    /// Indicates whether the IA32_HWP_REQUEST MSR is supported.
+    /// </summary>
+    struct hwp_epp final : cpu_info_detector<
+            0x00000006, cpu_info_register::eax, detail::cpu_info_bit(10)> {
+        typedef bool type;
+        static constexpr auto name = u8"Hardware-Controlled Performance States "
+            u8"Energy Performance Preference Control "
+            u8"(hwp-energy-performance-preference)";
+    };
+
+    /// <summary>
+    /// Indicates whether the IA32_HWP_REQUEST_PKG MSR is supported.
+    /// </summary>
+    struct hwp_pkg final : cpu_info_detector<
+            0x00000006, cpu_info_register::eax, detail::cpu_info_bit(11)> {
+        typedef bool type;
+        static constexpr auto name = u8"Hardware-Controlled Performance States "
+            u8"Package-Level Control (hwp-package-level-request)";
+    };
+
+    /// <summary>
+    /// Indicates whether hardware ducy cycling is supported.
+    /// </summary>
+    struct hdc final : cpu_info_detector<
+            0x00000006, cpu_info_register::eax, detail::cpu_info_bit(13)> {
+        typedef bool type;
+        static constexpr auto name = u8"Hardware Duty Cycling (hdc)";
+    };
+
+    /// <summary>
+    /// Indicates whether the Intel Turbo Boost Max Technology 3.0 is supported.
+    /// </summary>
+    struct turbo_boost_max final : cpu_info_detector<
+            0x00000006, cpu_info_register::ebx, detail::cpu_info_bit(14)> {
+        typedef bool type;
+        static constexpr auto name = u8"Intel Turbo Boost Max Technology 3.0";
+    };
+
+    /// <summary>
+    /// Interrupts upon changes to IA32_HWP_CAPABILITIES.Highest_Performance
+    /// (bits 7:0) supported.
+    /// </summary>
+    struct hwp_capabilities final : cpu_info_selector<
+            0x00000006, cpu_info_register::ebx, 0, 15> {
+        typedef std::uint16_t type;
+        static constexpr auto name = u8"Hardware-Controlled Performance States "
+            u8"Capabilities (hwp-cap)";
+    };
+
+    /// <summary>
+    /// Indicates whether HWP PECI override is supported.
+    /// </summary>
+    struct hwp_peci_override final : cpu_info_detector<
+            0x00000006, cpu_info_register::ebx, detail::cpu_info_bit(16)> {
+        typedef bool type;
+        static constexpr auto name = u8"Hardware-Controlled Performance States "
+            u8"Platform Environment Control Interface Override "
+            u8"(hwp-peci-override)";
+    };
+
+    /// <summary>
+    /// Indicates whether flexible HWP is supported.
+    /// </summary>
+    struct flexible_hwp final : cpu_info_detector<
+            0x00000006, cpu_info_register::ebx, detail::cpu_info_bit(17)> {
+        typedef bool type;
+        static constexpr auto name = u8"Flexible Hardware-Controlled "
+            u8"Performance States (flexible-hwp)";
+    };
+
+    /// <summary>
+    /// Indicates whether fast access mode for IA32_HWP_REQUEST MSR is
+    /// supported.
+    /// </summary>
+    struct hwp_request_fast_access final : cpu_info_detector<
+            0x00000006, cpu_info_register::ebx, detail::cpu_info_bit(18)> {
+        typedef bool type;
+        static constexpr auto name = u8"Hardware-Controlled Performance States "
+            u8"Request Fast Access (hwp-request-fast-access)";
+    };
+
+    /// <summary>
+    /// Indicates whether the hardware feedback interface is supported.
+    /// </summary>
+    struct hw_feedback_interface final : cpu_info_detector<
+            0x00000006, cpu_info_register::ebx, detail::cpu_info_bit(19)> {
+        typedef bool type;
+        static constexpr auto name = u8"Hardware Feedback Interface "
+            u8"(hw-feedback)";
+    };
+
+    /// <summary>
+    /// IA32_HWP_REQUEST of idle logical processor ignored when only one of two
+    /// logical processors that share a physical processor is active.
+    /// </summary>
+    struct hwp_request_ignore_idle final : cpu_info_detector<
+            0x00000006, cpu_info_register::ebx, detail::cpu_info_bit(20)> {
+        typedef bool type;
+        static constexpr auto name = u8"Hardware-Controlled Performance States "
+            u8"Request Ignore Idle (hwp-request-ignore-idle)";
+    };
+
+    /// <summary>
+    /// IA32_HWP_CTL MSR is supported.
+    /// </summary>
+    struct hwp_control_msr final : cpu_info_detector<
+            0x00000006, cpu_info_register::ebx, detail::cpu_info_bit(22)> {
+        typedef bool type;
+        static constexpr auto name = u8"Hardware-Controlled Performance States "
+            u8"Control MSR (hwp-control-msr)";
+    };
+
+    /// <summary>
+    /// Intel Thread Director is supported.
+    /// </summary>
+    struct thread_director final : cpu_info_detector<
+            0x00000006, cpu_info_register::ebx, detail::cpu_info_bit(23)> {
+        typedef bool type;
+        static constexpr auto name = u8"Intel Thread Director "
+            u8"(thread-director)";
+    };
+
+    /// ECX and EDX missing
+
+    /// <summary>
+    /// SHA-512 instructions are supported.
+    /// </summary>
+    struct sha512 final : cpu_info_detector<
+            0x00000007, cpu_info_register::eax, detail::cpu_info_bit(0)> {
+        typedef bool type;
+        static constexpr auto name = u8"SHA-512 Extensions (sha512)";
+    };
+
+    /// <summary>
+    /// SM3 hash instructions are supported.
+    /// </summary>
+    struct sm3 final : cpu_info_detector<
+            0x00000007, cpu_info_register::eax, detail::cpu_info_bit(1)> {
+        typedef bool type;
+        static constexpr auto name = u8"SM3 Hash Extensions (sm3)";
+    };
+
+    /// <summary>
+    /// SM4 cipher instructions are supported.
+    /// </summary>
+    struct sm4 final : cpu_info_detector<
+            0x00000007, cpu_info_register::eax, detail::cpu_info_bit(2)> {
+        typedef bool type;
+        static constexpr auto name = u8"SM4 Cipher Extensions (sm4)";
+    };
+
+    /// <summary>
+    /// Remote atomic operations on integers are supported.
+    /// </summary>
+    struct rao_int final : cpu_info_detector<
+            0x00000007, cpu_info_register::eax, detail::cpu_info_bit(3)> {
+        typedef bool type;
+        static constexpr auto name = u8"Remote Atomic Operations on Integers "
+            u8"(rao-int)";
+    };
+
+    /// <summary>
+    /// AVX Vector Neural Network Instructions (AVX-VNNI) are supported.
+    /// </summary>
+    struct avx_vnni final : simd_detector<simd_instruction_set::avxvnni> {
+        typedef bool type;
+        static constexpr auto name = u8"AVX Vector Neural Network Instructions "
+            u8"(avx-vnni)";
+    };
+
+    /// <summary>
+    /// AVX-512 BF16 is supported.
+    /// </summary>
+    struct avx512_bf16 final : simd_detector<simd_instruction_set::avx512bf16> {
+        typedef bool type;
+        static constexpr auto name = u8"AVX-512 Instructions for BFLOAT16 "
+            u8"Numbers (avx512-bf16)";
+    };
+
+    /// <summary>
+    /// Indicates whether linear address space separation (LASS) is supported.
+    /// </summary>
+    struct lass final : cpu_info_detector<
+            0x00000007, cpu_info_register::eax, detail::cpu_info_bit(6)> {
+        typedef bool type;
+        static constexpr auto name = u8"Linear Address Space Separation (lass)";
+    };
+
+    /// <summary>
+    /// Indicates whether CMPccXADD instructions are supported.
+    /// </summary>
+    struct cmpccxadd final : cpu_info_detector<
+            0x00000007, cpu_info_register::eax, detail::cpu_info_bit(7)> {
+        typedef bool type;
+        static constexpr auto name = u8"CMPccXADD";
+    };
+
+    /// <summary>
+    /// Indicates whether LEAF 0x23 is supported.
+    /// </summary>
+    struct architectural_performance_monitoring : cpu_info_detector<
+            0x00000007, cpu_info_register::eax, detail::cpu_info_bit(8)> {
+        typedef bool type;
+        static constexpr auto name = u8"Architectural Performance Monitoring "
+            u8"Extended Leaf (archperf­monext)";
+    };
+
+    /// <summary>
+    /// Indicates whether fast zero-length REP MOVSB is supported.
+    /// </summary>
+    struct fzrm final : cpu_info_detector<
+            0x00000007, cpu_info_register::eax, detail::cpu_info_bit(10)> {
+        typedef bool type;
+        static constexpr auto name = u8"Fast Zero-Length REP MOVSB (fzrm)";
+    };
+
+    /// <summary>
+    /// Indicates whether fast short REP STOSB is supported.
+    /// </summary>
+    struct fsrs final : cpu_info_detector<
+            0x00000007, cpu_info_register::eax, detail::cpu_info_bit(11)> {
+        typedef bool type;
+        static constexpr auto name = u8"Fast Short REP STOSB (fsrs)";
+    };
+
+    /// <summary>
+    /// Indicates whether fast short REP CMPSB and REP SCASB are supported.
+    /// </summary>
+    struct rsrcs final : cpu_info_detector<
+            0x00000007, cpu_info_register::eax, detail::cpu_info_bit(12)> {
+        typedef bool type;
+        static constexpr auto name = u8"Fast short REP CMPSB and REP SCASB "
+            u8"(rsrcs)";
+    };
+
+    /// <summary>
+    /// Indicates whether flexible return and event delivery is supported.
+    /// </summary>
+    struct fred final : cpu_info_detector<
+            0x00000007, cpu_info_register::eax, detail::cpu_info_bit(17)> {
+        typedef bool type;
+        static constexpr auto name = u8"Flexible Return and Event Delivery "
+            u8"(fred)";
+    };
+
+    /// <summary>
+    /// Indicates whether the LKGS instruction is supported.
+    /// </summary>
+    struct lkgs final : cpu_info_detector<
+            0x00000007, cpu_info_register::eax, detail::cpu_info_bit(18)> {
+        typedef bool type;
+        static constexpr auto name = u8"LKGS";
+    };
+
+    /// <summary>
+    /// Indicates whether WRMSRNS is supported.
+    /// </summary>
+    struct non_serialising_wrmsr final : cpu_info_detector<
+            0x00000007, cpu_info_register::eax, detail::cpu_info_bit(19)> {
+        typedef bool type;
+        static constexpr auto name = u8"Non-Serialising Write to MSRs "
+            u8"(wrmsrns)";
+    };
+
+    /// <summary>
+    /// Indicates whether non-maskable interrupt source reporting is supported.
+    /// </summary>
+    struct nmi_source_reporting final : cpu_info_detector<
+            0x00000007, cpu_info_register::eax, detail::cpu_info_bit(20)> {
+        typedef bool type;
+        static constexpr auto name = u8"Non-Maskable Interrupt Source "
+            "Reporting (nmi-src)";
+    };
+
+    /// <summary>
+    /// Indicates whether AMX instructions for FP16 numbers are supported.
+    /// </summary>
+    struct amx_fp16 final : cpu_info_detector<
+            0x00000007, cpu_info_register::eax, detail::cpu_info_bit(21)> {
+        typedef bool type;
+        static constexpr auto name = u8"AMX instructions for FP16 numbers "
+            u8"(amx-fp16)";
+    };
+
+    /// <summary>
+    /// Indicates whether the HRESET instruction, the IA32_HRESET_ENABLE MSR and
+    /// leaf 0x20 are supported.
+    /// </summary>
+    struct hreset final : cpu_info_detector<
+            0x00000007, cpu_info_register::eax, detail::cpu_info_bit(22)> {
+        typedef bool type;
+        static constexpr auto name = u8"Processor History Reset (hreset)";
+    };
+
+    /// <summary>
+    /// AVX IFMA instructions are supported.
+    /// </summary>
+    struct avx_ifma : simd_detector<simd_instruction_set::avxifma> {
+        typedef bool type;
+        static constexpr auto name = u8"AVX Integer Fused Multiply Add";
+    };
+
+    /// <summary>
+    /// Indicates whether linear address masking is supported.
+    /// </summary>
+    struct linear_address_masking final : cpu_info_detector<
+            0x00000007, cpu_info_register::eax, detail::cpu_info_bit(26)> {
+        typedef bool type;
+        static constexpr auto name = u8"Linear Address Masking (lam)";
+    };
+
+    /// <summary>
+    /// Indicates whether RDMSRLIST and WRMSRLIST instructions are supported.
+    /// </summary>
+    struct msr_list final : cpu_info_detector<
+            0x00000007, cpu_info_register::eax, detail::cpu_info_bit(27)> {
+        typedef bool type;
+        static constexpr auto name = u8"RDMSRLIST and WRMSRLIST (msr-list)";
+    };
+
+    /// <summary>
+    /// If set, supports INVD instruction execution prevention after BIOS done.
+    /// </summary>
+    struct invd final : cpu_info_detector<
+            0x00000007, cpu_info_register::eax, detail::cpu_info_bit(30)> {
+        typedef bool type;
+        static constexpr auto name = u8"INVD";
+    };
+
+    /// <summary>
+    /// MOVRS and PREFETCHRST2 instructions supported (memory read/prefetch
+    /// with read-shared hint)
+    /// </summary>
+    struct movrs final : cpu_info_detector<
+            0x00000007, cpu_info_register::eax, detail::cpu_info_bit(31)> {
+        typedef bool type;
+        static constexpr auto name = u8"Memory Read/Prefetch with Read-Shared "
+            u8"Hint (movrs)";
+    };
+
     /// <summary>
     /// Checks whether the V2 extended topology enumeration leaf 0x1F is supported.
     /// </summary>
