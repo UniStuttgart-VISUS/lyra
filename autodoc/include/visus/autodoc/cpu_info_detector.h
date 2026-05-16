@@ -40,6 +40,28 @@ inline constexpr std::uint32_t cpu_info_bit(
 //    return (cpu_info_bit(last + 1) - 1) & ~((cpu_info_bit(first) - 1));
 //}
 
+
+
+/// <summary>
+/// A wrapper for a CPUID detector/selector that is only to be used for vendors
+/// that are identified by the <typeparamref name="TVendor" /> vendor detector.
+/// This class is used to combine multiple different detection methods
+/// for a single feature.
+/// </summary>
+template<class TVendor, class TDetector>
+class vendor_detector final : TDetector {
+
+public:
+
+    /// <summary>
+    /// Checks the configured <typeparamref name="TVendor" /> against the given
+    /// <see cref="cpu_info" /> and answers whether the detector is applicable.
+    /// </summary>
+    inline const bool applicable(_In_ const cpu_info& info) const noexcept {
+        return TVendor::check(info);
+    }
+};
+
 LYRA_DETAIL_NAMESPACE_END
 
 
@@ -105,6 +127,8 @@ private:
 };
 
 
+
+
 /// <summary>
 /// Base implementation for detecting the presence of bits in the CPU info
 /// of x86 CPUs.
@@ -128,9 +152,8 @@ public:
     cpu_info_detector(void);
 
     /// <summary>
-    /// Answer whether the instruction identified by
-    /// <typeparamref name="Fun" />, <typename="Reg" /> and
-    /// <typeparamref name="Mask" /> is supported.
+    /// Answer whether the feature identified by <typeparamref name="Fun" />,
+    /// <typename="Reg" /> and <typeparamref name="Mask" /> is supported.
     /// </summary>
     /// <returns><see langword="true" /> if the bit identified by the template
     /// is set, <see langword="false" /> otherwise.</returns>
@@ -139,6 +162,49 @@ public:
     }
 
 private:
+
+    bool _value;
+};
+
+
+/// <summary>
+/// A wrapper for a CPU feature that is detected differently depending on the
+/// vendor of the CPU. This class aggregates multiple
+/// <see cref="detail::vendor_detector" />s for different vendors and selects
+/// the applicable one based on the vendor string.
+/// </summary>
+/// <typeparam name="TDetects"></typeparam>
+template<class... TDetects> class vendor_cpu_info_detector {
+
+public:
+
+    /// <summary>
+    /// Initialises a new instance.
+    /// </summary>
+    inline vendor_cpu_info_detector(void) {
+        cpu_info info;
+        this->_value = (get_cpu_info(info, 0) && this->eval<TDetects...>(info));
+    }
+
+    /// <summary>
+    /// Answer whether one of the configured
+    /// <typeparamref name="TDetects" />s is applicable and yielded
+    /// <see langword="true" />.
+    /// </summary>
+    /// <returns>The result of the applicable detector, or
+    /// <see langword="false" /> if none was applicable.</returns>
+    inline operator bool(void) const noexcept {
+        return this->_value;
+    }
+
+private:
+
+    template<class THead, class... TTail>
+    static bool eval(_In_ const cpu_info& info);
+
+    inline static constexpr bool eval(const cpu_info&) noexcept {
+        return false;
+    }
 
     bool _value;
 };
@@ -183,6 +249,7 @@ private:
 
     std::uint32_t _value;
 };
+
 
 LYRA_NAMESPACE_END
 

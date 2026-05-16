@@ -34,6 +34,21 @@ LYRA_NAMESPACE::cpu_info_detector<Fun, Reg, Mask>::cpu_info_detector(
 
 
 /*
+ * LYRA_NAMESPACE::vendor_cpu_info_detector<TDetects...>::eval
+ */
+template<class... TDetects>
+template<class THead, class... TTail>
+bool LYRA_NAMESPACE::vendor_cpu_info_detector<TDetects...>::eval(
+        _In_ const cpu_info& info) {
+    if (THead::applicable(info)) {
+        return THead();
+    } else {
+        return this->eval<TTail...>(info);
+    }
+}
+
+
+/*
  * LYRA_NAMESPACE::cpu_info_selector<Fun, Reg, From, To>::cpu_info_selector
  */
 template<std::size_t Fun, std::size_t Reg, std::uint32_t From, std::uint32_t To>

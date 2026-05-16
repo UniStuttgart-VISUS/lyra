@@ -88,11 +88,13 @@ public:
     static constexpr auto value = std::make_tuple(TIdentifiers::value...);
 
     /// <summary>
-    /// Checke whether the given CPUID results match any of the
+    /// Checks whether the given CPUID results match any of the
     /// <see cref="value" />s of this type.
     /// </summary>
-    /// <param name="info"></param>
-    /// <returns></returns>
+    /// <param name="info">The results of a CPUID query to check. The caller is
+    /// responsible for providing only results of a vendor query.</param>
+    /// <returns><see langword="true" /> if <paramref name="info" /> identifies
+    /// the vendor, <see langword="false" /> otherwise.</returns>
     static constexpr bool check(const cpu_info& info) noexcept {
         return chk(info, std::make_index_sequence<sizeof...(TIdentifiers)>());
     }

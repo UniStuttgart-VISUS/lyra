@@ -321,23 +321,62 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
         add_feature(cpu_features::rao_int());
         add_feature(cpu_features::avx_vnni());
         add_feature(cpu_features::avx512_bf16());
-        add_feature(cpu_features::lass());
-        add_feature(cpu_features::cmpccxadd());
-        add_feature(cpu_features::architectural_performance_monitoring());
-        add_feature(cpu_features::fzrm());
-        add_feature(cpu_features::fsrs());
-        add_feature(cpu_features::rsrcs());
-        add_feature(cpu_features::fred());
-        add_feature(cpu_features::lkgs());
-        add_feature(cpu_features::non_serialising_wrmsr());
-        add_feature(cpu_features::nmi_source_reporting());
-        add_feature(cpu_features::amx_fp16());
-        add_feature(cpu_features::hreset());
-        add_feature(cpu_features::avx_ifma());
-        add_feature(cpu_features::linear_address_masking());
-        add_feature(cpu_features::msr_list());
-        add_feature(cpu_features::invd());
-        add_feature(cpu_features::movrs());
+        add_feature(cpu_features::extended_features());
+        add_feature(cpu_features::fsgsbase());
+        add_feature(cpu_features::tsc_adjust());
+        add_feature(cpu_features::sgx());
+        add_feature(cpu_features::bmi1());
+        add_feature(cpu_features::hle());
+        add_feature(cpu_features::avx2());
+        add_feature(cpu_features::fdp_exception_only());
+        add_feature(cpu_features::smep());
+        add_feature(cpu_features::bmi2());
+        add_feature(cpu_features::erms());
+        add_feature(cpu_features::invpcid());
+        add_feature(cpu_features::rtm());
+        add_feature(cpu_features::intel_resource_director_monitoring());
+        add_feature(cpu_features::fcs_fds_deprecated());
+        add_feature(cpu_features::mpx());
+        add_feature(cpu_features::intel_resource_director_allocation());
+        add_feature(cpu_features::avx512_f());
+        add_feature(cpu_features::avx512_dq());
+        add_feature(cpu_features::rdseed());
+        add_feature(cpu_features::adx());
+        add_feature(cpu_features::smap());
+        add_feature(cpu_features::avx512_ifma());
+        add_feature(cpu_features::pcommit());
+        add_feature(cpu_features::clflushopt());
+        add_feature(cpu_features::clwb());
+        add_feature(cpu_features::pt());
+        add_feature(cpu_features::avx512_pf());
+        add_feature(cpu_features::avx512_er());
+        add_feature(cpu_features::avx512_cd());
+        add_feature(cpu_features::sha());
+        add_feature(cpu_features::avx512_bw());
+        add_feature(cpu_features::avx512_vl());
+        add_feature(cpu_features::prefetchwt1());
+        add_feature(cpu_features::avx512_vbmi());
+        add_feature(cpu_features::umip());
+        add_feature(cpu_features::pku());
+        add_feature(cpu_features::ospke());
+
+        //add_feature(cpu_features::lass());
+        //add_feature(cpu_features::cmpccxadd());
+        //add_feature(cpu_features::architectural_performance_monitoring());
+        //add_feature(cpu_features::fzrm());
+        //add_feature(cpu_features::fsrs());
+        //add_feature(cpu_features::rsrcs());
+        //add_feature(cpu_features::fred());
+        //add_feature(cpu_features::lkgs());
+        //add_feature(cpu_features::non_serialising_wrmsr());
+        //add_feature(cpu_features::nmi_source_reporting());
+        //add_feature(cpu_features::amx_fp16());
+        //add_feature(cpu_features::hreset());
+        //add_feature(cpu_features::avx_ifma());
+        //add_feature(cpu_features::linear_address_masking());
+        //add_feature(cpu_features::msr_list());
+        //add_feature(cpu_features::invd());
+        //add_feature(cpu_features::movrs());
 
         if (detail::check_sensitive<cpu::simd_instructions>(flags)) {
             detail::property_set_impl simds;
@@ -351,21 +390,21 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
             //::add_simd<simd_instruction_set::avx>(simds, u8"AVX");
             //::add_simd<simd_instruction_set::avxvnni>(simds, u8"AVX VNNI");
             //::add_simd<simd_instruction_set::avxifma>(simds, u8"AVX IFMA");
-            ::add_simd<simd_instruction_set::avx2>(simds, u8"AVX 2");
-            ::add_simd<simd_instruction_set::avx512>(simds,
-                u8"AVX 512 Foundation");
-            ::add_simd<simd_instruction_set::avx512pf>(simds,
-                u8"AVX 512 Prefetch");
-            ::add_simd<simd_instruction_set::avx512dq>(simds,
-                u8"AVX 512 Vector Double Word and Quad Word");
-            ::add_simd<simd_instruction_set::avx512bw>(simds,
-                u8"AVX 512 Vector Byte and Word");
-            ::add_simd<simd_instruction_set::avx512vl>(simds,
-                u8"AVX 512 Vector Length");
-            ::add_simd<simd_instruction_set::avx512cd>(simds,
-                u8"AVX 512 Conflict Detection");
-            ::add_simd<simd_instruction_set::avx512ifma>(simds,
-                u8"AVX 512 Integer Fused Multiply Add");
+            //::add_simd<simd_instruction_set::avx2>(simds, u8"AVX 2");
+            //::add_simd<simd_instruction_set::avx512>(simds,
+            //    u8"AVX 512 Foundation");
+            //::add_simd<simd_instruction_set::avx512pf>(simds,
+            //    u8"AVX 512 Prefetch");
+            //::add_simd<simd_instruction_set::avx512dq>(simds,
+            //    u8"AVX 512 Vector Double Word and Quad Word");
+            //::add_simd<simd_instruction_set::avx512bw>(simds,
+            //    u8"AVX 512 Vector Byte and Word");
+            //::add_simd<simd_instruction_set::avx512vl>(simds,
+            //    u8"AVX 512 Vector Length");
+            //::add_simd<simd_instruction_set::avx512cd>(simds,
+            //    u8"AVX 512 Conflict Detection");
+            //::add_simd<simd_instruction_set::avx512ifma>(simds,
+            //    u8"AVX 512 Integer Fused Multiply Add");
             ::add_simd<simd_instruction_set::avx512er>(simds,
                 u8"AVX 512 Exponential and Reciprocal");
             ::add_simd<simd_instruction_set::avx5124fmaps>(simds, u8"AVX 512 "

@@ -135,6 +135,7 @@ namespace cpu_features {
             0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(2)> {
         typedef bool type;
         static constexpr auto name = u8"64-bit Debug Store (dtes64)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -144,6 +145,7 @@ namespace cpu_features {
             0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(3)> {
         typedef bool type;
         static constexpr auto name = u8"MONITOR and MWAIT (monitor)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -153,6 +155,7 @@ namespace cpu_features {
             0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(4)> {
         typedef bool type;
         static constexpr auto name = u8"CPL-Qualified Debug Store (ds-cpl)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -181,6 +184,7 @@ namespace cpu_features {
         typedef bool type;
         static constexpr auto name = u8"Enhanced Intel SpeedStep Technology "
             u8"(est)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -190,6 +194,7 @@ namespace cpu_features {
             0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(8)> {
         typedef bool type;
         static constexpr auto name = u8"Thermal Monitor 2 (tm2)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -207,6 +212,7 @@ namespace cpu_features {
             0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(10)> {
         typedef bool type;
         static constexpr auto name = u8"L1 context ID (cnxt-id)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -216,6 +222,7 @@ namespace cpu_features {
             0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(11)> {
         typedef bool type;
         static constexpr auto name = u8"Silicon Debug interface (sdbg)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -243,6 +250,7 @@ namespace cpu_features {
             0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(14)> {
         typedef bool type;
         static constexpr auto name = u8"Task Priority Messages (xtpr)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -253,6 +261,7 @@ namespace cpu_features {
         typedef bool type;
         static constexpr auto name = u8"Performance and Debug Capability "
             u8"(pdcm)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -262,6 +271,7 @@ namespace cpu_features {
             0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(17)> {
         typedef bool type;
         static constexpr auto name = u8"Process Context Identifiers (pcid)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -271,6 +281,7 @@ namespace cpu_features {
             0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(18)> {
         typedef bool type;
         static constexpr auto name = u8"Direct Cache Access (dca)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -296,6 +307,7 @@ namespace cpu_features {
         0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(21)> {
         typedef bool type;
         static constexpr auto name = u8"Extended APIC (x2apic)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -323,6 +335,7 @@ namespace cpu_features {
             0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(24)> {
         typedef bool type;
         static constexpr auto name = u8"TSC Deadline (tsc-deadline)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -381,6 +394,7 @@ namespace cpu_features {
         typedef bool type;
         static constexpr auto name = u8"On-board Random Number Generator "
             u8"(rdrnd)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -390,6 +404,7 @@ namespace cpu_features {
             0x00000001, cpu_info_register::ecx, detail::cpu_info_bit(31)> {
         typedef bool type;
         static constexpr auto name = u8"Hypervisor Present (hypervisor)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -399,6 +414,7 @@ namespace cpu_features {
             0x00000001, cpu_info_register::edx, detail::cpu_info_bit(0)> {
         typedef bool type;
         static constexpr auto name = u8"On-board x87 Floating-Point Unit (fpu)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -417,6 +433,7 @@ namespace cpu_features {
             0x00000001, cpu_info_register::edx, detail::cpu_info_bit(2)> {
         typedef bool type;
         static constexpr auto name = u8"Debugging Extensions (de)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -426,6 +443,7 @@ namespace cpu_features {
             0x00000001, cpu_info_register::edx, detail::cpu_info_bit(3)> {
         typedef bool type;
         static constexpr auto name = u8"Page Size Extension (pse)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -463,6 +481,7 @@ namespace cpu_features {
             0x00000001, cpu_info_register::edx, detail::cpu_info_bit(7)> {
         typedef bool type;
         static constexpr auto name = u8"Machine Check Exception (mce)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -482,6 +501,7 @@ namespace cpu_features {
         typedef bool type;
         static constexpr auto name = u8"Advanced Programmable Interrupt "
             u8"Controller (apic)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -491,6 +511,7 @@ namespace cpu_features {
             0x00000001, cpu_info_register::edx, detail::cpu_info_bit(11)> {
         typedef bool type;
         static constexpr auto name = u8"Fast System Call Instructions (sep)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -500,6 +521,7 @@ namespace cpu_features {
             0x00000001, cpu_info_register::edx, detail::cpu_info_bit(12)> {
         typedef bool type;
         static constexpr auto name = u8"Memory Type Range Registers (mtrr)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -509,6 +531,7 @@ namespace cpu_features {
             0x00000001, cpu_info_register::edx, detail::cpu_info_bit(13)> {
         typedef bool type;
         static constexpr auto name = u8"Page Global Enable (pge)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -518,6 +541,7 @@ namespace cpu_features {
         detail::cpu_info_bit(14)> {
         typedef bool type;
         static constexpr auto name = u8"Machine Check Architecture (mca)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -537,6 +561,7 @@ namespace cpu_features {
             0x00000001, cpu_info_register::edx, detail::cpu_info_bit(16)> {
         typedef bool type;
         static constexpr auto name = u8"Page Attribute Table (pat)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -546,6 +571,7 @@ namespace cpu_features {
             0x00000001, cpu_info_register::edx, detail::cpu_info_bit(17)> {
         typedef bool type;
         static constexpr auto name = u8"36-bit Page Size Extensions (pse-36)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -556,6 +582,7 @@ namespace cpu_features {
             0x00000001, cpu_info_register::edx, detail::cpu_info_bit(18)> {
         typedef bool type;
         static constexpr auto name = u8"Processor Serial Number (psn)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -565,6 +592,7 @@ namespace cpu_features {
             0x00000001, cpu_info_register::edx, detail::cpu_info_bit(19)> {
         typedef bool type;
         static constexpr auto name = u8"CLFLUSH";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -574,6 +602,8 @@ namespace cpu_features {
             0x00000001, cpu_info_register::edx, detail::cpu_info_bit(20)> {
         typedef bool type;
         static constexpr auto name = u8"No-Execute Bit (nx)";
+        // TODO: Itanium
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -583,6 +613,7 @@ namespace cpu_features {
             0x00000001, cpu_info_register::edx, detail::cpu_info_bit(21)> {
         typedef bool type;
         static constexpr auto name = u8"Debug Store (ds)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -593,6 +624,7 @@ namespace cpu_features {
         typedef bool type;
         static constexpr auto name = u8"On-Board Thermal Control MSRs for ACPI "
             u8"(acpi)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -610,6 +642,7 @@ namespace cpu_features {
             0x00000001, cpu_info_register::edx, detail::cpu_info_bit(24)> {
         typedef bool type;
         static constexpr auto name = u8"FXSAVE and FXSTOR (fxsr)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -635,6 +668,7 @@ namespace cpu_features {
             0x00000001, cpu_info_register::edx, detail::cpu_info_bit(27)> {
         typedef bool type;
         static constexpr auto name = u8"CPU Cache implements self-snoop (ss)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -644,6 +678,7 @@ namespace cpu_features {
             0x00000001, cpu_info_register::edx, detail::cpu_info_bit(28)> {
         typedef bool type;
         static constexpr auto name = u8"Maximum APIC IDs Reserved Field (htt)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -653,6 +688,7 @@ namespace cpu_features {
             0x00000001, cpu_info_register::edx, detail::cpu_info_bit(29)> {
         typedef bool type;
         static constexpr auto name = u8"Thermal Monitor (tm)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -662,6 +698,7 @@ namespace cpu_features {
             0x00000001, cpu_info_register::edx, detail::cpu_info_bit(30)> {
         typedef bool type;
         static constexpr auto name = u8"Itanium Processor Emulating x86 (ia64)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -671,6 +708,7 @@ namespace cpu_features {
             0x00000001, cpu_info_register::edx, detail::cpu_info_bit(31)> {
         typedef bool type;
         static constexpr auto name = u8"Pending Break Enable (pbe)";
+        static constexpr auto uncommon = true;
     };
 
     ///// <summary>
@@ -717,6 +755,7 @@ namespace cpu_features {
             0x00000005, cpu_info_register::eax, 0, 15> {
         typedef std::uint32_t type;
         static constexpr auto name = u8"Minimum Monitor Line Size";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -726,6 +765,7 @@ namespace cpu_features {
             0x00000005, cpu_info_register::ebx, 0, 15> {
         typedef std::uint32_t type;
         static constexpr auto name = u8"Maximum Monitor Line Size";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -736,6 +776,7 @@ namespace cpu_features {
             0x00000005, cpu_info_register::ecx, detail::cpu_info_bit(0)> {
         typedef bool type;
         static constexpr auto name = u8"Monitor Enumeration (emx)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -746,6 +787,7 @@ namespace cpu_features {
             0x00000005, cpu_info_register::ecx, detail::cpu_info_bit(1)> {
         typedef bool type;
         static constexpr auto name = u8"Interrupts as Break Events (ibe)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -756,6 +798,7 @@ namespace cpu_features {
             0x00000005, cpu_info_register::ecx, detail::cpu_info_bit(3)> {
         typedef bool type;
         static constexpr auto name = u8"Monitor-less MWAIT";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -765,6 +808,7 @@ namespace cpu_features {
             0x00000005, cpu_info_register::edx, 0, 3> {
         typedef std::uint32_t type;
         static constexpr auto name = u8"C0 Sub-States for MWAIT";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -774,6 +818,7 @@ namespace cpu_features {
             0x00000005, cpu_info_register::edx, 4, 7> {
         typedef std::uint32_t type;
         static constexpr auto name = u8"C1 Sub-States for MWAIT";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -783,6 +828,7 @@ namespace cpu_features {
             0x00000005, cpu_info_register::edx, 8, 11> {
         typedef std::uint32_t type;
         static constexpr auto name = u8"C2 Sub-States for MWAIT";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -792,6 +838,7 @@ namespace cpu_features {
             0x00000005, cpu_info_register::edx, 12, 15> {
         typedef std::uint32_t type;
         static constexpr auto name = u8"C3 Sub-States for MWAIT";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -801,6 +848,7 @@ namespace cpu_features {
             0x00000005, cpu_info_register::edx, 16, 19> {
         typedef std::uint32_t type;
         static constexpr auto name = u8"C4 Sub-States for MWAIT";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -810,6 +858,7 @@ namespace cpu_features {
             0x00000005, cpu_info_register::edx, 20, 23> {
         typedef std::uint32_t type;
         static constexpr auto name = u8"C5 Sub-States for MWAIT";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -819,6 +868,7 @@ namespace cpu_features {
             0x00000005, cpu_info_register::edx, 24, 27> {
         typedef std::uint32_t type;
         static constexpr auto name = u8"C6 Sub-States for MWAIT";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -828,6 +878,7 @@ namespace cpu_features {
             0x00000005, cpu_info_register::edx, 28, 31> {
         typedef std::uint32_t type;
         static constexpr auto name = u8"C7 Sub-States for MWAIT";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -837,6 +888,7 @@ namespace cpu_features {
             0x00000006, cpu_info_register::eax, detail::cpu_info_bit(0)> {
         typedef bool type;
         static constexpr auto name = u8"Digital Thermal Sensor (dts)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -846,6 +898,7 @@ namespace cpu_features {
             0x00000006, cpu_info_register::eax, detail::cpu_info_bit(1)> {
         typedef bool type;
         static constexpr auto name = u8"Turbo Boost Technology (turbo-boost)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -855,6 +908,7 @@ namespace cpu_features {
             0x00000006, cpu_info_register::eax, detail::cpu_info_bit(2)> {
         typedef bool type;
         static constexpr auto name = u8"Always Running APIC Timer (arat)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -864,6 +918,7 @@ namespace cpu_features {
             0x00000006, cpu_info_register::eax, detail::cpu_info_bit(4)> {
         typedef bool type;
         static constexpr auto name = u8"Power Limit Notification (pln)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -874,6 +929,7 @@ namespace cpu_features {
         typedef bool type;
         static constexpr auto name = u8"Extended Clock Modulation Duty "
             u8"Capability (ecmd)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -885,6 +941,7 @@ namespace cpu_features {
         typedef bool type;
         static constexpr auto name = u8"Package Thermal Management Capability "
             u8"(ptm)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -895,6 +952,7 @@ namespace cpu_features {
         typedef bool type;
         static constexpr auto name = u8"Hardware-Controlled Performance States "
             u8"(hwp)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -905,6 +963,7 @@ namespace cpu_features {
         typedef bool type;
         static constexpr auto name = u8"Hardware-Controlled Performance States "
             u8"Notification (hwp-notification)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -915,6 +974,7 @@ namespace cpu_features {
         typedef bool type;
         static constexpr auto name = u8"Hardware-Controlled Performance States "
             u8"Activity Window Control (hwp-activity-window)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -926,6 +986,7 @@ namespace cpu_features {
         static constexpr auto name = u8"Hardware-Controlled Performance States "
             u8"Energy Performance Preference Control "
             u8"(hwp-energy-performance-preference)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -936,6 +997,7 @@ namespace cpu_features {
         typedef bool type;
         static constexpr auto name = u8"Hardware-Controlled Performance States "
             u8"Package-Level Control (hwp-package-level-request)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -945,6 +1007,7 @@ namespace cpu_features {
             0x00000006, cpu_info_register::eax, detail::cpu_info_bit(13)> {
         typedef bool type;
         static constexpr auto name = u8"Hardware Duty Cycling (hdc)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -954,6 +1017,7 @@ namespace cpu_features {
             0x00000006, cpu_info_register::ebx, detail::cpu_info_bit(14)> {
         typedef bool type;
         static constexpr auto name = u8"Intel Turbo Boost Max Technology 3.0";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -965,6 +1029,7 @@ namespace cpu_features {
         typedef std::uint16_t type;
         static constexpr auto name = u8"Hardware-Controlled Performance States "
             u8"Capabilities (hwp-cap)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -976,6 +1041,7 @@ namespace cpu_features {
         static constexpr auto name = u8"Hardware-Controlled Performance States "
             u8"Platform Environment Control Interface Override "
             u8"(hwp-peci-override)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -986,6 +1052,7 @@ namespace cpu_features {
         typedef bool type;
         static constexpr auto name = u8"Flexible Hardware-Controlled "
             u8"Performance States (flexible-hwp)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -997,6 +1064,7 @@ namespace cpu_features {
         typedef bool type;
         static constexpr auto name = u8"Hardware-Controlled Performance States "
             u8"Request Fast Access (hwp-request-fast-access)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -1007,6 +1075,7 @@ namespace cpu_features {
         typedef bool type;
         static constexpr auto name = u8"Hardware Feedback Interface "
             u8"(hw-feedback)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -1018,6 +1087,7 @@ namespace cpu_features {
         typedef bool type;
         static constexpr auto name = u8"Hardware-Controlled Performance States "
             u8"Request Ignore Idle (hwp-request-ignore-idle)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -1028,6 +1098,7 @@ namespace cpu_features {
         typedef bool type;
         static constexpr auto name = u8"Hardware-Controlled Performance States "
             u8"Control MSR (hwp-control-msr)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -1038,6 +1109,7 @@ namespace cpu_features {
         typedef bool type;
         static constexpr auto name = u8"Intel Thread Director "
             u8"(thread-director)";
+        static constexpr auto uncommon = true;
     };
 
     /// ECX and EDX missing
@@ -1058,6 +1130,7 @@ namespace cpu_features {
             0x00000007, cpu_info_register::eax, detail::cpu_info_bit(1)> {
         typedef bool type;
         static constexpr auto name = u8"SM3 Hash Extensions (sm3)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -1067,6 +1140,7 @@ namespace cpu_features {
             0x00000007, cpu_info_register::eax, detail::cpu_info_bit(2)> {
         typedef bool type;
         static constexpr auto name = u8"SM4 Cipher Extensions (sm4)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -1077,6 +1151,7 @@ namespace cpu_features {
         typedef bool type;
         static constexpr auto name = u8"Remote Atomic Operations on Integers "
             u8"(rao-int)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -1086,6 +1161,7 @@ namespace cpu_features {
         typedef bool type;
         static constexpr auto name = u8"AVX Vector Neural Network Instructions "
             u8"(avx-vnni)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -1097,6 +1173,8 @@ namespace cpu_features {
             u8"Numbers (avx512-bf16)";
     };
 
+#if false
+    TODO: Figure out how we encode ECX=1
     /// <summary>
     /// Indicates whether linear address space separation (LASS) is supported.
     /// </summary>
@@ -1104,6 +1182,7 @@ namespace cpu_features {
             0x00000007, cpu_info_register::eax, detail::cpu_info_bit(6)> {
         typedef bool type;
         static constexpr auto name = u8"Linear Address Space Separation (lass)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -1113,6 +1192,7 @@ namespace cpu_features {
             0x00000007, cpu_info_register::eax, detail::cpu_info_bit(7)> {
         typedef bool type;
         static constexpr auto name = u8"CMPccXADD";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -1123,6 +1203,7 @@ namespace cpu_features {
         typedef bool type;
         static constexpr auto name = u8"Architectural Performance Monitoring "
             u8"Extended Leaf (archperf­monext)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -1132,6 +1213,7 @@ namespace cpu_features {
             0x00000007, cpu_info_register::eax, detail::cpu_info_bit(10)> {
         typedef bool type;
         static constexpr auto name = u8"Fast Zero-Length REP MOVSB (fzrm)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -1141,6 +1223,7 @@ namespace cpu_features {
             0x00000007, cpu_info_register::eax, detail::cpu_info_bit(11)> {
         typedef bool type;
         static constexpr auto name = u8"Fast Short REP STOSB (fsrs)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -1151,6 +1234,7 @@ namespace cpu_features {
         typedef bool type;
         static constexpr auto name = u8"Fast short REP CMPSB and REP SCASB "
             u8"(rsrcs)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -1161,6 +1245,7 @@ namespace cpu_features {
         typedef bool type;
         static constexpr auto name = u8"Flexible Return and Event Delivery "
             u8"(fred)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -1170,6 +1255,7 @@ namespace cpu_features {
             0x00000007, cpu_info_register::eax, detail::cpu_info_bit(18)> {
         typedef bool type;
         static constexpr auto name = u8"LKGS";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -1180,6 +1266,7 @@ namespace cpu_features {
         typedef bool type;
         static constexpr auto name = u8"Non-Serialising Write to MSRs "
             u8"(wrmsrns)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -1190,6 +1277,7 @@ namespace cpu_features {
         typedef bool type;
         static constexpr auto name = u8"Non-Maskable Interrupt Source "
             "Reporting (nmi-src)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -1200,6 +1288,7 @@ namespace cpu_features {
         typedef bool type;
         static constexpr auto name = u8"AMX instructions for FP16 numbers "
             u8"(amx-fp16)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -1210,6 +1299,7 @@ namespace cpu_features {
             0x00000007, cpu_info_register::eax, detail::cpu_info_bit(22)> {
         typedef bool type;
         static constexpr auto name = u8"Processor History Reset (hreset)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -1228,6 +1318,7 @@ namespace cpu_features {
             0x00000007, cpu_info_register::eax, detail::cpu_info_bit(26)> {
         typedef bool type;
         static constexpr auto name = u8"Linear Address Masking (lam)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -1237,6 +1328,7 @@ namespace cpu_features {
             0x00000007, cpu_info_register::eax, detail::cpu_info_bit(27)> {
         typedef bool type;
         static constexpr auto name = u8"RDMSRLIST and WRMSRLIST (msr-list)";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -1246,6 +1338,7 @@ namespace cpu_features {
             0x00000007, cpu_info_register::eax, detail::cpu_info_bit(30)> {
         typedef bool type;
         static constexpr auto name = u8"INVD";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -1257,7 +1350,396 @@ namespace cpu_features {
         typedef bool type;
         static constexpr auto name = u8"Memory Read/Prefetch with Read-Shared "
             u8"Hint (movrs)";
+        static constexpr auto uncommon = true;
     };
+#endif
+
+    /// <summary>
+    /// Answer the number of sub-leafs (possible values for ECX) of leaf 0x7.
+    /// </summary>
+    struct extended_features final : cpu_info_selector<
+            0x00000007, cpu_info_register::eax, 0, 31> {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"Number of Sub-Leafs of Leaf 0x7";
+    };
+
+    struct fsgsbase final : cpu_info_detector<
+            0x00000007, cpu_info_register::ebx, detail::cpu_info_bit(0)> {
+        typedef bool type;
+        static constexpr auto name = u8"Access to Base of %fs and %gs "
+            u8"(fsgsbase)";
+        static constexpr auto uncommon = true;
+    };
+
+    struct tsc_adjust final : cpu_info_detector<
+            0x00000007, cpu_info_register::ebx, detail::cpu_info_bit(1)> {
+        typedef bool type;
+        static constexpr auto name = u8"TSC Adjust MSR (tsc-adjust)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Checks whether the Software Guard Extensions (SGX) are supported.
+    /// </summary>
+    struct sgx final : cpu_info_detector<
+            0x00000007, cpu_info_register::ebx, detail::cpu_info_bit(2)> {
+        typedef bool type;
+        static constexpr auto name = u8"Software Guard Extensions (sgx)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Checks whether Bit Manipulation Instruction Set 1 (BMI1) is supported.
+    /// </summary>
+    struct bmi1 final : cpu_info_detector<
+            0x00000007, cpu_info_register::ebx, detail::cpu_info_bit(3)> {
+        typedef bool type;
+        static constexpr auto name = u8"Bit Manipulation Instruction Set 1 "
+            u8"(bmi1)";
+    };
+
+    /// <summary>
+    /// Checks whether TSX Hardware Lock Elision is supported.
+    /// </summary>
+    struct hle final : cpu_info_detector<
+            0x00000007, cpu_info_register::ebx, detail::cpu_info_bit(4)> {
+        typedef bool type;
+        static constexpr auto name = u8"TSX Hardware Lock Elision (hle)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Checks whether AVX2 instructions are supported.
+    /// </summary>
+    struct avx2 final : simd_detector<simd_instruction_set::avx2> {
+        typedef bool type;
+        static constexpr auto name = u8"Advanced Vector Extensions 2 (avx2)";
+    };
+
+    struct fdp_exception_only final : cpu_info_detector<
+            0x00000007, cpu_info_register::ebx, detail::cpu_info_bit(6)> {
+        typedef bool type;
+        static constexpr auto name = u8"x87 FPU Data Pointer Register Updated "
+            u8"on Exceptions Only (fdp-excptn-only)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Checks whether Supervisor Mode Execution Prevention is supported.
+    /// </summary>
+    struct smep final : cpu_info_detector<
+            0x00000007, cpu_info_register::ebx, detail::cpu_info_bit(7)> {
+        typedef bool type;
+        static constexpr auto name = u8"Supervisor Mode Execution Prevention "
+            u8"(smep)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Checks whether Bit Manipulation Instruction Set 2 (BMI2) is supported.
+    /// </summary>
+    struct bmi2 final : cpu_info_detector<
+            0x00000007, cpu_info_register::ebx, detail::cpu_info_bit(8)> {
+        typedef bool type;
+        static constexpr auto name = u8"Bit Manipulation Instruction Set 2 "
+            u8"(bmi2)";
+    };
+
+    /// <summary>
+    /// Checks whether Enhanced REP MOVSB/STOSB is supported.
+    /// </summary>
+    struct erms final : cpu_info_detector<
+            0x00000007, cpu_info_register::ebx, detail::cpu_info_bit(9)> {
+        typedef bool type;
+        static constexpr auto name = u8"Enhanced REP MOVSB/STOSB (erms)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Checks whether the INVPCID instruction is supported.
+    /// </summary>
+    struct invpcid final : cpu_info_detector<
+            0x00000007, cpu_info_register::ebx, detail::cpu_info_bit(10)> {
+        typedef bool type;
+        static constexpr auto name = u8"INVPCID";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Checks whether TSX Restricted Transactional Memory is supported.
+    /// </summary>
+    struct rtm final : cpu_info_detector<
+            0x00000007, cpu_info_register::ebx, detail::cpu_info_bit(11)> {
+        typedef bool type;
+        static constexpr auto name = u8"TSX Restricted Transactional Memory "
+            u8"(rtm)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Checks whether Intel Resource Director (RDT) Monitoring or AMD Platform
+    /// QOS Monitoring is supported.
+    /// </summary>
+    struct intel_resource_director_monitoring final: cpu_info_detector<
+            0x00000007, cpu_info_register::ebx, detail::cpu_info_bit(12)> {
+        typedef bool type;
+        static constexpr auto name = u8"Intel Resource Director Monitoring or "
+            u8"AMD Platform QOS Monitoring (rdt-m/pqm)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Checks whether Intel Resource Director (RDT) Monitoring or AMD Platform
+    /// QOS Monitoring is supported.
+    /// </summary>
+    typedef intel_resource_director_monitoring adm_platform_qos_monitoring;
+
+    /// <summary>
+    /// Checks whether x87 FPU CS and DS are deprecated.
+    /// </summary>
+    struct fcs_fds_deprecated final : cpu_info_detector<
+            0x00000007, cpu_info_register::ebx, detail::cpu_info_bit(13)> {
+        typedef bool type;
+        static constexpr auto name = u8"x87 FPU CS and DS Deprecated "
+            u8"(fcs-fds-­deprecation)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Detects whether Intel MPX is supported.
+    /// </summary>
+    struct mpx final: cpu_info_detector<
+            0x00000007, cpu_info_register::ebx, detail::cpu_info_bit(14)> {
+        typedef bool type;
+        static constexpr auto name = u8"Intel Memory Protection Extensions "
+            u8"(mpx)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Detects whether Intel Resource Director (RDT) Allocation or AMD Platform
+    /// QOS Enforcement are present.
+    /// </summary>
+    struct intel_resource_director_allocation final: cpu_info_detector<
+            0x00000007, cpu_info_register::ebx, detail::cpu_info_bit(15)> {
+        typedef bool type;
+        static constexpr auto name = u8"Intel Resource Director Allocation or "
+            u8"AMD Platform QOS Enforcement (rdt-a/pqe)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Detects whether Intel Resource Director (RDT) Allocation or AMD Platform
+    /// QOS Enforcement are present.
+    /// </summary>
+    typedef intel_resource_director_allocation amd_platform_qos_enforcement;
+
+    /// <summary>
+    /// Detects whether the foundation instruction set of AVX-512 is supported.
+    /// </summary>
+    struct avx512_f final : simd_detector<simd_instruction_set::avx512f> {
+        typedef bool type;
+        static constexpr auto name = u8"AVX-512 Foundation (avx512-f)";
+    };
+
+    /// <summary>
+    /// Detects whether AVX-512 DQ is supported.
+    /// </summary>
+    struct avx512_dq final : simd_detector<simd_instruction_set::avx512dq> {
+        typedef bool type;
+        static constexpr auto name = u8"AVX-512 Double Word and Quad Word "
+            u8"Instructions (avx512-dq)";
+    };
+
+    /// <summary>
+    /// Checks whether the RDSEED instruction is supported.
+    /// </summary>
+    struct rdseed final : cpu_info_detector<
+            0x00000007, cpu_info_register::ebx, detail::cpu_info_bit(18)> {
+        typedef bool type;
+        static constexpr auto name = u8"RDSEED";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Checks whether Multi-Precision Add-Carry Instruction Extensions are present.
+    /// </summary>
+    struct adx final : cpu_info_detector<
+            0x00000007, cpu_info_register::ebx, detail::cpu_info_bit(19)> {
+        typedef bool type;
+        static constexpr auto name = u8"Multi-Precision Add-Carry "
+            u8"Instruction Extensions (adx)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Checks whether Supervisor Mode Access Prevention is supported.
+    /// </summary>
+    struct smap final : cpu_info_detector<
+            0x00000007, cpu_info_register::ebx, detail::cpu_info_bit(20)> {
+        typedef bool type;
+        static constexpr auto name = u8"Supervisor Mode Access Prevention "
+            u8"(smap)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Detects whether AVX-512 IFMA is supported.
+    /// </summary>
+    struct avx512_ifma final : simd_detector<simd_instruction_set::avx512ifma> {
+        typedef bool type;
+        static constexpr auto name = u8"AVX-512 Integer Fused Multiply-Add "
+            u8"Instructions (avx512-ifma)";
+    };
+
+    /// <summary>
+    /// Checks whether PCOMMIT is supported.
+    /// </summary>
+    struct pcommit final : cpu_info_detector<
+            0x00000007, cpu_info_register::ebx, detail::cpu_info_bit(22)> {
+        typedef bool type;
+        static constexpr auto name = u8"PCOMMIT";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Checks whether CLFLUSHOPT is supported.
+    /// </summary>
+    struct clflushopt final : cpu_info_detector<
+            0x00000007, cpu_info_register::ebx, detail::cpu_info_bit(23)> {
+        typedef bool type;
+        static constexpr auto name = u8"CLFLUSHOPT";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Checks whether CLWB is supported.
+    /// </summary>
+    struct clwb final : cpu_info_detector<
+            0x00000007, cpu_info_register::ebx, detail::cpu_info_bit(24)> {
+        typedef bool type;
+        static constexpr auto name = u8"CLWB";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Checks whether Intel Processor Trace is supported.
+    /// </summary>
+    struct pt final : cpu_info_detector<
+            0x00000007, cpu_info_register::ebx, detail::cpu_info_bit(25)> {
+        typedef bool type;
+        static constexpr auto name = u8"Intel Procesor Trace (pt)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Detects whether AVX-512 PF is supported.
+    /// </summary>
+    struct avx512_pf final : simd_detector<simd_instruction_set::avx512pf> {
+        typedef bool type;
+        static constexpr auto name = u8"AVX-512 Prefetch Instructions "
+            u8"(avx512-pf)";
+    };
+
+    /// <summary>
+    /// Detects whether AVX-512 ER is supported.
+    /// </summary>
+    struct avx512_er final : simd_detector<simd_instruction_set::avx512er> {
+        typedef bool type;
+        static constexpr auto name = u8"AVX-512 Exponential and Reciprocal "
+            u8"Instructions (avx512-er)";
+    };
+
+    /// <summary>
+    /// Detects whether AVX-512 CD is supported.
+    /// </summary>
+    struct avx512_cd final : simd_detector<simd_instruction_set::avx512cd> {
+        typedef bool type;
+        static constexpr auto name = u8"AVX-512 Conflict Detection "
+            u8"Instructions (avx512-cd)";
+    };
+
+    /// <summary>
+    /// Checks whether SHA-1 and SHA-256 extensions are supported.
+    /// </summary>
+    struct sha final : cpu_info_detector<
+            0x00000007, cpu_info_register::ebx, detail::cpu_info_bit(29)> {
+        typedef bool type;
+        static constexpr auto name = u8"SHA-1 and SHA-256 extensions (sha)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Detects whether AVX-512 BW is supported.
+    /// </summary>
+    struct avx512_bw final : simd_detector<simd_instruction_set::avx512bw> {
+        typedef bool type;
+        static constexpr auto name = u8"AVX-512 Byte and Word Instructions "
+            u8"(avx512-bw)";
+    };
+
+    /// <summary>
+    /// Detects whether AVX-512 VL is supported.
+    /// </summary>
+    struct avx512_vl final : simd_detector<simd_instruction_set::avx512vl> {
+        typedef bool type;
+        static constexpr auto name = u8"AVX-512 Vector Length Extensions "
+            u8"(avx512-vl)";
+    };
+
+    /// <summary>
+    /// Checks whether the PREFETCHWT1 instruction is supported.
+    /// </summary>
+    struct prefetchwt1 final : cpu_info_detector<
+            0x00000007, cpu_info_register::ecx, detail::cpu_info_bit(0)> {
+        typedef bool type;
+        static constexpr auto name = u8"PREFETCHWT1";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Detects whether AVX-512 VBMI is supported.
+    /// </summary>
+    struct avx512_vbmi final : simd_detector<simd_instruction_set::avx512vbmi> {
+        typedef bool type;
+        static constexpr auto name = u8"AVX-512 Vector Bit Manipulation "
+            u8"Instructions (avx512-vbmi)";
+    };
+
+    /// <summary>
+    /// Checks whether the user-mode instruction prevention is supported.
+    /// </summary>
+    struct umip final : cpu_info_detector<
+            0x00000007, cpu_info_register::ecx, detail::cpu_info_bit(2)> {
+        typedef bool type;
+        static constexpr auto name = u8"User-mode Instruction Prevention "
+            u8"(umip)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Checks whether the memory protection keys for user-mode pages are
+    /// supported.
+    /// </summary>
+    struct pku final : cpu_info_detector<
+            0x00000007, cpu_info_register::ecx, detail::cpu_info_bit(3)> {
+        typedef bool type;
+        static constexpr auto name = u8"Memory Protection Keys for User-Mode "
+            u8"Pages (pku)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Checks whether <paramref name="pku" /> is enabled by the OS.
+    /// </summary>
+    struct ospke final : cpu_info_detector<
+            0x00000007, cpu_info_register::ecx, detail::cpu_info_bit(4)> {
+        typedef bool type;
+        static constexpr auto name = u8"Memory Protection Keys for User-Mode "
+            u8"Pages Enabled by Operating System (ospke)";
+        static constexpr auto uncommon = true;
+    };
+
 
     /// <summary>
     /// Checks whether the V2 extended topology enumeration leaf 0x1F is supported.
