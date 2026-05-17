@@ -2338,6 +2338,60 @@ namespace cpu_features {
     //    static constexpr auto name = u8"mpsadbw_512";
     //};
 
+    /// <summary>
+    /// Asymmetric RDT Monitoring capability is available.
+    /// </summary>
+    struct asymmetric_rdt_mon final : cpu_info_bit_ex<
+            0x00000007, 0x00000001, cpu_info_register::ecx, 0> {
+        typedef bool type;
+        static constexpr auto name = u8"Asymmetric RDT Monitoring "
+            u8"Capability (rdt-m-asym)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Asymmetric RDT Allocation capability is available.
+    /// </summary>
+    struct asymmetric_rdt_alloc final : cpu_info_bit_ex<
+            0x00000007, 0x00000001, cpu_info_register::ecx, 1> {
+        typedef bool type;
+        static constexpr auto name = u8"Asymmetric RDT Allocation "
+            u8"Capability (rdt-a-asym)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// X86S (cancelled).
+    /// </summary>
+    struct legacy_­reduced_­isa final : cpu_info_bit_ex<
+            0x00000007, 0x00000001, cpu_info_register::ecx, 2> {
+        typedef bool type;
+        static constexpr auto name = u8"X86S (legacy-­reduced-isa)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// 64-bit Startup Inter-Processor Interrupt (part of cancelled X86S).
+    /// </summary>
+    struct sipi64 final : cpu_info_bit_ex<
+            0x00000007, 0x00000001, cpu_info_register::ecx, 4> {
+        typedef bool type;
+        static constexpr auto name = u8"64-bit Startup Inter-Processor "
+            u8"Interrupt (sipi64)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Immediate forms of the RDMSR and WRMSRNS instructions are available.
+    /// </summary>
+    struct immediate_msr final : cpu_info_bit_ex<
+            0x00000007, 0x00000001, cpu_info_register::ecx, 5> {
+        typedef bool type;
+        static constexpr auto name = u8"Immediate forms of the RDMSR and "
+            u8"WRMSRNS Instructions (msr-imm)";
+        static constexpr auto uncommon = true;
+    };
+
 
     /// <summary>
     /// Checks whether the V2 extended topology enumeration leaf 0x1F is supported.

@@ -455,8 +455,14 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
             ::add_cpu_feature<cpu_features::ppin>(ps, info);
             ::add_cpu_feature<cpu_features::pbndkb>(ps, info);
             ::add_cpu_feature<cpu_features::cpuid_max_value>(ps, info);
-            
+
             // ECX
+            ::add_cpu_feature<cpu_features::asymmetric_rdt_mon>(ps, info);
+            ::add_cpu_feature<cpu_features::asymmetric_rdt_alloc>(ps, info);
+            ::add_cpu_feature<cpu_features::legacy_­reduced_­isa>(ps, info);
+            ::add_cpu_feature<cpu_features::sipi64>(ps, info);
+            ::add_cpu_feature<cpu_features::immediate_msr>(ps, info);
+
             // EDX
         }
 
