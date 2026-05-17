@@ -13,8 +13,6 @@
 #include "visus/autodoc/cpu.h"
 #include "visus/autodoc/cpu_features.h"
 #include "visus/autodoc/cpu_info.h"
-#include "visus/autodoc/cpu_info_detector.h"
-#include "visus/autodoc/cpu_states.h"
 #include "visus/autodoc/cpu_vendor.h"
 #include "visus/autodoc/simd_detector.h"
 

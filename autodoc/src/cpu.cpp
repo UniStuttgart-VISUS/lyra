@@ -54,6 +54,16 @@ bool add_amd_topology(_Inout_ LYRA_DETAIL_NAMESPACE::property_set_impl& ps) {
 
 
 /// <summary>
+/// Adds a CPU feature or property to <paramref name="ps" />.
+/// </summary>
+template<class TFeature>
+void add_cpu_feature(_Inout_ LYRA_DETAIL_NAMESPACE::property_set_impl& ps,
+        _In_ const LYRA_NAMESPACE::cpu_info& info) {
+    ps.add<TFeature>(TFeature::get(info));
+};
+
+
+/// <summary>
 /// Adds the CPU topology from CPUID queries to <paramref name="ps" />.
 /// </summary>
 /// <remarks>
@@ -81,17 +91,6 @@ bool add_intel_topology(_Inout_ LYRA_DETAIL_NAMESPACE::property_set_impl& ps) {
     }
 
     return false;
-}
-
-
-/// <summary>
-/// Tests whether <typeparamref name="I" /> is supported and adds the result to
-/// <paramref name="ps" />.
-/// </summary>
-template<LYRA_NAMESPACE::simd_instruction_set I>
-inline void add_simd(_Inout_ LYRA_DETAIL_NAMESPACE::property_set_impl& ps,
-        _In_z_ const char *name) {
-    ps.add(name, LYRA_NAMESPACE::simd_detector<I>());
 }
 
 
@@ -196,238 +195,269 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
     }
 
     if (detail::check_flags<cpu::features>(flags)) {
+        cpu_info info;
         detail::property_set_impl props;
 
-        const auto add_feature = [&props](const auto& feature) {
-            typedef std::decay_t<decltype(feature)> feature_type;
-            props.add<feature_type>(feature);
-        };
+        if (get_cpu_info(info, 0x00000001)) {
+            // EAX
+            ::add_cpu_feature<cpu_features::stepping_id>(ps, info);
+            const auto model = cpu_features::model::get(info);
+            const auto ext_model = cpu_features::extended_model::get(info);
+            ps.add(u8"Model", (ext_model << 4) | model);
+            const auto family = cpu_features::family_id::get(info);
+            const auto ext_family = cpu_features::extended_family_id::get(info);
+            ps.add(u8"Family", (ext_family << 4) | family);
+            ::add_cpu_feature<cpu_features::processor_type>(ps, info);
+            ::add_cpu_feature<cpu_features::sse3>(ps, info);
+            ::add_cpu_feature<cpu_features::pclmulqdq>(ps, info);
+            ::add_cpu_feature<cpu_features::dtes64>(ps, info);
+            ::add_cpu_feature<cpu_features::monitor>(ps, info);
+            ::add_cpu_feature<cpu_features::ds_cpl>(ps, info);
+            ::add_cpu_feature<cpu_features::vmx>(ps, info);
+            ::add_cpu_feature<cpu_features::smx>(ps, info);
+            ::add_cpu_feature<cpu_features::est>(ps, info);
+            ::add_cpu_feature<cpu_features::tm2>(ps, info);
+            ::add_cpu_feature<cpu_features::ssse3>(ps, info);
+            ::add_cpu_feature<cpu_features::cnxt_id>(ps, info);
+            ::add_cpu_feature<cpu_features::sdbg>(ps, info);
+            ::add_cpu_feature<cpu_features::fma>(ps, info);
+            ::add_cpu_feature<cpu_features::cx16>(ps, info);
+            ::add_cpu_feature<cpu_features::xtpr>(ps, info);
+            ::add_cpu_feature<cpu_features::pdcm>(ps, info);
+            ::add_cpu_feature<cpu_features::pcid>(ps, info);
+            ::add_cpu_feature<cpu_features::dca>(ps, info);
+            ::add_cpu_feature<cpu_features::sse4_1>(ps, info);
+            ::add_cpu_feature<cpu_features::sse4_2>(ps, info);
+            ::add_cpu_feature<cpu_features::x2apic>(ps, info);
+            ::add_cpu_feature<cpu_features::movbe>(ps, info);
+            ::add_cpu_feature<cpu_features::popcnt>(ps, info);
+            ::add_cpu_feature<cpu_features::tsc_deadline>(ps, info);
+            ::add_cpu_feature<cpu_features::aes>(ps, info);
+            ::add_cpu_feature<cpu_features::xsave>(ps, info);
+            ::add_cpu_feature<cpu_features::osxsave>(ps, info);
+            ::add_cpu_feature<cpu_features::avx>(ps, info);
+            ::add_cpu_feature<cpu_features::f16c>(ps, info);
+            ::add_cpu_feature<cpu_features::rdrnd>(ps, info);
+            ::add_cpu_feature<cpu_features::hypervisor>(ps, info);
 
-        add_feature(cpu_features::stepping_id());
-        props.add(u8"Model", (cpu_features::extended_model() << 4)
-            | cpu_features::model());
-        props.add(u8"Family", cpu_features::extended_family_id()
-            + cpu_features::family_id());
-        add_feature(cpu_features::processor_type());
-        add_feature(cpu_features::brand());
-        add_feature(cpu_features::clflush_size());
-        add_feature(cpu_features::max_cpu_id());
-        add_feature(cpu_features::apic_id());
-        add_feature(cpu_features::sse3());
-        add_feature(cpu_features::pclmulqdq());
-        add_feature(cpu_features::dtes64());
-        add_feature(cpu_features::monitor());
-        add_feature(cpu_features::ds_cpl());
-        add_feature(cpu_features::vmx());
-        add_feature(cpu_features::smx());
-        add_feature(cpu_features::est());
-        add_feature(cpu_features::tm2());
-        add_feature(cpu_features::ssse3());
-        add_feature(cpu_features::cnxt_id());
-        add_feature(cpu_features::sdbg());
-        add_feature(cpu_features::fma());
-        add_feature(cpu_features::cx16());
-        add_feature(cpu_features::xtpr());
-        add_feature(cpu_features::pdcm());
-        add_feature(cpu_features::pcid());
-        add_feature(cpu_features::dca());
-        add_feature(cpu_features::sse4_1());
-        add_feature(cpu_features::sse4_2());
-        add_feature(cpu_features::x2apic());
-        add_feature(cpu_features::movbe());
-        add_feature(cpu_features::popcnt());
-        add_feature(cpu_features::tsc_deadline());
-        add_feature(cpu_features::aes());
-        add_feature(cpu_features::xsave());
-        add_feature(cpu_features::osxsave());
-        add_feature(cpu_features::avx());
-        add_feature(cpu_features::f16c());
-        add_feature(cpu_features::rdrnd());
-        add_feature(cpu_features::hypervisor());
-        add_feature(cpu_features::fpu());
-        add_feature(cpu_features::vme());
-        add_feature(cpu_features::de());
-        add_feature(cpu_features::pse());
-        add_feature(cpu_features::tsc());
-        add_feature(cpu_features::msr());
-        add_feature(cpu_features::pae());
-        add_feature(cpu_features::mce());
-        add_feature(cpu_features::cx8());
-        add_feature(cpu_features::apic());
-        add_feature(cpu_features::sep());
-        add_feature(cpu_features::mtrr());
-        add_feature(cpu_features::pge());
-        add_feature(cpu_features::mca());
-        add_feature(cpu_features::cmov());
-        add_feature(cpu_features::pse36());
-        add_feature(cpu_features::psn());
-        add_feature(cpu_features::clfsh());
-        add_feature(cpu_features::nx());
-        add_feature(cpu_features::ds());
-        add_feature(cpu_features::acpi());
-        add_feature(cpu_features::mmx());
-        add_feature(cpu_features::fxsr());
-        add_feature(cpu_features::sse());
-        add_feature(cpu_features::sse2());
-        add_feature(cpu_features::ss());
-        add_feature(cpu_features::htt());
-        add_feature(cpu_features::ia64());
-        add_feature(cpu_features::pbe());
-        add_feature(cpu_features::topology_leaf_b());
-        add_feature(cpu_features::topology_extensions());
-        {
-            const cpu_features::emx emx;
-            add_feature(emx);
-            if (emx) {
-                add_feature(cpu_features::min_monitor_size());
-                add_feature(cpu_features::max_monitor_size());
-                add_feature(cpu_features::ibe());
-                add_feature(cpu_features::monitorless_mwait());
-                add_feature(cpu_features::c0_sub_states());
-                add_feature(cpu_features::c1_sub_states());
-                add_feature(cpu_features::c2_sub_states());
-                add_feature(cpu_features::c3_sub_states());
-                add_feature(cpu_features::c4_sub_states());
-                add_feature(cpu_features::c5_sub_states());
-                add_feature(cpu_features::c6_sub_states());
-                add_feature(cpu_features::c7_sub_states());
+            // EBX
+            ::add_cpu_feature<cpu_features::brand>(ps, info);
+            ::add_cpu_feature<cpu_features::clflush_size>(ps, info);
+            ::add_cpu_feature<cpu_features::max_cpu_id>(ps, info);
+            ::add_cpu_feature<cpu_features::apic_id>(ps, info);
+
+            // ECX
+
+
+            // EDX
+            ::add_cpu_feature<cpu_features::fpu>(ps, info);
+            ::add_cpu_feature<cpu_features::vme>(ps, info);
+            ::add_cpu_feature<cpu_features::de>(ps, info);
+            ::add_cpu_feature<cpu_features::pse>(ps, info);
+            ::add_cpu_feature<cpu_features::tsc>(ps, info);
+            ::add_cpu_feature<cpu_features::msr>(ps, info);
+            ::add_cpu_feature<cpu_features::pae>(ps, info);
+            ::add_cpu_feature<cpu_features::mce>(ps, info);
+            ::add_cpu_feature<cpu_features::cx8>(ps, info);
+            ::add_cpu_feature<cpu_features::apic>(ps, info);
+            ::add_cpu_feature<cpu_features::sep>(ps, info);
+            ::add_cpu_feature<cpu_features::mtrr>(ps, info);
+            ::add_cpu_feature<cpu_features::pge>(ps, info);
+            ::add_cpu_feature<cpu_features::mca>(ps, info);
+            ::add_cpu_feature<cpu_features::cmov>(ps, info);
+            ::add_cpu_feature<cpu_features::pse36>(ps, info);
+            ::add_cpu_feature<cpu_features::psn>(ps, info);
+            ::add_cpu_feature<cpu_features::clfsh>(ps, info);
+            ::add_cpu_feature<cpu_features::nx>(ps, info);
+            ::add_cpu_feature<cpu_features::ds>(ps, info);
+            ::add_cpu_feature<cpu_features::acpi>(ps, info);
+            ::add_cpu_feature<cpu_features::mmx>(ps, info);
+            ::add_cpu_feature<cpu_features::fxsr>(ps, info);
+            ::add_cpu_feature<cpu_features::sse>(ps, info);
+            ::add_cpu_feature<cpu_features::sse2>(ps, info);
+            ::add_cpu_feature<cpu_features::ss>(ps, info);
+            ::add_cpu_feature<cpu_features::htt>(ps, info);
+            ::add_cpu_feature<cpu_features::ia64>(ps, info);
+            ::add_cpu_feature<cpu_features::pbe>(ps, info);
+        }
+
+        if (get_cpu_info(info, 0x00000005)) {
+            ::add_cpu_feature<cpu_features::emx>(ps, info);
+            if (cpu_features::emx::get(info)) {
+                ::add_cpu_feature<cpu_features::min_monitor_size>(ps, info);
+                ::add_cpu_feature<cpu_features::max_monitor_size>(ps, info);
+                ::add_cpu_feature<cpu_features::ibe>(ps, info);
+                ::add_cpu_feature<cpu_features::monitorless_mwait>(ps, info);
+                ::add_cpu_feature<cpu_features::c0_sub_states>(ps, info);
+                ::add_cpu_feature<cpu_features::c1_sub_states>(ps, info);
+                ::add_cpu_feature<cpu_features::c2_sub_states>(ps, info);
+                ::add_cpu_feature<cpu_features::c3_sub_states>(ps, info);
+                ::add_cpu_feature<cpu_features::c4_sub_states>(ps, info);
+                ::add_cpu_feature<cpu_features::c5_sub_states>(ps, info);
+                ::add_cpu_feature<cpu_features::c6_sub_states>(ps, info);
+                ::add_cpu_feature<cpu_features::c7_sub_states>(ps, info);
             }
         }
-        add_feature(cpu_features::dts());
-        add_feature(cpu_features::turbo_boost());
-        add_feature(cpu_features::arat());
-        add_feature(cpu_features::pln());
-        add_feature(cpu_features::ecmd());
-        add_feature(cpu_features::ptm());
-        add_feature(cpu_features::hwp());
-        add_feature(cpu_features::hwp_notification());
-        add_feature(cpu_features::hwp_activity_window());
-        add_feature(cpu_features::hwp_epp());
-        add_feature(cpu_features::hwp_pkg());
-        add_feature(cpu_features::hdc());
-        add_feature(cpu_features::turbo_boost_max());
-        add_feature(cpu_features::hwp_capabilities());
-        add_feature(cpu_features::hwp_peci_override());
-        add_feature(cpu_features::flexible_hwp());
-        add_feature(cpu_features::hwp_request_fast_access());
-        add_feature(cpu_features::hw_feedback_interface());
-        add_feature(cpu_features::hwp_request_ignore_idle());
-        add_feature(cpu_features::hwp_control_msr());
-        add_feature(cpu_features::thread_director());
-        // TODO
-        add_feature(cpu_features::sha512());
-        add_feature(cpu_features::sm3());
-        add_feature(cpu_features::sm4());
-        add_feature(cpu_features::rao_int());
-        add_feature(cpu_features::avx_vnni());
-        add_feature(cpu_features::avx512_bf16());
-        add_feature(cpu_features::extended_features());
-        add_feature(cpu_features::fsgsbase());
-        add_feature(cpu_features::tsc_adjust());
-        add_feature(cpu_features::sgx());
-        add_feature(cpu_features::bmi1());
-        add_feature(cpu_features::hle());
-        add_feature(cpu_features::avx2());
-        add_feature(cpu_features::fdp_exception_only());
-        add_feature(cpu_features::smep());
-        add_feature(cpu_features::bmi2());
-        add_feature(cpu_features::erms());
-        add_feature(cpu_features::invpcid());
-        add_feature(cpu_features::rtm());
-        add_feature(cpu_features::intel_resource_director_monitoring());
-        add_feature(cpu_features::fcs_fds_deprecated());
-        add_feature(cpu_features::mpx());
-        add_feature(cpu_features::intel_resource_director_allocation());
-        add_feature(cpu_features::avx512_f());
-        add_feature(cpu_features::avx512_dq());
-        add_feature(cpu_features::rdseed());
-        add_feature(cpu_features::adx());
-        add_feature(cpu_features::smap());
-        add_feature(cpu_features::avx512_ifma());
-        add_feature(cpu_features::pcommit());
-        add_feature(cpu_features::clflushopt());
-        add_feature(cpu_features::clwb());
-        add_feature(cpu_features::pt());
-        add_feature(cpu_features::avx512_pf());
-        add_feature(cpu_features::avx512_er());
-        add_feature(cpu_features::avx512_cd());
-        add_feature(cpu_features::sha());
-        add_feature(cpu_features::avx512_bw());
-        add_feature(cpu_features::avx512_vl());
-        add_feature(cpu_features::prefetchwt1());
-        add_feature(cpu_features::avx512_vbmi());
-        add_feature(cpu_features::umip());
-        add_feature(cpu_features::pku());
-        add_feature(cpu_features::ospke());
 
-        //add_feature(cpu_features::lass());
-        //add_feature(cpu_features::cmpccxadd());
-        //add_feature(cpu_features::architectural_performance_monitoring());
-        //add_feature(cpu_features::fzrm());
-        //add_feature(cpu_features::fsrs());
-        //add_feature(cpu_features::rsrcs());
-        //add_feature(cpu_features::fred());
-        //add_feature(cpu_features::lkgs());
-        //add_feature(cpu_features::non_serialising_wrmsr());
-        //add_feature(cpu_features::nmi_source_reporting());
-        //add_feature(cpu_features::amx_fp16());
-        //add_feature(cpu_features::hreset());
-        //add_feature(cpu_features::avx_ifma());
-        //add_feature(cpu_features::linear_address_masking());
-        //add_feature(cpu_features::msr_list());
-        //add_feature(cpu_features::invd());
-        //add_feature(cpu_features::movrs());
+        if (get_cpu_info(info, 0x00000006)) {
+            // EAX
+            ::add_cpu_feature<cpu_features::dts>(ps, info);
+            ::add_cpu_feature<cpu_features::turbo_boost>(ps, info);
+            ::add_cpu_feature<cpu_features::arat>(ps, info);
+            ::add_cpu_feature<cpu_features::pln>(ps, info);
+            ::add_cpu_feature<cpu_features::ecmd>(ps, info);
+            ::add_cpu_feature<cpu_features::ptm>(ps, info);
+            ::add_cpu_feature<cpu_features::hwp>(ps, info);
+            ::add_cpu_feature<cpu_features::hwp_notification>(ps, info);
+            ::add_cpu_feature<cpu_features::hwp_activity_window>(ps, info);
+            ::add_cpu_feature<cpu_features::hwp_epp>(ps, info);
+            ::add_cpu_feature<cpu_features::hwp_pkg>(ps, info);
+            ::add_cpu_feature<cpu_features::hdc>(ps, info);
+            ::add_cpu_feature<cpu_features::turbo_boost_max>(ps, info);
+            ::add_cpu_feature<cpu_features::hwp_capabilities>(ps, info);
+            ::add_cpu_feature<cpu_features::hwp_peci_override>(ps, info);
+            ::add_cpu_feature<cpu_features::flexible_hwp>(ps, info);
+            ::add_cpu_feature<cpu_features::hwp_request_fast_access>(ps, info);
+            ::add_cpu_feature<cpu_features::hw_feedback_interface>(ps, info);
+            ::add_cpu_feature<cpu_features::hwp_request_ignore_idle>(ps, info);
+            ::add_cpu_feature<cpu_features::hwp_control_msr>(ps, info);
+            ::add_cpu_feature<cpu_features::thread_director>(ps, info);
 
-        if (detail::check_sensitive<cpu::simd_instructions>(flags)) {
-            detail::property_set_impl simds;
-            //::add_simd<simd_instruction_set::mmx>(simds, u8"MMX");
-            //::add_simd<simd_instruction_set::sse>(simds, u8"SSE");
-            //::add_simd<simd_instruction_set::sse2>(simds, u8"SSE 2");
-            //::add_simd<simd_instruction_set::sse3>(simds, u8"SSE 3");
-            //::add_simd<simd_instruction_set::ssse3>(simds, u8"SSSE 3");
-            //::add_simd<simd_instruction_set::sse4_1>(simds, u8"SSE 4.1");
-            //::add_simd<simd_instruction_set::sse4_2>(simds, u8"SSE 4.2");
-            //::add_simd<simd_instruction_set::avx>(simds, u8"AVX");
-            //::add_simd<simd_instruction_set::avxvnni>(simds, u8"AVX VNNI");
-            //::add_simd<simd_instruction_set::avxifma>(simds, u8"AVX IFMA");
-            //::add_simd<simd_instruction_set::avx2>(simds, u8"AVX 2");
-            //::add_simd<simd_instruction_set::avx512>(simds,
-            //    u8"AVX 512 Foundation");
-            //::add_simd<simd_instruction_set::avx512pf>(simds,
-            //    u8"AVX 512 Prefetch");
-            //::add_simd<simd_instruction_set::avx512dq>(simds,
-            //    u8"AVX 512 Vector Double Word and Quad Word");
-            //::add_simd<simd_instruction_set::avx512bw>(simds,
-            //    u8"AVX 512 Vector Byte and Word");
-            //::add_simd<simd_instruction_set::avx512vl>(simds,
-            //    u8"AVX 512 Vector Length");
-            //::add_simd<simd_instruction_set::avx512cd>(simds,
-            //    u8"AVX 512 Conflict Detection");
-            //::add_simd<simd_instruction_set::avx512ifma>(simds,
-            //    u8"AVX 512 Integer Fused Multiply Add");
-            ::add_simd<simd_instruction_set::avx512er>(simds,
-                u8"AVX 512 Exponential and Reciprocal");
-            ::add_simd<simd_instruction_set::avx5124fmaps>(simds, u8"AVX 512 "
-                u8"Vector Fused Multiply Accumulation Packed Single Precision");
-            ::add_simd<simd_instruction_set::avx5124vnniw>(simds, u8"AVX 512 "
-                u8"Vector Neural Network Instructions Word Variable Precision");
-            ::add_simd<simd_instruction_set::avx512vpopcntdq>(simds,
-                u8"AVX 512 Vector POPCOUNT Double Word and Quad Word");
-            ::add_simd<simd_instruction_set::avx512vnni>(simds,
-                u8"AVX 512 Vector Neural Network Instructions");
-            ::add_simd<simd_instruction_set::avx512bitalg>(simds,
-                u8"AVX 512 Bit Algorithms");
-            //::add_simd<simd_instruction_set::avx512gfni>(simds,
-            //    u8"AVX 512 Galois Field New Instructions");
-            //::add_simd<simd_instruction_set::avx512vpclmulqdq>(simds,
-            //    u8"AVX 512 ");
-            //::add_simd<simd_instruction_set::avx512vaes>(simds,
-            //    u8"AVX 512 ");
-            //::add_simd<simd_instruction_set::avx512bf16>(simds,
-            //    u8"AVX 512 Instructions for bfloat16 Numbers");
-            props.add<cpu::simd_instructions>(property_set(
-                std::move(simds)));
+            // EBX
+            // ECX
+            // EDX
         }
+
+        if (get_cpu_info(info, 0x00000007)) {
+            ::add_cpu_feature<cpu_features::extended_features>(ps, info);
+
+            // EAX
+            ::add_cpu_feature<cpu_features::fsgsbase>(ps, info);
+            ::add_cpu_feature<cpu_features::tsc_adjust>(ps, info);
+            ::add_cpu_feature<cpu_features::sgx>(ps, info);
+            ::add_cpu_feature<cpu_features::bmi1>(ps, info);
+            ::add_cpu_feature<cpu_features::hle>(ps, info);
+            ::add_cpu_feature<cpu_features::avx2>(ps, info);
+            ::add_cpu_feature<cpu_features::fdp_exception_only>(ps, info);
+            ::add_cpu_feature<cpu_features::smep>(ps, info);
+            ::add_cpu_feature<cpu_features::bmi2>(ps, info);
+            ::add_cpu_feature<cpu_features::erms>(ps, info);
+            ::add_cpu_feature<cpu_features::invpcid>(ps, info);
+            ::add_cpu_feature<cpu_features::rtm>(ps, info);
+            ::add_cpu_feature<cpu_features::intel_res_dir_monitoring>(ps, info);
+            ::add_cpu_feature<cpu_features::adm_plat_qos_monitoring>(ps, info);
+            ::add_cpu_feature<cpu_features::fcs_fds_deprecated>(ps, info);
+            ::add_cpu_feature<cpu_features::mpx>(ps, info);
+            ::add_cpu_feature<cpu_features::intel_res_dir_allocation>(ps, info);
+            ::add_cpu_feature<cpu_features::amd_plat_qos_enforcement>(ps, info);
+            ::add_cpu_feature<cpu_features::avx512_f>(ps, info); 
+            ::add_cpu_feature<cpu_features::avx512_dq>(ps, info);
+            ::add_cpu_feature<cpu_features::rdseed>(ps, info);
+            ::add_cpu_feature<cpu_features::adx>(ps, info);
+            ::add_cpu_feature<cpu_features::smap>(ps, info);
+            ::add_cpu_feature<cpu_features::avx512_ifma>(ps, info);
+            ::add_cpu_feature<cpu_features::pcommit>(ps, info);
+            ::add_cpu_feature<cpu_features::clflushopt>(ps, info);
+            ::add_cpu_feature<cpu_features::clwb>(ps, info);
+            ::add_cpu_feature<cpu_features::pt>(ps, info);
+            ::add_cpu_feature<cpu_features::avx512_pf>(ps, info);
+            ::add_cpu_feature<cpu_features::avx512_er>(ps, info);
+            ::add_cpu_feature<cpu_features::avx512_cd>(ps, info);
+            ::add_cpu_feature<cpu_features::sha>(ps, info);
+            ::add_cpu_feature<cpu_features::avx512_bw>(ps, info);
+            ::add_cpu_feature<cpu_features::avx512_vl>(ps, info);
+
+            // ECX
+            ::add_cpu_feature<cpu_features::prefetchwt1>(ps, info);
+            ::add_cpu_feature<cpu_features::avx512_vbmi>(ps, info);
+            ::add_cpu_feature<cpu_features::umip>(ps, info);
+            ::add_cpu_feature<cpu_features::pku>(ps, info);
+            ::add_cpu_feature<cpu_features::ospke>(ps, info);
+            ::add_cpu_feature<cpu_features::timed_wait_pause>(ps, info);
+            ::add_cpu_feature<cpu_features::avx512_vmbi2>(ps, info);
+            ::add_cpu_feature<cpu_features::control_flow_enforcement>(ps, info);
+            ::add_cpu_feature<cpu_features::gfni>(ps, info);
+            ::add_cpu_feature<cpu_features::vaes>(ps, info);
+            ::add_cpu_feature<cpu_features::vpclmulqdq>(ps, info);
+            ::add_cpu_feature<cpu_features::avx512_vnni>(ps, info);
+            ::add_cpu_feature<cpu_features::avx512_bitalg>(ps, info);
+            ::add_cpu_feature<cpu_features::tme_en>(ps, info);
+            ::add_cpu_feature<cpu_features::avx512_vpopcntdq>(ps, info);
+            ::add_cpu_feature<cpu_features::la57>(ps, info);
+            ::add_cpu_feature<cpu_features::mawau>(ps, info);
+            ::add_cpu_feature<cpu_features::read_processor_id>(ps, info);
+            ::add_cpu_feature<cpu_features::key_locker>(ps, info);
+            ::add_cpu_feature<cpu_features::bus_lock_detect>(ps, info);
+            ::add_cpu_feature<cpu_features::cldemote>(ps, info);
+            ::add_cpu_feature<cpu_features::mprr>(ps, info);
+            ::add_cpu_feature<cpu_features::movdiri>(ps, info);
+            ::add_cpu_feature<cpu_features::movdir64b>(ps, info);
+            ::add_cpu_feature<cpu_features::enqcmd>(ps, info);
+            ::add_cpu_feature<cpu_features::sgx_launch_config>(ps, info);
+            ::add_cpu_feature<cpu_features::pks>(ps, info);
+
+            // EDX
+            ::add_cpu_feature<cpu_features::sgx_attestation>(ps, info);
+            ::add_cpu_feature<cpu_features::avx512_4vnniw>(ps, info);
+            ::add_cpu_feature<cpu_features::avx512_4fmaps>(ps, info);
+            ::add_cpu_feature<cpu_features::fsrm>(ps, info);
+            ::add_cpu_feature<cpu_features::uintr>(ps, info);
+            ::add_cpu_feature<cpu_features::avx512_vp2intersect>(ps, info);
+            ::add_cpu_feature<cpu_features::srbds_ctrl>(ps, info);
+            ::add_cpu_feature<cpu_features::md_clear>(ps, info);
+            ::add_cpu_feature<cpu_features::rtm_always_abort>(ps, info);
+            ::add_cpu_feature<cpu_features::rtm_force_abort>(ps, info);
+            ::add_cpu_feature<cpu_features::serialise>(ps, info);
+            ::add_cpu_feature<cpu_features::hybrid>(ps, info);
+            ::add_cpu_feature<cpu_features::tsxldtrk>(ps, info);
+            ::add_cpu_feature<cpu_features::pconfig>(ps, info);
+            ::add_cpu_feature<cpu_features::lbr>(ps, info);
+            ::add_cpu_feature<cpu_features::cet_ibt>(ps, info);
+            ::add_cpu_feature<cpu_features::amx_bf16>(ps, info);
+            ::add_cpu_feature<cpu_features::avx512_fp16>(ps, info);
+            ::add_cpu_feature<cpu_features::amx_tile>(ps, info);
+            ::add_cpu_feature<cpu_features::amx_int8>(ps, info);
+            ::add_cpu_feature<cpu_features::speculation_control>(ps, info);
+            ::add_cpu_feature<cpu_features::stibp>(ps, info);
+            ::add_cpu_feature<cpu_features::l1d_flush>(ps, info);
+            ::add_cpu_feature<cpu_features::arch_capabilities>(ps, info);
+            ::add_cpu_feature<cpu_features::core_capabilities>(ps, info);
+            ::add_cpu_feature<cpu_features::ssbd>(ps, info);
+        }
+
+        if (get_cpu_info(info, 0x00000007, 0x00000001)) {
+            // EAX
+            ::add_cpu_feature<cpu_features::sha512>(ps, info);
+            ::add_cpu_feature<cpu_features::sm3>(ps, info);
+            ::add_cpu_feature<cpu_features::sm4>(ps, info);
+            ::add_cpu_feature<cpu_features::rao_int>(ps, info);
+            ::add_cpu_feature<cpu_features::avx_vnni>(ps, info);
+            ::add_cpu_feature<cpu_features::avx512_bf16>(ps, info);
+            ::add_cpu_feature<cpu_features::lass>(ps, info);
+            ::add_cpu_feature<cpu_features::cmpccxadd>(ps, info);
+            ::add_cpu_feature<cpu_features::arch_perf_monitoring>(ps, info);
+            ::add_cpu_feature<cpu_features::fzrm>(ps, info);
+            ::add_cpu_feature<cpu_features::fsrs>(ps, info);
+            ::add_cpu_feature<cpu_features::rsrcs>(ps, info);
+            ::add_cpu_feature<cpu_features::fred>(ps, info);
+            ::add_cpu_feature<cpu_features::lkgs>(ps, info);
+            ::add_cpu_feature<cpu_features::non_serialising_wrmsr>(ps, info);
+            ::add_cpu_feature<cpu_features::nmi_source_reporting>(ps, info);
+            ::add_cpu_feature<cpu_features::amx_fp16>(ps, info);
+            ::add_cpu_feature<cpu_features::hreset>(ps, info);
+            ::add_cpu_feature<cpu_features::avx_ifma>(ps, info);
+            ::add_cpu_feature<cpu_features::linear_address_masking>(ps, info);
+            ::add_cpu_feature<cpu_features::msr_list>(ps, info);
+            ::add_cpu_feature<cpu_features::invd>(ps, info);
+            ::add_cpu_feature<cpu_features::movrs>(ps, info);
+
+            // EBX
+            // ECX
+            // EDX
+        }
+
+        //add_feature(cpu_features::topology_leaf_b());
+        //add_feature(cpu_features::topology_extensions());
 
         ps.add<cpu::features>(property_set(std::move(props)));
     }
