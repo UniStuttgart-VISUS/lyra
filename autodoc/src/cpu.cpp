@@ -452,6 +452,10 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
             ::add_cpu_feature<cpu_features::movrs>(ps, info);
 
             // EBX
+            ::add_cpu_feature<cpu_features::ppin>(ps, info);
+            ::add_cpu_feature<cpu_features::pbndkb>(ps, info);
+            ::add_cpu_feature<cpu_features::cpuid_max_value>(ps, info);
+            
             // ECX
             // EDX
         }

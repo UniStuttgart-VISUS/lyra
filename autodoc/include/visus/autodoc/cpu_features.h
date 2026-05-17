@@ -1122,6 +1122,15 @@ namespace cpu_features {
 
     /// ECX and EDX missing
 
+    /// <summary>
+    /// Answer the number of sub-leafs (possible values for ECX) of leaf 0x7.
+    /// </summary>
+    struct extended_features final : cpu_info_bits<
+            0x00000007, cpu_info_register::eax, 0, 31> {
+        typedef std::uint32_t type;
+        static constexpr auto name = u8"Number of Sub-Leaves of Leaf 0x7";
+    };
+
     struct fsgsbase final : cpu_info_bit<
             0x00000007, cpu_info_register::ebx, 0> {
         typedef bool type;
@@ -2280,13 +2289,54 @@ namespace cpu_features {
     };
 
     /// <summary>
-    /// Answer the number of sub-leafs (possible values for ECX) of leaf 0x7.
+    /// Intel Protected Processor Inventory Number MSRs are available.
     /// </summary>
-    struct extended_features final : cpu_info_bits<
-            0x00000007, cpu_info_register::eax, 0, 31> {
-        typedef std::uint32_t type;
-        static constexpr auto name = u8"Number of Sub-Leafs of Leaf 0x7";
+    struct ppin final : cpu_info_bit_ex<
+            0x00000007, 0x00000001, cpu_info_register::ebx, 0> {
+        typedef bool type;
+        static constexpr auto name = u8"Intel Protected Processor Inventory "
+            u8"Number MSRs (ppin)";
+        static constexpr auto uncommon = true;
     };
+
+    /// <summary>
+    /// Total storage encryption is supported.
+    /// </summary>
+    struct pbndkb final : cpu_info_bit_ex<
+            0x00000007, 0x00000001, cpu_info_register::ebx, 1> {
+        typedef bool type;
+        static constexpr auto name = u8"Total Storage Encryption (pbndkb)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// If 1, then bit 22 of IA32_MISC_ENABLE cannot be set to 1 to limit
+    /// the value returned by CPUID.
+    /// </summary>
+    struct cpuid_max_value final : cpu_info_bit_ex<
+            0x00000007, 0x00000001, cpu_info_register::ebx, 3> {
+        typedef bool type;
+        static constexpr auto name = u8"CPUID Limit (cpuidmaxval-lim-rmv)";
+        static constexpr auto uncommon = true;
+    };
+
+    //struct mpsadbw_512 final : cpu_info_bit_ex<
+    //        0x00000007, 0x00000001, cpu_info_register::ebx, 28> {
+    //    typedef bool type;
+    //    static constexpr auto name = u8"mpsadbw_512";
+    //};
+
+    //struct avx512_rao_fp final : cpu_info_bit_ex<
+    //        0x00000007, 0x00000001, cpu_info_register::ebx, 30> {
+    //    typedef bool type;
+    //    static constexpr auto name = u8"mpsadbw_512";
+    //};
+
+    //struct avx512_rao_fp final : cpu_info_bit_ex<
+    //        0x00000007, 0x00000001, cpu_info_register::ebx, 31> {
+    //    typedef bool type;
+    //    static constexpr auto name = u8"mpsadbw_512";
+    //};
 
 
     /// <summary>
