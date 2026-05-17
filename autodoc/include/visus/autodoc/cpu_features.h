@@ -2136,7 +2136,7 @@ namespace cpu_features {
             0x00000007, 0x00000001, cpu_info_register::eax, 8> {
         typedef bool type;
         static constexpr auto name = u8"Architectural Performance Monitoring "
-            u8"Extended Leaf (archperf­monext)";
+            u8"Extended Leaf (archperfmonext)";
         static constexpr auto uncommon = true;
     };
 

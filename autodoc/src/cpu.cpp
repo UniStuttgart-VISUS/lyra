@@ -328,7 +328,9 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
             // EDX
         }
 
+        std::uint32_t max_ext_func = 0;
         if (get_cpu_info(info, 0x00000007)) {
+            max_ext_func = cpu_features::extended_features::get(info);
             ::add_cpu_feature<cpu_features::extended_features>(ps, info);
 
             // EAX
@@ -425,7 +427,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
             ::add_cpu_feature<cpu_features::ssbd>(ps, info);
         }
 
-        if (get_cpu_info(info, 0x00000007, 0x00000001)) {
+        if (get_cpu_info(info, 0x00000007, 0x00000001) && (max_ext_func >= 1)) {
             // EAX
             ::add_cpu_feature<cpu_features::sha512>(ps, info);
             ::add_cpu_feature<cpu_features::sm3>(ps, info);
