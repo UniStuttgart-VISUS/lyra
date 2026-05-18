@@ -63,7 +63,7 @@ namespace cpu {
     struct features final {
         typedef property_set type;
         static constexpr auto is_immutable = true;
-        static constexpr auto is_uncommon = true;
+        static constexpr auto is_uncommon = false;
         static constexpr auto name = u8"Features";
     };
 
@@ -83,6 +83,17 @@ namespace cpu {
     struct number final {
         typedef std::uint32_t type;
         static constexpr auto name = u8"Number";
+    };
+
+    /// <summary>
+    /// Identifies a property set that holds information about specific features
+    /// the CPU might support as reported by the operating system.
+    /// </summary>
+    struct os_features final {
+        typedef property_set type;
+        static constexpr auto is_immutable = true;
+        static constexpr auto is_uncommon = false;
+        static constexpr auto name = u8"OS-Reported Features";
     };
 
     /// <summary>

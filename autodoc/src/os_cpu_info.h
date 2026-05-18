@@ -19,6 +19,7 @@
 
 #include "visus/autodoc/affinity_mask.h"
 #include "visus/autodoc/fnv1a.h"
+#include "visus/autodoc/property_set.h"
 
 LYRA_DETAIL_NAMESPACE_BEGIN
 
@@ -66,6 +67,15 @@ LYRA_TEST_API std::vector<bool> get_thread_cpu_affinity(
 /// <returns>A vector of Booleans representing the CPU affinity of the calling
 /// thread.</returns>
 LYRA_TEST_API std::vector<bool> get_thread_cpu_affinity(void);
+
+#if defined(_WIN32)
+/// <summary>
+/// Gets the CPU features as reported by
+/// <see cref="IsProcessorFeaturePresent" />.
+/// </summary>
+/// <returns></returns>
+LYRA_TEST_API property_set get_processor_features(void);
+#endif /* defined(_WIN32) */
 
 #if defined(_WIN32) && (_WIN32_WINNT >= 0x0601)
 /// <summary>

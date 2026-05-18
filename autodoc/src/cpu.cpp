@@ -106,6 +106,11 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get(
     detail::checked_add<cpu::cpuid>(ps, flags, get_cpuid(flags));
     ps.merge(get_topology(flags));
 
+#if defined(_WIN32)
+    detail::checked_add<cpu::os_features>(ps, flags,
+        detail::get_processor_features());
+#endif /* defined(_WIN32) */
+
     return property_set(std::move(ps));
 }
 
@@ -550,7 +555,6 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
         } /* if (get_cpu_info(info, 0x80000001)) */
 
         //add_feature(cpu_features::topology_leaf_b());
-
         ps.add<cpu::features>(property_set(std::move(props)));
     } /* if (detail::check_flags<cpu::features>(flags)) */
 
