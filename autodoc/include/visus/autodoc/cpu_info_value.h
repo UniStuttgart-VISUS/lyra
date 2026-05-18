@@ -108,6 +108,17 @@ class cpu_info_value_ex {
 public:
 
     /// <summary>
+    /// The type of the condition that must be met for the value to be
+    /// retrieved.
+    /// </summary>
+    typedef TCond condition_type;
+
+    /// <summary>
+    /// The type of the value being retrieved.
+    /// </summary>
+    typedef std::uint32_t value_type;
+
+    /// <summary>
     /// Gets the value of the CPUID instruction for <typeparamref name="Leaf" />
     /// (and optionally the <typeparamref name="Sub" /> leaf) provided that
     /// <typeparamref name="TCond" /> evaluates to <see langword="true" />.
@@ -127,7 +138,7 @@ public:
     /// </summary>
     /// <returns>The value of the selected register <typeparamref name="Reg" />
     /// or zero if the info could not be retrieved.</returns>
-    static inline std::uint32_t get(void) noexcept {
+    static inline value_type get(void) noexcept {
         cpu_info info;
         return get(info) ? info.values[Reg] : 0;
     }
@@ -161,6 +172,17 @@ class cpu_info_any_ex : private cpu_info_value_ex<Leaf, Sub, Reg, TCond> {
 public:
 
     /// <summary>
+    /// The type of the condition that must be met for the value to be
+    /// retrieved.
+    /// </summary>
+    typedef typename base_type::condition_type condition_type;
+
+    /// <summary>
+    /// The type of the value being retrieved.
+    /// </summary>
+    typedef bool value_type;
+
+    /// <summary>
     /// Check whether any of the bits in <typename="Reg" /> is set in the
     /// <paramref name="info" />.
     /// </summary>
@@ -168,8 +190,8 @@ public:
     /// <returns></returns>
     static inline bool get(_In_ const cpu_info& info) noexcept {
         const auto reg = info.values[Reg];
-        assert((base_type::get() == reg) || !TCond());
-        return (TCond() && (reg != 0));
+        assert((base_type::get() == reg) || !condition_type());
+        return (condition_type() && (reg != 0));
     }
 
     /// <summary>
@@ -185,13 +207,13 @@ public:
     /// </summary>
     /// <returns><see langword="true" /> if the register is not zero,
     /// <see langword="false" /> otherwise.</returns>
-    inline operator bool(void) const noexcept {
+    inline operator value_type(void) const noexcept {
         return this->_value;
     }
 
 private:
 
-    bool _value;
+    value_type _value;
 };
 
 
@@ -226,6 +248,17 @@ class cpu_info_bit_ex : private cpu_info_value_ex<Leaf, Sub, Reg, TCond> {
 public:
 
     /// <summary>
+    /// The type of the condition that must be met for the value to be
+    /// retrieved.
+    /// </summary>
+    typedef typename base_type::condition_type condition_type;
+
+    /// <summary>
+    /// The type of the value being retrieved.
+    /// </summary>
+    typedef bool value_type;
+
+    /// <summary>
     /// Check whether the specified <paramref name="Bit" /> is set in the
     /// <paramref name="Reg" /> of the <paramref name="info" />.
     /// </summary>
@@ -252,13 +285,13 @@ public:
     /// </summary>
     /// <returns><see langword="true" /> if the bit is set,
     /// <see langword="false" /> otherwise.</returns>
-    inline operator bool(void) const noexcept {
+    inline operator value_type(void) const noexcept {
         return this->_value;
     }
 
 private:
 
-    bool _value;
+    value_type _value;
 };
 
 
@@ -298,6 +331,17 @@ class cpu_info_bits_ex : private cpu_info_value_ex<Leaf, Sub, Reg, TCond> {
 public:
 
     /// <summary>
+    /// The type of the condition that must be met for the value to be
+    /// retrieved.
+    /// </summary>
+    typedef typename base_type::condition_type condition_type;
+
+    /// <summary>
+    /// The type of the value being retrieved.
+    /// </summary>
+    typedef std::uint32_t value_type;
+
+    /// <summary>
     /// Extracts bits <typeparamref name="From" /> to <typeparamref name="To" />
     /// from the specified register <paramref name="Reg" /> of
     /// <paramref name="info" />.
@@ -323,13 +367,13 @@ public:
     /// Answer the selected bits of <typename="Reg" />.
     /// </summary>
     /// <returns>The value selected by the mask.</returns>
-    inline operator std::uint32_t(void) const noexcept {
+    inline operator value_type(void) const noexcept {
         return this->_value;
     }
 
 private:
 
-    std::uint32_t _value;
+    value_type _value;
 };
 
 

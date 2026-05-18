@@ -106,7 +106,7 @@ LYRA_NAMESPACE::affinity_mask::affinity_mask(void) noexcept
  * LYRA_NAMESPACE::affinity_mask::affinity_mask
  */
 LYRA_NAMESPACE::affinity_mask::affinity_mask(
-        _In_ const mask_type mask,
+        _In_ mask_type mask,
         _In_ const std::size_t size) noexcept
         : _mask(mask) {
 #if !defined(_WIN32)

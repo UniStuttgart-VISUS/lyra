@@ -59,7 +59,9 @@ bool add_amd_topology(_Inout_ LYRA_DETAIL_NAMESPACE::property_set_impl& ps) {
 template<class TFeature>
 void add_cpu_feature(_Inout_ LYRA_DETAIL_NAMESPACE::property_set_impl& ps,
         _In_ const LYRA_NAMESPACE::cpu_info& info) {
-    ps.add<TFeature>(TFeature::get(info));
+    if (typename TFeature::condition_type()) {
+        ps.add<TFeature>(TFeature::get(info));
+    }
 };
 
 
@@ -268,7 +270,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
             ::add_cpu_feature<cpu_features::pse36>(ps, info);
             ::add_cpu_feature<cpu_features::psn>(ps, info);
             ::add_cpu_feature<cpu_features::clfsh>(ps, info);
-            ::add_cpu_feature<cpu_features::nx>(ps, info);
+            ::add_cpu_feature<cpu_features::itanium_nx>(ps, info);
             ::add_cpu_feature<cpu_features::ds>(ps, info);
             ::add_cpu_feature<cpu_features::acpi>(ps, info);
             ::add_cpu_feature<cpu_features::mmx>(ps, info);
@@ -279,7 +281,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
             ::add_cpu_feature<cpu_features::htt>(ps, info);
             ::add_cpu_feature<cpu_features::ia64>(ps, info);
             ::add_cpu_feature<cpu_features::pbe>(ps, info);
-        }
+        } /* if (get_cpu_info(info, 0x00000001)) */
 
         if (get_cpu_info(info, 0x00000005)) {
             ::add_cpu_feature<cpu_features::emx>(ps, info);
@@ -297,7 +299,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
                 ::add_cpu_feature<cpu_features::c6_sub_states>(ps, info);
                 ::add_cpu_feature<cpu_features::c7_sub_states>(ps, info);
             }
-        }
+        } /* if (get_cpu_info(info, 0x00000005)) */
 
         if (get_cpu_info(info, 0x00000006)) {
             // EAX
@@ -326,7 +328,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
             // EBX
             // ECX
             // EDX
-        }
+        } /* if (get_cpu_info(info, 0x00000006)) */
 
         std::uint32_t max_ext_func = 0;
         if (get_cpu_info(info, 0x00000007)) {
@@ -425,7 +427,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
             ::add_cpu_feature<cpu_features::arch_capabilities>(ps, info);
             ::add_cpu_feature<cpu_features::core_capabilities>(ps, info);
             ::add_cpu_feature<cpu_features::ssbd>(ps, info);
-        }
+        } /* if (get_cpu_info(info, 0x00000007)) */
 
         if ((max_ext_func >= 1) && get_cpu_info(info, 0x00000007, 0x00000001)) {
             // EAX
@@ -461,7 +463,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
             // ECX
             ::add_cpu_feature<cpu_features::asymmetric_rdt_mon>(ps, info);
             ::add_cpu_feature<cpu_features::asymmetric_rdt_alloc>(ps, info);
-            ::add_cpu_feature<cpu_features::legacy_­reduced_­isa>(ps, info);
+            ::add_cpu_feature<cpu_features::legacy_reduced_isa>(ps, info);
             ::add_cpu_feature<cpu_features::sipi64>(ps, info);
             ::add_cpu_feature<cpu_features::immediate_msr>(ps, info);
 
@@ -485,7 +487,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
             ::add_cpu_feature<cpu_features::sec_trusted_attestation>(ps, info);
             ::add_cpu_feature<cpu_features::mwait>(ps, info);
             ::add_cpu_feature<cpu_features::slsm>(ps, info);
-        }
+        } /* if ((max_ext_func >= 1) && ... */
 
         if ((max_ext_func >= 2) && get_cpu_info(info, 0x00000007, 0x00000002)) {
             // EDX
@@ -496,14 +498,43 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
             ::add_cpu_feature<cpu_features::bhi_ctrl>(ps, info);
             ::add_cpu_feature<cpu_features::mcdt_no>(ps, info);
             ::add_cpu_feature<cpu_features::uc_lock_disable>(ps, info);
-            ::add_cpu_feature<cpu_features::monitor_­mitg_no>(ps, info);
-        }
+            ::add_cpu_feature<cpu_features::monitor_mitg_no>(ps, info);
+        } /* if ((max_ext_func >= 2) && ... */
+
+        if (get_cpu_info(info, 0x80000001)) {
+            // ECX
+            ::add_cpu_feature<cpu_features::lahf_lm>(ps, info);
+            ::add_cpu_feature<cpu_features::cmp_legacy>(ps, info);
+            ::add_cpu_feature<cpu_features::svm>(ps, info);
+            ::add_cpu_feature<cpu_features::extended_apic>(ps, info);
+            ::add_cpu_feature<cpu_features::cr8_legacy>(ps, info);
+            ::add_cpu_feature<cpu_features::advanced_bit_manipulation>(ps, info);
+            ::add_cpu_feature<cpu_features::sse4a>(ps, info);
+            ::add_cpu_feature<cpu_features::misaligned_sse>(ps, info);
+            ::add_cpu_feature<cpu_features::prefetch_3dnow>(ps, info);
+            
+
+            ::add_cpu_feature<cpu_features::topology_extensions>(ps, info);
+
+            // EDX
+            ::add_cpu_feature<cpu_features::k6_syscall>(ps, info);
+            ::add_cpu_feature<cpu_features::syscall>(ps, info);
+            ::add_cpu_feature<cpu_features::k7_ecc>(ps, info);
+            ::add_cpu_feature<cpu_features::ecc>(ps, info);
+            ::add_cpu_feature<cpu_features::amd_nx>(ps, info);
+            ::add_cpu_feature<cpu_features::extended_mmx>(ps, info);
+            ::add_cpu_feature<cpu_features::optimised_fxsr>(ps, info);
+            ::add_cpu_feature<cpu_features::gibibyte_pages>(ps, info);
+            ::add_cpu_feature<cpu_features::rdtscp>(ps, info);
+            ::add_cpu_feature<cpu_features::long_mode>(ps, info);
+            ::add_cpu_feature<cpu_features::threednow_ext>(ps, info);
+            ::add_cpu_feature<cpu_features::threednow>(ps, info);
+        } /* if (get_cpu_info(info, 0x80000001)) */
 
         //add_feature(cpu_features::topology_leaf_b());
-        //add_feature(cpu_features::topology_extensions());
 
         ps.add<cpu::features>(property_set(std::move(props)));
-    }
+    } /* if (detail::check_flags<cpu::features>(flags)) */
 
     return property_set(std::move(ps));
 }

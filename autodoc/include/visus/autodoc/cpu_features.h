@@ -542,8 +542,8 @@ namespace cpu_features {
     /// <summary>
     /// Indicates whether the Machine Check Architecture (MCA) is supported.
     /// </summary>
-    struct mca final : cpu_info_bit<0x00000001, cpu_info_register::edx,
-        14> {
+    struct mca final : cpu_info_bit<
+            0x00000001, cpu_info_register::edx, 14> {
         typedef bool type;
         static constexpr auto name = u8"Machine Check Architecture (mca)";
         static constexpr auto uncommon = true;
@@ -603,12 +603,11 @@ namespace cpu_features {
     /// <summary>
     /// Indicates whether the no-execute bit on Itanium is supported.
     /// </summary>
-    struct nx final : cpu_info_bit<
-            0x00000001, cpu_info_register::edx, 20> {
+    struct itanium_nx final : cpu_info_bit<
+            0x00000001, cpu_info_register::edx, 20,
+            detail::vendor_condition<cpu_vendor::intel>> {
         typedef bool type;
         static constexpr auto name = u8"No-Execute Bit (nx)";
-        // TODO: Itanium only
-        static constexpr auto uncommon = true;
     };
 
     /// <summary>
@@ -2363,7 +2362,7 @@ namespace cpu_features {
     /// <summary>
     /// X86S (cancelled).
     /// </summary>
-    struct legacy_­reduced_­isa final : cpu_info_bit_ex<
+    struct legacy_reduced_isa final : cpu_info_bit_ex<
             0x00000007, 0x00000001, cpu_info_register::ecx, 2> {
         typedef bool type;
         static constexpr auto name = u8"X86S (legacy-­reduced-isa)";
@@ -2667,7 +2666,7 @@ namespace cpu_features {
     /// performance/power issues caused by the instructions exceeding the
     /// capacity of an internal monitor tracking table.
     /// </summary>
-    struct monitor_­mitg_no final : cpu_info_bit_ex<
+    struct monitor_mitg_no final : cpu_info_bit_ex<
         0x00000007, 0x00000002, cpu_info_register::edx, 6> {
         typedef bool type;
         static constexpr auto name = u8"MONITOR and UMONITOR Not Affected by "
@@ -2697,13 +2696,222 @@ namespace cpu_features {
     };
 
     /// <summary>
+    /// LAHF and SAHF are supported in long mode.
+    /// </summary>
+    struct lahf_lm final : cpu_info_bit<
+            0x80000001, cpu_info_register::ecx, 0> {
+        typedef bool type;
+        static constexpr auto name = u8"LAHF and SAHF in Long Mode (lahf-lm)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Hyperthreading not valid
+    /// </summary>
+    struct cmp_legacy final : cpu_info_bit<
+            0x80000001, cpu_info_register::ecx, 1> {
+        typedef bool type;
+        static constexpr auto name = u8"Hyperthreading Not Valid (cmp_legacy)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// SVM virtualisation supported.
+    /// </summary>
+    struct svm final : cpu_info_bit<
+        0x80000001, cpu_info_register::ecx, 2> {
+        typedef bool type;
+        static constexpr auto name = u8"Secure Virtual Machine (svm)";
+    };
+
+    /// <summary>
+    /// Extended APIC space.
+    /// </summary>
+    struct extended_apic final : cpu_info_bit<
+            0x80000001, cpu_info_register::ecx, 3> {
+        typedef bool type;
+        static constexpr auto name = u8"Extended APIC Space (extapic)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// CR8 in 32-bit mode.
+    /// </summary>
+    struct cr8_legacy final : cpu_info_bit<
+            0x80000001, cpu_info_register::ecx, 4> {
+        typedef bool type;
+        static constexpr auto name = u8"CR8 in 32-bit Mode (cr8-legacy)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Advanced bit manipulation instructions (LZCNT and POPCNT) supported.
+    /// </summary>
+    struct advanced_bit_manipulation final : cpu_info_bit<
+            0x80000001, cpu_info_register::ecx, 5> {
+        typedef bool type;
+        static constexpr auto name = u8"Advanced Bit Manipulation (abm)";
+    };
+
+    /// <summary>
+    /// SSE4a
+    /// </summary>
+    struct sse4a final : cpu_info_bit<
+            0x80000001, cpu_info_register::ecx, 6> {
+        typedef bool type;
+        static constexpr auto name = u8"SSE4a Instruction Group (sse4a)";
+    };
+
+    /// <summary>
+    /// Misaligned SSE mode supported.
+    /// </summary>
+    struct misaligned_sse final : cpu_info_bit<
+            0x80000001, cpu_info_register::ecx, 7> {
+        typedef bool type;
+        static constexpr auto name = u8"Misaligned SSE Mode (misalignsse)";
+    };
+
+    /// <summary>
+    /// PREFETCH and PREFETCHW instructions supported.
+    /// </summary>
+    struct prefetch_3dnow final : cpu_info_bit<
+            0x80000001, cpu_info_register::ecx, 8> {
+        typedef bool type;
+        static constexpr auto name = u8"PREFETCH and PREFETCHW (3dnowprefetch)";
+    };
+
+    /// <summary>
     /// Test for extended APIC ID. See also
     /// https://docs.kernel.org/arch/x86/topology.html
     /// </summary>
     struct topology_extensions final : cpu_info_bit<
             0x80000001, cpu_info_register::ecx, 22> {
         typedef bool type;
-        static constexpr auto name = u8"Extended APIC ID (topology_extensions)";
+        static constexpr auto name = u8"Extended APIC ID (topoext)";
+    };
+
+    /// <summary>
+    /// SYSCALL and SYSRET are supported.
+    /// </summary>
+    struct k6_syscall final : cpu_info_bit<
+            0x80000001, cpu_info_register::edx, 10,
+            detail::vendor_condition<cpu_vendor::amd>> {
+        typedef bool type;
+        static constexpr auto name = u8"SYSCALL and SYSRET on AMD K6 (syscall)";
+    };
+
+    /// <summary>
+    /// SYSCALL and SYSRET are supported.
+    /// </summary>
+    struct syscall final : cpu_info_bit<
+            0x80000001, cpu_info_register::edx, 11> {
+        typedef bool type;
+        static constexpr auto name = u8"SYSCALL and SYSRET (syscall)";
+    };
+
+    /// <summary>
+    /// Processor supports ECC memory.
+    /// </summary>
+    struct k7_ecc final : cpu_info_bit<
+            0x80000001, cpu_info_register::edx, 18,
+            detail::vendor_condition<cpu_vendor::amd>> {
+        typedef bool type;
+        static constexpr auto name = u8"AMD K7 Supports ECC Memory (ecc)";
+    };
+
+    /// <summary>
+    /// Processor supports ECC memory.
+    /// </summary>
+    struct ecc final : cpu_info_bit<
+            0x80000001, cpu_info_register::edx, 19> {
+        typedef bool type;
+        static constexpr auto name = u8"Supports ECC Memory (ecc)";
+    };
+
+    /// <summary>
+    /// Indicates whether the no-execute bit on is supported.
+    /// </summary>
+    struct amd_nx final : cpu_info_bit<
+            0x80000001, cpu_info_register::edx, 20,
+            detail::vendor_condition<cpu_vendor::amd>> {
+        typedef bool type;
+        static constexpr auto name = u8"No-Execute Bit (nx)";
+    };
+
+    /// <summary>
+    /// Indicates whether AMD's extension of MMX is supported.
+    /// </summary>
+    struct extended_mmx final : cpu_info_bit<
+            0x80000001, cpu_info_register::edx, 22,
+            detail::vendor_condition<cpu_vendor::amd>> {
+        typedef bool type;
+        static constexpr auto name = u8"Extended MMX (mmxext)";
+    };
+
+    /// <summary>
+    /// Indicates whether optimised FXSAVE/FXRSTOR instructions are supported.
+    /// </summary>
+    struct optimised_fxsr final : cpu_info_bit<
+            0x80000001, cpu_info_register::edx, 25,
+            detail::vendor_condition<cpu_vendor::amd>> {
+        typedef bool type;
+        static constexpr auto name = u8"Optimised FXSAVE and FXRSTOR "
+            u8"(fxsr-opt)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Indicates whether Gibibyte pages are supported.
+    /// </summary>
+    struct gibibyte_pages final : cpu_info_bit<
+            0x80000001, cpu_info_register::edx, 26,
+            detail::vendor_condition<cpu_vendor::amd>> {
+        typedef bool type;
+        static constexpr auto name = u8"Gibibyte Pages (pdpe1gb)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// RDTSCP instruction is supported.
+    /// </summary>
+    struct rdtscp final : cpu_info_bit<
+            0x80000001, cpu_info_register::edx, 27,
+            detail::vendor_condition<cpu_vendor::amd>> {
+        typedef bool type;
+        static constexpr auto name = u8"RDTSCP";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Long mode is supported.
+    /// </summary>
+    struct long_mode final : cpu_info_bit<
+            0x80000001, cpu_info_register::edx, 29,
+            detail::vendor_condition<cpu_vendor::amd>> {
+        typedef bool type;
+        static constexpr auto name = u8"Long Mode (lm)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// 3DNow! Extended instruction set is supported.
+    /// </summary>
+    struct threednow_ext final : cpu_info_bit<
+            0x80000001, cpu_info_register::edx, 30,
+            detail::vendor_condition<cpu_vendor::amd>> {
+        typedef bool type;
+        static constexpr auto name = u8"3DNow! Extended (3dnowext)";
+    };
+
+    /// <summary>
+    /// 3DNow! instruction set is supported.
+    /// </summary>
+    struct threednow final : cpu_info_bit<
+            0x80000001, cpu_info_register::edx, 31,
+            detail::vendor_condition<cpu_vendor::amd>> {
+        typedef bool type;
+        static constexpr auto name = u8"3DNow! (3dnow)";
+        static constexpr auto uncommon = true;
     };
 
 } /* namespace cpu_features */

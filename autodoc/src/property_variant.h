@@ -161,7 +161,7 @@ template<> struct property_variant_access<std::vector<boolean>> final {
 /// </summary>
 /// <param name="v"></param>
 /// <returns></returns>
-LYRA_TEST_API property_variant make_property_variant(_In_ const VARIANT& v);
+LYRA_TEST_API property_variant to_property_variant(_In_ const VARIANT& v);
 #endif /* defined(_WIN32) */
 
 LYRA_DETAIL_NAMESPACE_END

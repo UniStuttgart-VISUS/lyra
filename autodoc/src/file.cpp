@@ -211,7 +211,7 @@ LYRA_NAMESPACE::property_set LYRA_DETAIL_NAMESPACE::get_file_version_info(
 #define _LYRA_ADD_FLAG_STR(s, f) do {\
     if ((v & f) == f) {\
         if (!s.empty()) { s+= u8", "; }\
-        s += u8#f;\
+        s += #f;\
     }\
 } while (false)
 #define _LYRA_ADD_FLAG_PROP(n, s, v) do {\

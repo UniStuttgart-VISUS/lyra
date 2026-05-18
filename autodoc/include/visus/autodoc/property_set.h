@@ -185,20 +185,20 @@ private:
     typedef detail::property_set_impl impl;
 
     template<class TVisitor, class TType>
-    static constexpr auto visit_array = std::is_invocable_v<TVisitor,
-        const char *, const TType *, std::size_t>;
+    static constexpr auto visit_array = std::is_invocable<TVisitor,
+        const char *, const TType *, std::size_t>::value;
 
     template<class TVisitor, class TType>
-    static constexpr auto visit_array_r = std::is_invocable_r_v<bool, TVisitor,
-        const char *, const TType *, std::size_t>;
+    static constexpr auto visit_array_r = std::is_invocable_r<bool, TVisitor,
+        const char *, const TType *, std::size_t>::value;
 
     template<class TVisitor, class TType>
-    static constexpr auto visit_scalar = std::is_invocable_v<TVisitor,
-        const char *, const TType&>;
+    static constexpr auto visit_scalar = std::is_invocable<TVisitor,
+        const char *, const TType&>::value;
 
     template<class TVisitor, class TType>
-    static constexpr auto visit_scalar_r = std::is_invocable_r_v<bool, TVisitor,
-        const char *, const TType&>;
+    static constexpr auto visit_scalar_r = std::is_invocable_r<bool, TVisitor,
+        const char *, const TType&>::value;
 
     //void merge(_In_ property_set&& other);
 

@@ -13,10 +13,10 @@
 
 #if defined(_WIN32)
 /*
- * LYRA_DETAIL_NAMESPACE::make_property_variant
+ * LYRA_DETAIL_NAMESPACE::to_property_variant
  */
 LYRA_DETAIL_NAMESPACE::property_variant
-LYRA_DETAIL_NAMESPACE::make_property_variant(_In_ const VARIANT& v) {
+LYRA_DETAIL_NAMESPACE::to_property_variant(_In_ const VARIANT& v) {
     switch (v.vt) {
         //case VT_EMPTY:
         //case VT_NULL:
@@ -29,9 +29,9 @@ LYRA_DETAIL_NAMESPACE::make_property_variant(_In_ const VARIANT& v) {
         case VT_BSTR: return multi_sz::for_string(to_utf8(v.bstrVal,
             ::SysStringLen(v.bstrVal)));
         //case VT_DISPATCH:
-        case VT_ERROR: return v.scode;
+        case VT_ERROR: return static_cast<std::uint32_t>(v.scode);
         case VT_BOOL: return (v.boolVal != VARIANT_FALSE);
-        case VT_VARIANT: return make_property_variant(*v.pvarVal);
+        case VT_VARIANT: return to_property_variant(*v.pvarVal);
         //case VT_UNKNOWN
         //case VT_DECIMAL: return v.decVal.
         case VT_I1: return v.cVal;

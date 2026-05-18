@@ -99,7 +99,7 @@ public:
     /// <param name="mask">The affinity mask.</param>
     /// <param name="size">The size of the mask. This parameter is irrelevant
     /// on Windows.</param>
-    affinity_mask(_In_ const mask_type mask,
+    affinity_mask(_In_ mask_type mask,
         _In_ const std::size_t size = 0) noexcept;
 
     /// <summary>

@@ -25,7 +25,7 @@ void LYRA_DETAIL_NAMESPACE::copy_wbem_properties(
 
         while ((hr = object->Next(0, name.put(), value.addressof(),
                 nullptr, nullptr)) == S_OK /* [sic] */) {
-            auto v = make_property_variant(value);
+            auto v = to_property_variant(value);
             if (!std::holds_alternative<std::monostate>(v)) {
                 ps.add(to_utf8(name.get()), std::move(v));
             }

@@ -194,7 +194,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::network::get(
             }
         }
 
-        if (addr.Dhcpv6ClientDuid != nullptr) {
+        {
             auto s = detail::to_hex_string(addr.Dhcpv6ClientDuid,
                 addr.Dhcpv6ClientDuidLength);
             detail::checked_add("DHCPv6 Client DUID", p, flags, s.c_str());
@@ -202,7 +202,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::network::get(
 
         detail::checked_add("DHCPv6 IAID", p, flags, addr.Dhcpv6Iaid);
 
-        if (addr.PhysicalAddress != nullptr) {
+        {
             auto s = detail::to_hex_string(addr.PhysicalAddress,
                 addr.PhysicalAddressLength);
             detail::checked_add<hardware_address>(p, flags,
