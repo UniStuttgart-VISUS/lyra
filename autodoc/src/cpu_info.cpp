@@ -144,6 +144,7 @@ bool LYRA_API LYRA_NAMESPACE::get_cpu_info(
         _Out_ cpu_info& info,
         _In_ const std::uint32_t leaf,
         _In_ const std::uint32_t subleaf) {
+#if defined(_LYRA_X86)
     constexpr auto threshold = 0x80000000;
     const auto base = (leaf >= threshold) ? threshold : 0;
     const auto available = detail::get_cpu_info(nullptr, 0, base);
@@ -154,6 +155,9 @@ bool LYRA_API LYRA_NAMESPACE::get_cpu_info(
     }
 
     return retval;
+#else /* defined(_LYRA_X86) */
+    return false;
+#endif /* defined(_LYRA_X86) */
 }
 
 
