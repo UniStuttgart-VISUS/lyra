@@ -508,13 +508,31 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
             ::add_cpu_feature<cpu_features::svm>(ps, info);
             ::add_cpu_feature<cpu_features::extended_apic>(ps, info);
             ::add_cpu_feature<cpu_features::cr8_legacy>(ps, info);
-            ::add_cpu_feature<cpu_features::advanced_bit_manipulation>(ps, info);
+            ::add_cpu_feature<cpu_features::abm>(ps, info);
             ::add_cpu_feature<cpu_features::sse4a>(ps, info);
             ::add_cpu_feature<cpu_features::misaligned_sse>(ps, info);
             ::add_cpu_feature<cpu_features::prefetch_3dnow>(ps, info);
-            
-
+            ::add_cpu_feature<cpu_features::osvisibe_workaround>(ps, info);
+            ::add_cpu_feature<cpu_features::ibs>(ps, info);
+            ::add_cpu_feature<cpu_features::xop>(ps, info);
+            ::add_cpu_feature<cpu_features::skinit>(ps, info);
+            ::add_cpu_feature<cpu_features::watchdog_timer>(ps, info);
+            ::add_cpu_feature<cpu_features::tbm0>(ps, info);
+            ::add_cpu_feature<cpu_features::lwp>(ps, info);
+            ::add_cpu_feature<cpu_features::fma4>(ps, info);
+            ::add_cpu_feature<cpu_features::tce>(ps, info);
+            ::add_cpu_feature<cpu_features::cvt16>(ps, info);
+            ::add_cpu_feature<cpu_features::nodeid_msr>(ps, info);
+            ::add_cpu_feature<cpu_features::tbm>(ps, info);
             ::add_cpu_feature<cpu_features::topology_extensions>(ps, info);
+            ::add_cpu_feature<cpu_features::core_perf_count>(ps, info);
+            ::add_cpu_feature<cpu_features::northbridge_perf_count>(ps, info);
+            ::add_cpu_feature<cpu_features::stream_perf_monitor>(ps, info);
+            ::add_cpu_feature<cpu_features::dbx>(ps, info);
+            ::add_cpu_feature<cpu_features::perftsc>(ps, info);
+            ::add_cpu_feature<cpu_features::cache_perf_count>(ps, info);
+            ::add_cpu_feature<cpu_features::monitorx>(ps, info);
+            ::add_cpu_feature<cpu_features::address_mask_extension>(ps, info);
 
             // EDX
             ::add_cpu_feature<cpu_features::k6_syscall>(ps, info);

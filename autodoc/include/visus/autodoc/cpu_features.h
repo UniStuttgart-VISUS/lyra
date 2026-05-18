@@ -2754,6 +2754,11 @@ namespace cpu_features {
     };
 
     /// <summary>
+    /// Advanced bit manipulation instructions (LZCNT and POPCNT) supported.
+    /// </summary>
+    typedef advanced_bit_manipulation abm;
+
+    /// <summary>
     /// SSE4a
     /// </summary>
     struct sse4a final : cpu_info_bit<
@@ -2781,13 +2786,250 @@ namespace cpu_features {
     };
 
     /// <summary>
+    /// OS-visible workaround.
+    /// </summary>
+    struct osvisibe_workaround final : cpu_info_bit<
+            0x80000001, cpu_info_register::ecx, 9,
+            detail::vendor_condition<cpu_vendor::amd>> {
+        typedef bool type;
+        static constexpr auto name = u8"OS-Visible Workaround (osvw)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Instruction-based sampling supported.
+    /// </summary>
+    struct ibs final : cpu_info_bit<
+            0x80000001, cpu_info_register::ecx, 10,
+            detail::vendor_condition<cpu_vendor::amd>> {
+        typedef bool type;
+        static constexpr auto name = u8"Instruction-Based Sampling (ibs)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// XOP instruction set supported.
+    /// </summary>
+    struct xop final : cpu_info_bit<
+            0x80000001, cpu_info_register::ecx, 11,
+            detail::vendor_condition<cpu_vendor::amd>> {
+        typedef bool type;
+        static constexpr auto name = u8"XOP Instruction Set (xop)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// SKINIT and STGI instructions.
+    /// </summary>
+    struct skinit final : cpu_info_bit<
+            0x80000001, cpu_info_register::ecx, 12,
+            detail::vendor_condition<cpu_vendor::amd>> {
+        typedef bool type;
+        static constexpr auto name = u8"SKINIT and STGI";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Watchdog timer supported.
+    /// </summary>
+    struct watchdog_timer final : cpu_info_bit<
+            0x80000001, cpu_info_register::ecx, 13,
+            detail::vendor_condition<cpu_vendor::amd>> {
+        typedef bool type;
+        static constexpr auto name = u8"Watchdog Timer (wdt)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// TBM0 instruction set supported.
+    /// </summary>
+    struct tbm0 final : cpu_info_bit<
+            0x80000001, cpu_info_register::ecx, 14,
+            detail::vendor_condition<cpu_vendor::amd>> {
+        typedef bool type;
+        static constexpr auto name = u8"TBM0";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Lightweight Profiling supported.
+    /// </summary>
+    struct lwp final : cpu_info_bit<
+            0x80000001, cpu_info_register::ecx, 15,
+            detail::vendor_condition<cpu_vendor::amd>> {
+        typedef bool type;
+        static constexpr auto name = u8"Lightweight Profiling (lwp)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// 4-operand fused multiply-add instructions are supported.
+    /// </summary>
+    struct fma4 final : cpu_info_bit<
+            0x80000001, cpu_info_register::ecx, 16,
+            detail::vendor_condition<cpu_vendor::amd>> {
+        typedef bool type;
+        static constexpr auto name = u8"4-Operand Fused Multiply-Add "
+            u8"Instructions (fma4)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Translation cache extension supported.
+    /// </summary>
+    struct tce final : cpu_info_bit<
+            0x80000001, cpu_info_register::ecx, 17,
+            detail::vendor_condition<cpu_vendor::amd>> {
+        typedef bool type;
+        static constexpr auto name = u8"Translation Cache Extension (tce)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// XOP-prefix forms fo FP16-FP32 conversion instructions.
+    /// </summary>
+    struct cvt16 final : cpu_info_bit<
+            0x80000001, cpu_info_register::ecx, 18,
+            detail::vendor_condition<cpu_vendor::amd>> {
+        typedef bool type;
+        static constexpr auto name = u8"XOP-Prefix Forms of FP16-FP32 "
+            u8"Conversion Instructions (cvt16)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// NodeID MSR is supported.
+    /// </summary>
+    struct nodeid_msr final : cpu_info_bit<
+            0x80000001, cpu_info_register::ecx, 19,
+            detail::vendor_condition<cpu_vendor::amd>> {
+        typedef bool type;
+        static constexpr auto name = u8"NodeID MSR (nodeid-msr)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Trailing bit manipulation is supported.
+    /// </summary>
+    struct trailing_bit_manipulation final : cpu_info_bit<
+            0x80000001, cpu_info_register::ecx, 21,
+            detail::vendor_condition<cpu_vendor::amd>> {
+        typedef bool type;
+        static constexpr auto name = u8"Trailing Bit Manipulation (tbm)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Trailing bit manipulation is supported.
+    /// </summary>
+    typedef trailing_bit_manipulation tbm;
+
+    /// <summary>
     /// Test for extended APIC ID. See also
     /// https://docs.kernel.org/arch/x86/topology.html
     /// </summary>
     struct topology_extensions final : cpu_info_bit<
-            0x80000001, cpu_info_register::ecx, 22> {
+            0x80000001, cpu_info_register::ecx, 22,
+            detail::vendor_condition<cpu_vendor::amd>> {
         typedef bool type;
-        static constexpr auto name = u8"Extended APIC ID (topoext)";
+        static constexpr auto name = u8"Topology Extensions (topoext)";
+    };
+
+    /// <summary>
+    /// Core performance counter extensions are supported.
+    /// </summary>
+    struct core_perf_count final : cpu_info_bit<
+            0x80000001, cpu_info_register::ecx, 23,
+            detail::vendor_condition<cpu_vendor::amd>> {
+        typedef bool type;
+        static constexpr auto name = u8"Core Performance Counter Extensions "
+            u8"(perfctr-core)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Northbridge performance counter extensions are supported.
+    /// </summary>
+    struct northbridge_perf_count final : cpu_info_bit<
+            0x80000001, cpu_info_register::ecx, 24,
+            detail::vendor_condition<cpu_vendor::amd>> {
+        typedef bool type;
+        static constexpr auto name = u8"Northbridge Performance Counter "
+            u8"Extensions (perfctr-nb)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Streaming performance monitor architecture is supported.
+    /// </summary>
+    struct stream_perf_monitor final : cpu_info_bit<
+            0x80000001, cpu_info_register::ecx, 25,
+            detail::vendor_condition<cpu_vendor::amd>> {
+        typedef bool type;
+        static constexpr auto name = u8"Streaming Performance Monitor "
+            u8"Architecture (stream-perf-mon)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Data breakpoint extensions are supported.
+    /// </summary>
+    struct dbx final : cpu_info_bit<
+            0x80000001, cpu_info_register::ecx, 26,
+            detail::vendor_condition<cpu_vendor::amd>> {
+        typedef bool type;
+        static constexpr auto name = u8"Data Breakpoint Extensions (dbx)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Performance timestamp counter supported.
+    /// </summary>
+    struct perftsc final : cpu_info_bit<
+            0x80000001, cpu_info_register::ecx, 27,
+            detail::vendor_condition<cpu_vendor::amd>> {
+        typedef bool type;
+        static constexpr auto name = u8"Performance Timestamp Counter "
+            u8"(perftsc)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// AMD Family 0x15/0x16 (Jaguar/Puma): L2I perf counter extensions, and AMD
+    /// Family ≥0x17(Zen): L3 perf counter extensions
+    /// </summary>
+    struct cache_perf_count final : cpu_info_bit<
+            0x80000001, cpu_info_register::ecx, 28,
+            detail::vendor_condition<cpu_vendor::amd>> {
+        typedef bool type;
+        static constexpr auto name = u8"L2 Instruction Cache Performance "
+            u8"Counter Extensions (pcx_l2i) or L3 Cache Performance Counter "
+            u8"Extensions (pcx_l3)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// MONITORX and MWAITX instructions are supported.
+    /// </summary>
+    struct monitorx final : cpu_info_bit<
+            0x80000001, cpu_info_register::ecx, 29,
+            detail::vendor_condition<cpu_vendor::amd>> {
+        typedef bool type;
+        static constexpr auto name = u8"MONITORX and MWAITX";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Address mask extension to 32 bits for instruction breakpoints is
+    /// supported.
+    /// </summary>
+    struct address_mask_extension final : cpu_info_bit<
+            0x80000001, cpu_info_register::ecx, 30,
+            detail::vendor_condition<cpu_vendor::amd>> {
+        typedef bool type;
+        static constexpr auto name = u8"Address Mask Extension to 32 Bits for "
+            u8"Instruction Breakpoints";
+        static constexpr auto uncommon = true;
     };
 
     /// <summary>
