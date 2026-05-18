@@ -2392,6 +2392,299 @@ namespace cpu_features {
         static constexpr auto uncommon = true;
     };
 
+    /// <summary>
+    /// 16-bit floating-point Neural Network operations are supported.
+    /// </summary>
+    struct avx512_vnni_fp16 final : cpu_info_bit_ex<
+            0x00000007, 0x00000001, cpu_info_register::edx, 1> {
+        typedef bool type;
+        static constexpr auto name = u8"avx512-vnni-fp16";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// 8-bit integral Neural Network operations are supported.
+    /// </summary>
+    struct avx512_vnni_int8 final : cpu_info_bit_ex<
+            0x00000007, 0x00000001, cpu_info_register::edx, 2> {
+        typedef bool type;
+        static constexpr auto name = u8"avx512-vnni-int8";
+        static constexpr auto uncommon = true;
+    };
+
+    struct avx512_ne_convert final : cpu_info_bit_ex<
+            0x00000007, 0x00000001, cpu_info_register::edx, 3> {
+        typedef bool type;
+        static constexpr auto name = u8"avx512-ne-convert";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// 8-bit integral Neural Network operations are supported.
+    /// </summary>
+    struct avx_vnni_int8 final : cpu_info_bit_ex<
+            0x00000007, 0x00000001, cpu_info_register::edx, 4> {
+        typedef bool type;
+        static constexpr auto name = u8"AVX 8-bit Integral Vector Neural "
+            u8"Network Instructions (avx-vnni-int8)";
+    };
+
+    /// <summary>
+    /// No-exception floating-point conversions are supported.
+    /// </summary>
+    struct avx_ne_convert final : cpu_info_bit_ex<
+            0x00000007, 0x00000001, cpu_info_register::edx, 5> {
+        typedef bool type;
+        static constexpr auto name = u8"AVX No-Exception Floating-Point "
+            u8"Conversion Instructions (avx-ne-convert)";
+    };
+
+    /// <summary>
+    /// AMX support for complex tiles
+    /// </summary>
+    struct amx_complex final : cpu_info_bit_ex<
+            0x00000007, 0x00000001, cpu_info_register::edx, 8> {
+        typedef bool type;
+        static constexpr auto name = u8"AMX Support for Complex Tiles "
+            u8"(amx-complex)";
+    };
+
+    /// <summary>
+    /// 16-bit integral Neural Network operations are supported.
+    /// </summary>
+    struct avx_vnni_int16 final : cpu_info_bit_ex<
+            0x00000007, 0x00000001, cpu_info_register::edx, 10> {
+        typedef bool type;
+        static constexpr auto name = u8"AVX 16-bit Integral Vector Neural "
+            u8"Network Instructions (avx-vnni-int16)";
+    };
+
+    /// <summary>
+    /// 16-bit integral Neural Network operations are supported.
+    /// </summary>
+    struct avx512_vnni_int16 final : cpu_info_bit_ex<
+            0x00000007, 0x00000001, cpu_info_register::edx, 11> {
+        typedef bool type;
+        static constexpr auto name = u8"AVX-512 16-bit Integral Vector Neural "
+            u8"Network Instructions (avx512-vnni-int16)";
+    };
+
+    /// <summary>
+    /// User timer events are supported.
+    /// </summary>
+    struct user_timer_events final : cpu_info_bit_ex<
+            0x00000007, 0x00000001, cpu_info_register::edx, 13> {
+        typedef bool type;
+        static constexpr auto name = u8"IA32_UINTR_TIMER MSR (utmr)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Instruction cache prefetch is supported.
+    /// </summary>
+    struct instruction_prefecth final : cpu_info_bit_ex<
+            0x00000007, 0x00000001, cpu_info_register::edx, 14> {
+        typedef bool type;
+        static constexpr auto name = u8"Instruction Cache Prefetch "
+            u8"Instructions (prefetchi)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// User-mode MSRs are supported.
+    /// </summary>
+    struct user_msr final : cpu_info_bit_ex<
+            0x00000007, 0x00000001, cpu_info_register::edx, 15> {
+        typedef bool type;
+        static constexpr auto name = u8"User-Mode MSR Access (user-msr)";
+        static constexpr auto uncommon = true;
+    };
+
+    struct avx512_bf16_ne final : cpu_info_bit_ex<
+            0x00000007, 0x00000001, cpu_info_register::edx, 16> {
+        typedef bool type;
+        static constexpr auto name = u8"avx512-bf16-ne";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// UIRET sets UIF.
+    /// </summary>
+    struct uiret_uif_rflags final : cpu_info_bit_ex<
+            0x00000007, 0x00000001, cpu_info_register::edx, 17> {
+        typedef bool type;
+        static constexpr auto name = u8"User Interrupt Return Instruction "
+            u8"Will Set User Interrupt Flag to the Value of bit 1 of the "
+            "RFLAGS Image Popped Off the Stack (uiret-uif-from-rflags)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// CET Supervisor Shadow Stacks are guaranteed not to become prematurely
+    /// busy.
+    /// </summary>
+    struct cet_sss final : cpu_info_bit_ex<
+            0x00000007, 0x00000001, cpu_info_register::edx, 18> {
+        typedef bool type;
+        static constexpr auto name = u8"Control-Flow Enforcement Supervisor "
+            u8"Shadow Stacks are Guaranteed Not to Become Prematurely Busy as "
+            u8"Long as Shadow Stack Switching does not Cause Page Faults on "
+            u8"the Stack Being Switched to (cet-sss)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// AVX10 converged vector ISA is supported.
+    /// </summary>
+    struct avx10 final : cpu_info_bit_ex<
+            0x00000007, 0x00000001, cpu_info_register::edx, 19> {
+        typedef bool type;
+        static constexpr auto name = u8"AVX10 Converged Vector ISA (avx10)";
+    };
+
+    /// <summary>
+    /// Advanced Performance Extensions are supported.
+    /// </summary>
+    struct apx_f final : cpu_info_bit_ex<
+            0x00000007, 0x00000001, cpu_info_register::edx, 21> {
+        typedef bool type;
+        static constexpr auto name = u8"Advanced Performance Extensions "
+            u8"(apx-f)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Trusted Execution Environment supports attestation.
+    /// </summary>
+    struct sec_trusted_attestation final : cpu_info_bit_ex<
+            0x00000007, 0x00000001, cpu_info_register::edx, 22> {
+        typedef bool type;
+        static constexpr auto name = u8"Trusted Execution Environment "
+            u8"Technologies Support Attestation Rooted in the On-Chip "
+            u8"Security Engine (sec-tee-attestation)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// MWAIT instruction is supported.
+    /// </summary>
+    struct mwait final : cpu_info_bit_ex<
+        0x00000007, 0x00000001, cpu_info_register::edx, 23> {
+        typedef bool type;
+        static constexpr auto name = u8"MWAIT";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Static Lockstep Mode of IA32_INTEGRITY_STATUS is supported.
+    /// </summary>
+    struct slsm final : cpu_info_bit_ex<
+            0x00000007, 0x00000001, cpu_info_register::edx, 24> {
+        typedef bool type;
+        static constexpr auto name = u8"Static Lockstep Mode (slsm)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Fast Store Forwarding Predictor disable supported.
+    /// </summary>
+    struct psfd final : cpu_info_bit_ex<
+            0x00000007, 0x00000002, cpu_info_register::edx, 0> {
+        typedef bool type;
+        static constexpr auto name = u8"Fast Store Forwarding Predictor "
+            u8"Disable (psfd)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// IPRED_DIS prevents instructions at an indirect branch target from
+    /// speculatively executing until the branch target address is resolved.
+    /// </summary>
+    struct ipred_ctrl final : cpu_info_bit_ex<
+            0x00000007, 0x00000002, cpu_info_register::edx, 1> {
+        typedef bool type;
+        static constexpr auto name = u8"IPRED_DIS Controls (ipred-ctrl)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// RRSBA behaviour disable supported.
+    /// </summary>
+    struct rrsba_ctrl final : cpu_info_bit_ex<
+            0x00000007, 0x00000002, cpu_info_register::edx, 2> {
+        typedef bool type;
+        static constexpr auto name = u8"RRSBA Behaviour Disable (rrsba-ctrl)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Data Dependent Prefetcher disable supported.
+    /// </summary>
+    struct ddpd_u final : cpu_info_bit_ex<
+            0x00000007, 0x00000002, cpu_info_register::edx, 3> {
+        typedef bool type;
+        static constexpr auto name = u8"Data Dependent Prefetcher Disable "
+            u8"(ddpd-u)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// BHI_DIS_S prevents predicted targets of indirect branches executed in
+    /// ring 0/1/2 from being selected based on branch history from branches
+    /// executed in ring 3.
+    /// </summary>
+    struct bhi_ctrl final : cpu_info_bit_ex<
+            0x00000007, 0x00000002, cpu_info_register::edx, 4> {
+        typedef bool type;
+        static constexpr auto name = u8"BHI_DIS_S Behaviour Enable (bhi-ctrl)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// If set, the processor does not exhibit MXCSR configuration dependent
+    /// timing.
+    /// </summary>
+    struct mcdt_no final : cpu_info_bit_ex<
+            0x00000007, 0x00000002, cpu_info_register::edx, 5> {
+        typedef bool type;
+        static constexpr auto name = u8"Processor Does Not Exhibit MXCSR-"
+            u8"Configuration-Dependent Timing (mcdt-no)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// UC-lock disable feature supported.
+    /// </summary>
+    struct uc_lock_disable final : cpu_info_bit_ex<
+            0x00000007, 0x00000002, cpu_info_register::edx, 6> {
+        typedef bool type;
+        static constexpr auto name = u8"UC-Lock Disable (uc-lock-disable)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Indicates that the MONITOR/UMONITOR instructions are not affected by
+    /// performance/power issues caused by the instructions exceeding the
+    /// capacity of an internal monitor tracking table.
+    /// </summary>
+    struct monitor_­mitg_no final : cpu_info_bit_ex<
+        0x00000007, 0x00000002, cpu_info_register::edx, 6> {
+        typedef bool type;
+        static constexpr auto name = u8"MONITOR and UMONITOR Not Affected by "
+            u8"Performance and Power Issues (monitor-­mitg-no)";
+        static constexpr auto uncommon = true;
+    };
+
+    /// <summary>
+    /// Answer whether the CPU supports leaf B of the CPUID instruction, which
+    /// contains information about the topology of the CPU. See also
+    /// https://github.com/tpn/cpuid-topo/blob/f9b24d25220965087c1d855f716c52d75bc7bbe0/cpu_topo.c#L1009-L1057
+    /// </summary>
+    struct topology_leaf_b final : cpu_info_any<
+        0x0000000b, cpu_info_register::ebx> {
+        typedef bool type;
+        static constexpr auto name = u8"Topology Leaf B (leaf 0xB)";
+    };
 
     /// <summary>
     /// Checks whether the V2 extended topology enumeration leaf 0x1F is supported.
@@ -2411,17 +2704,6 @@ namespace cpu_features {
             0x80000001, cpu_info_register::ecx, 22> {
         typedef bool type;
         static constexpr auto name = u8"Extended APIC ID (topology_extensions)";
-    };
-
-    /// <summary>
-    /// Answer whether the CPU supports leaf B of the CPUID instruction, which
-    /// contains information about the topology of the CPU. See also
-    /// https://github.com/tpn/cpuid-topo/blob/f9b24d25220965087c1d855f716c52d75bc7bbe0/cpu_topo.c#L1009-L1057
-    /// </summary>
-    struct topology_leaf_b final : cpu_info_any<
-            0x0000000b, cpu_info_register::ebx> {
-        typedef bool type;
-        static constexpr auto name = u8"Topology Leaf B (leaf 0xB)";
     };
 
 } /* namespace cpu_features */

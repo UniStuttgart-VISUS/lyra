@@ -427,7 +427,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
             ::add_cpu_feature<cpu_features::ssbd>(ps, info);
         }
 
-        if (get_cpu_info(info, 0x00000007, 0x00000001) && (max_ext_func >= 1)) {
+        if ((max_ext_func >= 1) && get_cpu_info(info, 0x00000007, 0x00000001)) {
             // EAX
             ::add_cpu_feature<cpu_features::sha512>(ps, info);
             ::add_cpu_feature<cpu_features::sm3>(ps, info);
@@ -466,6 +466,37 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
             ::add_cpu_feature<cpu_features::immediate_msr>(ps, info);
 
             // EDX
+            ::add_cpu_feature<cpu_features::avx512_vnni_fp16>(ps, info);
+            ::add_cpu_feature<cpu_features::avx512_vnni_int8>(ps, info);
+            ::add_cpu_feature<cpu_features::avx512_ne_convert>(ps, info);
+            ::add_cpu_feature<cpu_features::avx_vnni_int8>(ps, info);
+            ::add_cpu_feature<cpu_features::avx_ne_convert>(ps, info);
+            ::add_cpu_feature<cpu_features::amx_complex>(ps, info);
+            ::add_cpu_feature<cpu_features::avx_vnni_int16>(ps, info);
+            ::add_cpu_feature<cpu_features::avx512_vnni_int16>(ps, info);
+            ::add_cpu_feature<cpu_features::user_timer_events>(ps, info);
+            ::add_cpu_feature<cpu_features::instruction_prefecth>(ps, info);
+            ::add_cpu_feature<cpu_features::user_msr>(ps, info);
+            ::add_cpu_feature<cpu_features::avx512_bf16_ne>(ps, info);
+            ::add_cpu_feature<cpu_features::uiret_uif_rflags>(ps, info);
+            ::add_cpu_feature<cpu_features::cet_sss>(ps, info);
+            ::add_cpu_feature<cpu_features::avx10>(ps, info);
+            ::add_cpu_feature<cpu_features::apx_f>(ps, info);
+            ::add_cpu_feature<cpu_features::sec_trusted_attestation>(ps, info);
+            ::add_cpu_feature<cpu_features::mwait>(ps, info);
+            ::add_cpu_feature<cpu_features::slsm>(ps, info);
+        }
+
+        if ((max_ext_func >= 2) && get_cpu_info(info, 0x00000007, 0x00000002)) {
+            // EDX
+            ::add_cpu_feature<cpu_features::psfd>(ps, info);
+            ::add_cpu_feature<cpu_features::ipred_ctrl>(ps, info);
+            ::add_cpu_feature<cpu_features::rrsba_ctrl>(ps, info);
+            ::add_cpu_feature<cpu_features::ddpd_u>(ps, info);
+            ::add_cpu_feature<cpu_features::bhi_ctrl>(ps, info);
+            ::add_cpu_feature<cpu_features::mcdt_no>(ps, info);
+            ::add_cpu_feature<cpu_features::uc_lock_disable>(ps, info);
+            ::add_cpu_feature<cpu_features::monitor_­mitg_no>(ps, info);
         }
 
         //add_feature(cpu_features::topology_leaf_b());
