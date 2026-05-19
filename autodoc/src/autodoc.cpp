@@ -6,18 +6,23 @@
 
 #include "visus/autodoc/autodoc.h"
 
+#include <cassert>
 #include <filesystem>
 #include <fstream>
 #include <memory>
 #include <system_error>
+#include <type_traits>
 
 #include <nlohmann/json.hpp>
 
 #include "visus/autodoc/raw.h"
 #include "visus/autodoc/trace.h"
 
+#include "ends_with.h"
 #include "processes.h"
 #include "results.h"
+#include "string_manipulation.h"
+#include "to_string.h"
 
 
 LYRA_NAMESPACE_BEGIN
@@ -126,21 +131,55 @@ template<class TChar> _Ret_maybenull_ collect *make_collect(
 
 
 /// <summary>
-/// Implementation of <see cref="autodoc_write_raw_a" /> and
-/// <see cref="autodoc_write_raw_w" />. Note that wide characters are only
-/// supported on Windows.
+/// Writes the given property set to disk.
 /// </summary>
-template<class TChar>
-int write_raw(_In_z_ const TChar *path, _In_ const collection_flags flags) {
-    auto p = (path != nullptr)
+template<class TChar> int write_properties(
+        _In_z_ const TChar *path,
+        _In_ const property_set& data) {
+    static const std::filesystem::path csv(".csv");
+    static const std::filesystem::path tsv(".tsv");
+
+    const auto p = (path != nullptr)
         ? std::filesystem::path(path)
         : detail::get_default_path();
+    std::ofstream stream(p, std::ios::trunc);
 
+    if ((p.extension() == csv) || (p.extension() == tsv)) {
+        // If CSV/TSV output was requested, we need to flatten everything into
+        // key-value pairs.
+        const auto flat = data.flatten();
+        const auto sep = (p.extension() == csv) ? u8',' : u8'\t';
+        stream << u8"\"Property\"" << sep << "\"Value\"" << std::endl;
+
+        flat.visit([&stream, sep](const char *n, const auto *v,
+                const std::size_t c) {
+            assert(n != nullptr);
+            assert(c == 1);
+            auto w = to_string(v, true);
+            detail::replace_if(w.begin(), w.end(),
+                [](char c) { return ((c == '\r') || (c == '\n')); },
+                u8'\t');
+            stream << u8'"' << n << u8'\"' << sep << w << std::endl;
+        });
+
+    } else {
+        // If nothing special was requested, use JSON.
+        stream << data.json();
+    }
+
+    return 0;
+}
+
+
+/// <summary>
+/// Collects the raw data and writes them to disk.
+/// </summary>
+template<class TChar> int write_raw(
+        _In_z_ const TChar *path,
+        _In_ const LYRA_NAMESPACE::collection_flags flags) {
     try {
         const auto data = LYRA_NAMESPACE::raw::get(flags);
-        std::ofstream stream(p, std::ios::trunc);
-        stream << data.json();
-        return 0;
+        return LYRA_DETAIL_NAMESPACE::write_properties(path, data);
     } catch (std::system_error& ex) {
         LYRA_TRACE("Uncaught exception: %s", ex.what());
         return ex.code().value();

@@ -111,7 +111,7 @@ template<class TType> struct property_variant_access final {
 /// Specialisation for empty variants.
 /// </summary>
 template<> struct property_variant_access<std::monostate> final {
-    typedef const void *pointer;
+    typedef const std::nullptr_t pointer;
     typedef std::monostate storage;
     static constexpr auto type = property_type::none;
     static inline constexpr pointer get(_In_ const storage&) noexcept {

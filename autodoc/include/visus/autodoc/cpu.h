@@ -52,8 +52,18 @@ namespace cpu {
     struct cpuid final {
         typedef property_set type;
         static constexpr auto is_immutable = true;
-        static constexpr auto is_sensitive = true;
         static constexpr auto name = u8"CPUID";
+    };
+
+    /// <summary>
+    /// Identifies a property set that holds the raw register values from the
+    /// CPUID queries.
+    /// </summary>
+    struct cpuid_registers final {
+        typedef property_set type;
+        static constexpr auto is_immutable = true;
+        static constexpr auto is_sensitive = true;
+        static constexpr auto name = u8"Register Values";
     };
 
     /// <summary>

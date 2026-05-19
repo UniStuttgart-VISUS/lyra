@@ -144,6 +144,7 @@ template<> struct std::hash<GROUP_AFFINITY> final {
     }
 };
 
+
 /// <summary>
 /// Establishes an order of <see cref="GROUP_AFFINITY" />s.
 /// </summary>

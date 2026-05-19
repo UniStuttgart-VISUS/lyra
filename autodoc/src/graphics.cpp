@@ -33,7 +33,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::graphics::get_dxgi_adapters(
     static const auto make_luid = [](const LUID& luid) {
         detail::property_set_impl ps;
         ps.add(u8"LowPart", static_cast<std::uint32_t>(luid.LowPart));
-        ps.add(u8"HighPart", luid.HighPart);
+        ps.add(u8"HighPart", static_cast<std::int32_t>(luid.HighPart));
         return property_set(std::move(ps));
     };
 

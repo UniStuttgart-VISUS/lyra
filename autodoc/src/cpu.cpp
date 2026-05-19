@@ -147,7 +147,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
         }
     }
 
-    if (detail::check_flags<cpu::cpuid>(flags)) {
+    if (detail::check_flags<cpu::cpuid_registers>(flags)) {
         std::vector<cpu_info> infos(get_cpu_info());
         get_cpu_info(infos.data(), infos.size());
         std::vector<cpu_info> ex_infos(get_extended_cpu_info());
@@ -184,7 +184,7 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::cpu::get_cpuid(
         add_infos(infos, 0);
         add_infos(ex_infos, 0x80000000);
 
-        ps.add<cpu::cpuid>(property_set(std::move(info_set)));
+        ps.add<cpu::cpuid_registers>(property_set(std::move(info_set)));
     }
 
     {

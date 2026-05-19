@@ -7,7 +7,9 @@
 #include "visus/autodoc/property_set.h"
 
 #include <memory>
+#include <stack>
 #include <type_traits>
+#include <utility>
 
 #include <nlohmann/json.hpp>
 
@@ -125,6 +127,75 @@ bool LYRA_NAMESPACE::property_set::contains(
  */
 bool LYRA_NAMESPACE::property_set::empty(void) const noexcept {
     return ((this->_impl == nullptr) || this->_impl->values.empty());
+}
+
+
+/*
+ * LYRA_NAMESPACE::property_set::flatten
+ */
+LYRA_NAMESPACE::property_set LYRA_NAMESPACE::property_set::flatten(void) const {
+    if (this->empty()) {
+        return property_set();
+    }
+
+    detail::property_set_impl ps;
+
+    std::stack<std::pair<std::string, const property_set *>> stack;
+    stack.push(std::make_pair(std::string(), this));
+
+    while (!stack.empty()) {
+        auto current = stack.top().second;
+        auto prefix = stack.top().first;
+        stack.pop();
+
+        current->visit([&](const char *n, const auto *v, const std::size_t c) {
+            assert(v!= nullptr);
+            typedef std::decay_t<decltype(*v)> value_type;
+            const auto name = prefix + u8"[" + n + u8"]";
+
+            if constexpr (std::is_same_v<value_type, property_set>) {
+                // If we encounter a property set, expand it recursively.
+                if (c == 1) {
+                    stack.emplace(name, v);
+                } else {
+                    for (std::size_t i = 0; i < c; ++i) {
+                        stack.emplace(name + u8"[" + std::to_string(i) + u8"]",
+                            v + i);
+                    }
+                }
+
+            } else if constexpr (std::is_same_v<value_type, multi_sz>) {
+                // If we encounter a multi_sz, flatten it as well if it contains
+                // more than one element.
+                auto msz = v->data();
+                if (detail::multi_sz_single(msz)) {
+                     ps.values.emplace(name, multi_sz::for_string(msz));
+
+                } else if (msz != nullptr) {
+                    detail::multi_sz_visit(msz,
+                            [&](const char *s, std::size_t i) {
+                        ps.values.emplace(
+                            name + u8"[" + std::to_string(i) + u8"]",
+                            multi_sz::for_string(s));
+                    });
+                }
+
+            } else if (c == 1) {
+                // This is a single value, which we just add.
+                ps.values.emplace(name, *v);
+
+            } else if (c > 1) {
+                // This is a vector-valued property, which requires handling of
+                // the indices.
+                for (std::size_t i = 0; i < c; ++i) {
+                    ps.values.emplace(name + u8"[" + std::to_string(i) + u8"]",
+                        v[i]);
+                }
+            }
+        });
+    } /* while (!stack.empty()) */
+
+    return property_set(std::move(ps));
 }
 
 

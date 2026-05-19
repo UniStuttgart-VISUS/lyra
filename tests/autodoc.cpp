@@ -47,15 +47,36 @@ TEST(autodoc, wchar_t) {
     EXPECT_TRUE(std::filesystem::exists(exit_path));
 }
 
-
 TEST(autodoc, autodoc_write_raw_a) {
-    const std::string path("autodoc_write_raw_a.json");
+    {
+        const std::string path("autodoc_write_raw_a.json");
 
-    std::filesystem::remove(path);
-    EXPECT_FALSE(std::filesystem::exists(path));
+        std::filesystem::remove(path);
+        EXPECT_FALSE(std::filesystem::exists(path));
 
-    EXPECT_EQ(::autodoc_write_raw_a(path.c_str(), LYRA_NAMESPACE::collection_flags::no_sensitive), 0);
-    EXPECT_TRUE(std::filesystem::exists(path));
+        EXPECT_EQ(::autodoc_write_raw_a(path.c_str(), LYRA_NAMESPACE::collection_flags::no_sensitive), 0);
+        EXPECT_TRUE(std::filesystem::exists(path));
+    }
+
+    {
+        const std::string path("autodoc_write_raw_a.csv");
+
+        std::filesystem::remove(path);
+        EXPECT_FALSE(std::filesystem::exists(path));
+
+        EXPECT_EQ(::autodoc_write_raw_a(path.c_str(), LYRA_NAMESPACE::collection_flags::no_sensitive), 0);
+        EXPECT_TRUE(std::filesystem::exists(path));
+    }
+
+    {
+        const std::string path("autodoc_write_raw_a.tsv");
+
+        std::filesystem::remove(path);
+        EXPECT_FALSE(std::filesystem::exists(path));
+
+        EXPECT_EQ(::autodoc_write_raw_a(path.c_str(), LYRA_NAMESPACE::collection_flags::no_sensitive), 0);
+        EXPECT_TRUE(std::filesystem::exists(path));
+    }
 }
 
 TEST(autodoc, autodoc_write_raw_w) {

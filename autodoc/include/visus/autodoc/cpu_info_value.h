@@ -190,7 +190,7 @@ public:
     /// <returns></returns>
     static inline bool get(_In_ const cpu_info& info) noexcept {
         const auto reg = info.values[Reg];
-        assert((base_type::get() == reg) || !condition_type());
+        assert(!TCond() || ((base_type::get() != 0) == (reg != 0)));
         return (condition_type() && (reg != 0));
     }
 
@@ -267,7 +267,7 @@ public:
     static inline bool get(_In_ const cpu_info& info) noexcept {
         static constexpr auto mask = detail::bit_mask(Bit);
         const auto reg = info.values[Reg];
-        assert((base_type::get() == reg) || !TCond());
+        assert(!TCond() || ((base_type::get() & mask) == (reg & mask)));
         return (TCond() && ((reg & mask) == mask));
     }
 
@@ -351,7 +351,8 @@ public:
     static inline std::uint32_t get(_In_ const cpu_info& info) noexcept {
         constexpr auto mask = (detail::bit_mask(To - From + 1) - 1);
         const auto reg = info.values[Reg];
-        assert((base_type::get() == reg) || !TCond());
+        assert(!TCond() || (((base_type::get() >> From) & mask)
+            == ((reg >> From) & mask)));
         return TCond() ? ((reg >> From) & mask) : 0;
     }
 

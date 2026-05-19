@@ -11,6 +11,7 @@ file(GLOB_RECURSE TestFiles RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "*.cpp")
 # Create the test executable.
 add_executable(${PROJECT_NAME} ${TestFiles})
 target_include_directories(${PROJECT_NAME} PRIVATE ${LyraTestInclude})
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 target_link_libraries(${PROJECT_NAME} PRIVATE autodoc)
 target_link_libraries(${PROJECT_NAME} PRIVATE GTest::gtest_main)
 target_link_libraries(${PROJECT_NAME} PRIVATE gmock_main)

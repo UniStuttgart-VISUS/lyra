@@ -26,3 +26,25 @@ TIterator LYRA_DETAIL_NAMESPACE::remove_trailing_nulls(
         _In_ const TIterator begin, _In_ const TIterator end) {
     return trim_right_if(begin, end, [](const auto c) { return c == 0; });
 }
+
+
+/*
+ * LYRA_DETAIL_NAMESPACE::replace_if
+ */
+template<class TIterator, class TPredicate>
+std::size_t LYRA_DETAIL_NAMESPACE::replace_if(
+        _In_ const TIterator begin,
+        _In_ const TIterator end,
+        _In_ const TPredicate predicate,
+        _In_ const typename std::iterator_traits<TIterator>::value_type& value) {
+    std::size_t retval = 0;
+
+    for (auto it = begin; it != end; ++it) {
+        if (predicate(*it)) {
+            *it = value;
+            ++retval;
+        }
+    }
+
+    return retval;
+}

@@ -52,6 +52,8 @@
 #include <memory>
 #include <numeric>
 #include <string>
+#include <type_traits>
+#include <utility>
 #include <vector>
 
 #include "visus/autodoc/api.h"
@@ -168,7 +170,7 @@ static TIterator multi_sz_copy(_In_ TIterator oit,
     _In_opt_z_ const TChar *multi_sz);
 
 /// <summary>
-///  Answer the number of entries in the set of zero-terminated strings
+/// Answer the number of entries in the set of zero-terminated strings
 /// <paramref name="multi_sz" />.
 /// </summary>
 /// <remarks>
@@ -195,6 +197,41 @@ template<class TChar> bool multi_sz_equals(_In_opt_z_ const TChar *lhs,
     _In_opt_z_ const TChar *rhs) noexcept;
 
 /// <summary>
+/// Determines the number of elements in a <paramref name="multi_sz" /> and the
+/// total number of characters required to store them, including all terminating
+/// nulls.
+/// </summary>
+/// <typeparam name="TChar"></typeparam>
+/// <param name="multi_sz">A set of zero-terminated strings, terminated with
+/// <i>two</c> zeros at the end of the set. The caller remains owner of the
+/// memory.</param>
+/// <returns>A pair where the first element is the number of strings and the
+/// second element is the total number of characters, including all terminating
+/// nulls.</returns>
+template<class TChar> std::pair<std::size_t, std::size_t> multi_sz_measure(
+    _In_opt_z_ const TChar *multi_sz) noexcept;
+
+/// <summary>
+/// Answer whether the given <paramref name="multi_sz" /> holds exactly one
+/// string element.
+/// </summary>
+/// <remarks>
+/// <para>Note that is is indispensable that <paramref name="multi_sz" /> is
+/// terminated using <i>two</c> zeros. It is safe to pass
+/// <see langword="nullptr" />, though.</para>
+/// <para>This function is more efficient than <see cref="multi_sz_count" />
+/// as it bails out early.</para>
+/// </remarks>
+/// <param name="multi_sz">A set of zero-terminated strings, terminated with
+/// <i>two</c> zeros at the end of the set. The caller remains owner of the
+/// memory.</param>
+/// <returns><see langword="true" /> if the set contains exactly one string,
+/// <see langword="false" /> if it is invalid or contains more than one
+/// element.</returns>
+template<class TChar>
+bool multi_sz_single(_In_opt_z_ const TChar *multi_sz) noexcept;
+
+/// <summary>
 /// Answer the length of the set of zero-terminated strings
 /// <paramref name="multi_sz" /> in number of characters.
 /// </summary>
@@ -210,6 +247,52 @@ template<class TChar> bool multi_sz_equals(_In_opt_z_ const TChar *lhs,
 /// <paramref name="multi_sz" />.</returns>
 template<class TChar>
 std::size_t multi_sz_size(_In_opt_z_ const TChar *multi_sz) noexcept;
+
+/// <summary>
+/// Invokes <paramref name="visitor" /> for each string in the given
+/// <paramref name="multi_sz" />.
+/// </summary>
+/// <remarks>
+/// Note that is is indispensable that <paramref name="multi_sz" /> is
+/// terminated using <i>two</c> zeros. It is safe to pass
+/// <see langword="nullptr" />, though.
+/// </remarks>
+/// <typeparam name="TChar"></typeparam>
+/// <typeparam name="TVisitor"></typeparam>
+/// <param name="multi_sz">A set of zero-terminated strings, terminated with
+/// <i>two</c> zeros at the end of the set. The caller remains owner of the
+/// memory.</param>
+/// <param name="visitor"></param>
+/// <returns>The number of callback invocations, which is the number of elements
+/// in the multi-sz if the enumeration was not aborted early.</returns>
+template<class TChar, class TVisitor>
+std::size_t multi_sz_visit(_In_opt_z_ const TChar *multi_sz,
+    _In_ const TVisitor visitor);
+
+/// <summary>
+/// Exposes a null-terminate string as a pointer.
+/// </summary>
+/// <typeparam name="TChar"></typeparam>
+/// <param name="s"></param>
+/// <returns></returns>
+template<class TChar>
+inline constexpr _Ret_maybenull_z_ TChar *sz_ptr(_In_opt_z_ TChar *s) noexcept {
+    return s;
+}
+
+/// <summary>
+/// Exposes a null-terminate string as a pointer.
+/// </summary>
+/// <typeparam name="TChar"></typeparam>
+/// <typeparam name="TTraits"></typeparam>
+/// <typeparam name="TAlloc"></typeparam>
+/// <param name="s"></param>
+/// <returns></returns>
+template<class TChar, class TTraits, class TAlloc>
+inline _Ret_z_ const TChar *sz_ptr(
+        _In_ const std::basic_string<TChar, TTraits, TAlloc>& s) noexcept {
+    return s.c_str();
+}
 
 /// <summary>
 /// Answer the required buffer size, including the terminating null, for the
@@ -368,12 +451,28 @@ public:
     typedef char value_type;
 
     /// <summary>
+    /// Creates a new instance from a range of strings.
+    /// </summary>
+    /// <typeparam name="TIterator"></typeparam>
+    /// <param name="begin"></param>
+    /// <param name="end"></param>
+    /// <returns></returns>
+    template<class TIterator> static multi_sz for_range(
+            _In_ const TIterator begin,
+            _In_ const TIterator end) {
+        multi_sz retval;
+        assert(retval._value == nullptr);
+        retval._value = detail::multi_sz_add(retval._value, begin, end);
+        return retval;
+    }
+
+    /// <summary>
     /// Creates a new instance for a single element.
     /// </summary>
     /// <param name="value">The initial string to be added to a new multi-sz
     /// string.</param>
     /// <returns>A new multi-sz instance holding the given string.</returns>
-    static inline multi_sz for_string(_In_z_ const value_type *value) {
+    static inline multi_sz for_string(_In_opt_z_ const value_type *value) {
         multi_sz retval;
         retval.add(value);
         return retval;
@@ -390,23 +489,6 @@ public:
             _In_ const std::basic_string<value_type, TTraits, TAlloc>& value) {
         multi_sz retval;
         retval.add(value.c_str());
-        return retval;
-    }
-
-    /// <summary>
-    /// Creates a new instance from a range of strings.
-    /// </summary>
-    /// <typeparam name="TIterator"></typeparam>
-    /// <param name="begin"></param>
-    /// <param name="end"></param>
-    /// <returns></returns>
-    template<class TIterator>
-    static multi_sz for_strings(_In_ const TIterator begin,
-            _In_ const TIterator end) {
-        multi_sz retval;
-        for (auto it = begin; it != end; ++it) {
-            retval.add(*it);
-        }
         return retval;
     }
 
@@ -588,6 +670,16 @@ public:
     ///// <returns><c>*<see langword="this" />.</c>.</returns>
     //template<class TPredicate>
     //multi_sz& remove_if(_In_ const TPredicate predicate);
+
+    /// <summary>
+    /// Answer whether the object holds exactly one string element.
+    /// </summary>
+    /// <returns><see langword="true" /> if the multi-sz holds exactly one
+    /// string, <see langword="false" /> if it is empty or contains more than
+    /// one string.</returns>
+    inline bool single(void) const noexcept {
+        return detail::multi_sz_single(this->_value);
+    }
 
     /// <summary>
     /// Answer the size of the multi-sz including all terminating zeros.

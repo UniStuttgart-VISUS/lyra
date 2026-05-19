@@ -109,7 +109,7 @@ LYRA_NAMESPACE::property_set LYRA_DETAIL_NAMESPACE::get_processor_features(
     property_set_impl ps;
 
 #define _LYRA_ADD_PROF_FEATURE(feature) do {\
-    ps.add(u8#feature, ::IsProcessorFeaturePresent(feature) != FALSE);\
+    ps.add(#feature, ::IsProcessorFeaturePresent(feature) != FALSE);\
 } while (false)
 
     _LYRA_ADD_PROF_FEATURE(PF_ARM_64BIT_LOADSTORE_ATOMIC);

@@ -15,3 +15,12 @@ TEST(raw, get) {
     auto json = props.json();
     EXPECT_NE(json, nullptr);
 }
+
+TEST(raw, flatten) {
+    auto hierarchical = LYRA_NAMESPACE::raw::get();
+    EXPECT_FALSE(hierarchical.empty());
+    auto flattened = hierarchical.flatten();
+    EXPECT_FALSE(flattened.empty());
+    auto json = flattened.json();
+    EXPECT_NE(json, nullptr);
+}

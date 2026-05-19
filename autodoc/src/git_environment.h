@@ -28,9 +28,11 @@ class LYRA_TEST_API git_environment final {
 
 public:
 
+    static constexpr auto diff_property = u8"Diff";
     static constexpr auto head_property = u8"Head";
     static constexpr auto git_directory = ".git";
     static constexpr auto remotes_property = u8"Remotes";
+    static constexpr auto status_property = u8"Status";
 
     /// <summary>
     /// Creates a new instance for the current working directory.
@@ -45,6 +47,13 @@ public:
     explicit git_environment(const std::filesystem::path& directory);
 
     /// <summary>
+    /// If a Git executable is available, returns the diff of the repository.
+    /// </summary>
+    /// <param name=""></param>
+    /// <returns></returns>
+    std::string diff(void) const;
+
+    /// <summary>
     /// Gets the hash of the current HEAD commit.
     /// </summary>
     /// <returns>The hash of the current HEAD commit or an empty string if
@@ -57,6 +66,12 @@ public:
     /// <returns>A map with the names of the remotes as keys and their URLs as
     /// values.</returns>
     std::unordered_map<std::string, std::string> remotes(void) const;
+
+    /// <summary>
+    /// If a Git executable is in the path, return the status of the repository.
+    /// </summary>
+    /// <returns></returns>
+    std::string status(void) const;
 
     /// <summary>
     /// Indicates whether the Git environment is valid.
@@ -80,6 +95,8 @@ public:
 
         if (*this) {
             retval.add(head_property, this->head());
+            retval.add(status_property, this->status());
+            retval.add(diff_property, this->diff());
 
             const auto remotes = this->remotes();
             if (!remotes.empty()) {
@@ -97,7 +114,6 @@ public:
 private:
 
     std::filesystem::path _directory;
-
 };
 
 LYRA_DETAIL_NAMESPACE_END

@@ -66,6 +66,7 @@ _Ret_maybenull_z_ TChar *LYRA_DETAIL_NAMESPACE::multi_sz_add(
 
     } else if ((cnt_lhs > 0) && (cnt_rhs > 0)) {
         // Perform the concatenation.
+        assert(cnt_lhs > 1);
         assert(lhs != nullptr);
         assert(rhs != nullptr);
         retval = allocator.allocate(cnt_lhs + cnt_rhs);
@@ -99,7 +100,8 @@ _Ret_maybenull_z_ TChar *LYRA_DETAIL_NAMESPACE::multi_sz_add(
         auto cursor = retval = allocator.allocate(cnt_rhs + 1);
         for (auto it = begin; it != end; ++it) {
             const auto cnt_str = sz_size(*it);
-            ::memcpy(cursor, *it, cnt_str * sizeof(TChar));
+            const auto ptr = sz_ptr(*it);
+            ::memcpy(cursor, ptr, cnt_str * sizeof(TChar));
             cursor += cnt_str;
         }
 
@@ -118,7 +120,8 @@ _Ret_maybenull_z_ TChar *LYRA_DETAIL_NAMESPACE::multi_sz_add(
         auto cursor = retval = allocator.allocate(cnt_rhs + 1);
         for (auto it = begin; it != end; ++it) {
             const auto cnt_str = sz_size(*it);
-            ::memcpy(cursor, *it, cnt_str * sizeof(TChar));
+            const auto ptr = sz_ptr(*it);
+            ::memcpy(cursor, ptr, cnt_str * sizeof(TChar));
             retval[cnt_str] = 0;
             cursor += cnt_str;
         }
@@ -212,17 +215,7 @@ TIterator LYRA_DETAIL_NAMESPACE::multi_sz_copy(
 template<class TChar>
 std::size_t LYRA_DETAIL_NAMESPACE::multi_sz_count(
         _In_opt_z_ const TChar *multi_sz) noexcept {
-    std::size_t retval = 0;
-    auto *cursor = multi_sz;
-
-    if (cursor != nullptr) {
-        while (*cursor != static_cast<TChar>(0)) {
-            while (*cursor++ != static_cast<TChar>(0));
-            retval++;
-        }
-    }
-
-    return retval;
+    return multi_sz_visit(multi_sz, [](auto) { });
 }
 
 
@@ -263,6 +256,45 @@ bool LYRA_DETAIL_NAMESPACE::multi_sz_equals(
 
 
 /*
+ * LYRA_DETAIL_NAMESPACE::multi_sz_measure
+ */
+template<class TChar>
+std::pair<std::size_t, std::size_t> LYRA_DETAIL_NAMESPACE::multi_sz_measure(
+        _In_opt_z_ const TChar *multi_sz) noexcept {
+    std::size_t count = 0;
+    std::size_t size = 0;
+
+    if (multi_sz != nullptr) {
+        auto *cursor = multi_sz;
+
+        while (*cursor != 0) {
+            ++count;
+            while (*cursor++ != 0);
+        }
+
+        size = (cursor - multi_sz) + 1;
+    }
+
+    return std::make_pair(count, size);
+}
+
+
+/*
+ * LYRA_DETAIL_NAMESPACE::multi_sz_single
+ */
+template<class TChar>
+bool LYRA_DETAIL_NAMESPACE::multi_sz_single(
+        _In_opt_z_ const TChar *multi_sz) noexcept {
+    if (multi_sz == nullptr) {
+        return false;
+    }
+
+    while (*multi_sz++ != 0);
+    return (*multi_sz == 0);
+}
+
+
+/*
  * LYRA_DETAIL_NAMESPACE::multi_sz_size
  */
 template<class TChar>
@@ -276,4 +308,48 @@ std::size_t LYRA_DETAIL_NAMESPACE::multi_sz_size(
     } else {
         return 0;
     }
+}
+
+
+/*
+ * LYRA_DETAIL_NAMESPACE::multi_sz_visit
+ */
+template<class TChar, class TVisitor>
+std::size_t LYRA_DETAIL_NAMESPACE::multi_sz_visit(
+        _In_opt_z_ const TChar *multi_sz,
+        _In_ const TVisitor visitor) {
+    constexpr auto zero = static_cast<TChar>(0);
+    std::size_t retval = 0;
+
+    if (multi_sz != nullptr) {
+        auto *cursor = multi_sz;
+
+        while (*cursor != 0) {
+            ++retval;
+
+            if constexpr (std::is_invocable_r_v<TVisitor,
+                    bool, const TChar *, std::size_t>) {
+                if (!visitor(cursor, retval - 1)) {
+                    return retval;
+                }
+
+            } else if constexpr (std::is_invocable_r_v<TVisitor,
+                    bool, const TChar *>) {
+                if (!visitor(cursor)) {
+                    return retval;
+                }
+
+            } else if constexpr (std::is_invocable_v<TVisitor,
+                    const TChar *, std::size_t>) {
+                visitor(cursor, retval - 1);
+
+            } else {
+                visitor(cursor);
+            }
+
+            while (*cursor++ != zero);
+        }
+    }
+
+    return retval;
 }

@@ -84,6 +84,20 @@ public:
     bool empty(void) const noexcept;
 
     /// <summary>
+    /// Creates a new property set with the same contents as this one, but with
+    /// all nested property sets flattened into the top level.
+    /// </summary>
+    /// <remarks>
+    /// <para>Flattening a property set might be beneficial for use cases like
+    /// storing values in a flat key-value store.</para>
+    /// <para>The original names of the properties are wrapped in square
+    /// brackets to indicate the nesting. Vector-valued properties are flattened
+    /// similarly using zero-based indices.</para>
+    /// </remarks>
+    /// <returns>The flattened property set.</returns>
+    property_set flatten(void) const;
+
+    /// <summary>
     /// Gets a pointer to the value of the property with the specified name.
     /// </summary>
     /// <param name="dst"></param>

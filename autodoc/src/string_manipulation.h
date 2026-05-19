@@ -103,6 +103,24 @@ std::vector<TChar>& remove_trailing_nulls(_In_ std::vector<TChar>& str) {
 }
 
 /// <summary>
+/// Replaces all elements in the range [<paramref name="begin" />,
+/// <paramref name="end" />[ that match the given <paramref name="predicate" />
+/// with the given specified <paramref name="value" />.
+/// </summary>
+/// <typeparam name="TIterator"></typeparam>
+/// <typeparam name="TPredicate"></typeparam>
+/// <param name="begin"></param>
+/// <param name="end"></param>
+/// <param name="predicate"></param>
+/// <param name="value"></param>
+/// <returns>The number of replaced elements.</returns>
+template<class TIterator, class TPredicate> std::size_t replace_if(
+    _In_ const TIterator begin,
+    _In_ const TIterator end,
+    _In_ const TPredicate predicate,
+    _In_ const typename std::iterator_traits<TIterator>::value_type& value);
+
+/// <summary>
 /// Converts a string of bytes to a string of hexadecimal characters
 /// representing the individual bytes.
 /// </summary>

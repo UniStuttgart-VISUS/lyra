@@ -10,8 +10,12 @@
 #include <fstream>
 #include <regex>
 
+#include "visus/autodoc/trace.h"
+
+#include "invoke.h"
 #include "processes.h"
 #include "property_set_impl.h"
+#include "push_directory.h"
 #include "string_manipulation.h"
 
 
@@ -50,6 +54,20 @@ LYRA_DETAIL_NAMESPACE::git_environment::git_environment(
             // Check the parent directory.
             this->_directory = this->_directory.parent_path();
         }
+    }
+}
+
+
+/*
+ * LYRA_DETAIL_NAMESPACE::git_environment::diff
+ */
+std::string LYRA_DETAIL_NAMESPACE::git_environment::diff(void) const {
+    try {
+        LYRA_PUSH_DIRECTORY(this->_directory);
+        return invoke("git diff");
+    } catch (const std::exception& ex) {
+        LYRA_TRACE("Invoking Git failed: %s", ex.what());
+        return "";
     }
 }
 
@@ -133,4 +151,18 @@ LYRA_DETAIL_NAMESPACE::git_environment::remotes(void) const {
     } /* if (f.is_open()) */
 
     return retval;
+}
+
+
+/*
+ * LYRA_DETAIL_NAMESPACE::git_environment::status
+ */
+std::string LYRA_DETAIL_NAMESPACE::git_environment::status(void) const {
+    try {
+        LYRA_PUSH_DIRECTORY(this->_directory);
+        return invoke("git status -s");
+    } catch (const std::exception& ex) {
+        LYRA_TRACE("Invoking Git failed: %s", ex.what());
+        return "";
+    }
 }

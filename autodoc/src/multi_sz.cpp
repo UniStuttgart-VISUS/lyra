@@ -62,7 +62,6 @@ LYRA_NAMESPACE::multi_sz::iterator::operator =(_In_ const iterator& rhs) {
 typename LYRA_NAMESPACE::multi_sz::iterator&
 LYRA_NAMESPACE::multi_sz::iterator::operator ++(void) {
     if (this->_current != nullptr) {
-        assert(*this->_current != 0);
         while (*this->_current++ != 0);
 
         // Note: The loop above always increments the pointer, i.e. if we

@@ -34,6 +34,24 @@ TEST(multi_sz, array_ctor) {
     EXPECT_EQ(msz[4], nullptr);
 }
 
+TEST(multi_sz, iterator_ctor) {
+    std::vector<std::string> strings = { "Horst", "Hugo", "Heinz", "Hans" };
+    auto msz = LYRA_NAMESPACE::multi_sz::for_range(strings.begin(), strings.end());
+    EXPECT_FALSE(msz.empty());
+    EXPECT_EQ(msz.count(), std::size_t(4));
+    EXPECT_EQ(msz.length(), std::size_t(23));
+    EXPECT_STREQ(msz.at(0), "Horst");
+    EXPECT_STREQ(msz.at(1), "Hugo");
+    EXPECT_STREQ(msz.at(2), "Heinz");
+    EXPECT_STREQ(msz.at(3), "Hans");
+    EXPECT_EQ(msz.at(4), nullptr);
+    EXPECT_STREQ(msz[0], "Horst");
+    EXPECT_STREQ(msz[1], "Hugo");
+    EXPECT_STREQ(msz[2], "Heinz");
+    EXPECT_STREQ(msz[3], "Hans");
+    EXPECT_EQ(msz[4], nullptr);
+}
+
 TEST(multi_sz, copy_ctor) {
     const char *strings[] = { "Horst", "Hugo" };
     LYRA_NAMESPACE::multi_sz msz(strings, 2);
@@ -91,12 +109,24 @@ TEST(multi_sz, add) {
     msz.add("Horst");
     EXPECT_FALSE(msz.empty());
     EXPECT_EQ(msz.count(), std::size_t(1));
+    EXPECT_EQ(msz.size(), std::size_t(7));
+    {
+        const auto m = LYRA_DETAIL_NAMESPACE::multi_sz_measure(msz.data());
+        EXPECT_EQ(m.first, std::size_t(1));
+        EXPECT_EQ(m.second, std::size_t(7));
+    }
     EXPECT_STREQ(msz.at(0), "Horst");
     EXPECT_EQ(msz.at(1), nullptr);
 
     msz.add("Hugo");
     EXPECT_FALSE(msz.empty());
     EXPECT_EQ(msz.count(), std::size_t(2));
+    EXPECT_EQ(msz.size(), std::size_t(12));
+    {
+        const auto m = LYRA_DETAIL_NAMESPACE::multi_sz_measure(msz.data());
+        EXPECT_EQ(m.first, std::size_t(2));
+        EXPECT_EQ(m.second, std::size_t(12));
+    }
     EXPECT_STREQ(msz.at(0), "Horst");
     EXPECT_STREQ(msz.at(1), "Hugo");
     EXPECT_EQ(msz.at(2), nullptr);
@@ -104,6 +134,12 @@ TEST(multi_sz, add) {
     msz.add("Heinz");
     EXPECT_FALSE(msz.empty());
     EXPECT_EQ(msz.count(), std::size_t(3));
+    EXPECT_EQ(msz.size(), std::size_t(18));
+    {
+        const auto m = LYRA_DETAIL_NAMESPACE::multi_sz_measure(msz.data());
+        EXPECT_EQ(m.first, std::size_t(3));
+        EXPECT_EQ(m.second, std::size_t(18));
+    }
     EXPECT_STREQ(msz.at(0), "Horst");
     EXPECT_STREQ(msz.at(1), "Hugo");
     EXPECT_STREQ(msz.at(2), "Heinz");
