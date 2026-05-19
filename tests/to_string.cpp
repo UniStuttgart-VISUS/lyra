@@ -6,6 +6,7 @@
 
 #include <gtest/gtest.h>
 
+#include "boolean.h"
 #include "to_string.h"
 
 
@@ -82,12 +83,12 @@ TEST(to_string, boolean) {
     EXPECT_EQ("1", LYRA_DETAIL_NAMESPACE::to_unquoted_string(LYRA_DETAIL_NAMESPACE::boolean(true)));
     EXPECT_EQ("1", LYRA_DETAIL_NAMESPACE::to_quoted_string(LYRA_DETAIL_NAMESPACE::boolean(true)));
     {
-        const boolean v = false;
+        const LYRA_DETAIL_NAMESPACE::boolean v = false;
         EXPECT_EQ("0", LYRA_DETAIL_NAMESPACE::to_string(&v, false));
         EXPECT_EQ("0", LYRA_DETAIL_NAMESPACE::to_string(&v, true));
     }
     {
-        const boolean v = true;
+        const LYRA_DETAIL_NAMESPACE::boolean v = true;
         EXPECT_EQ("1", LYRA_DETAIL_NAMESPACE::to_string(&v, false));
         EXPECT_EQ("1", LYRA_DETAIL_NAMESPACE::to_string(&v, true));
     }

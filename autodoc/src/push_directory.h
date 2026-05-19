@@ -51,8 +51,7 @@ private:
 /// </summary>
 /// <param name="dir"></param>
 /// <returns></returns>
-inline [[nodiscard]] workdir_scope push_directory(
-        _In_ const std::filesystem::path& dir) {
+inline workdir_scope push_directory(_In_ const std::filesystem::path& dir) {
     return workdir_scope(dir);
 }
 

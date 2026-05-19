@@ -254,13 +254,13 @@ LYRA_NAMESPACE::property_set LYRA_NAMESPACE::network::get(
 
         if (!i.second.anycast_addresses.empty()) {
             detail::checked_add<anycast_address>(p, flags,
-                multi_sz::for_strings(i.second.anycast_addresses.begin(),
+                multi_sz::for_range(i.second.anycast_addresses.begin(),
                 i.second.anycast_addresses.end()));
         }
 
         if (!i.second.p2p_addresses.empty()) {
             detail::checked_add<p2p_address>(p, flags,
-                multi_sz::for_strings(i.second.p2p_addresses.begin(),
+                multi_sz::for_range(i.second.p2p_addresses.begin(),
                     i.second.p2p_addresses.end()));
         }
 
