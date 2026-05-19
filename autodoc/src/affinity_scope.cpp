@@ -52,18 +52,18 @@ void LYRA_NAMESPACE::affinity_scope::set(
 
 #else /* defined(_WIN32) && (_WIN32_WINNT >= 0x0601) */
     try {
-        this->_mask = affinity_mask::thread();
-        assert(this->_mask);
-    } catch (...) {
-        LYRA_TRACE(_T("Failed to get current thread affinity mask."));
-        this->_mask.clear();
-    }
+        auto prev = affinity_mask::thread();
+        assert(prev);
 
-    if (this->_mask) {
-        if (::sched_setaffinity(::gettid(), mask.size(), mask.get()) != 0) {
+        if (::sched_setaffinity(::gettid(), mask.size(), mask.get()) == 0) {
+            this->_mask = std::move(prev);
+        } else {
             LYRA_TRACE(_T("Failed to set thread affinity mask: 0x%x"), errno);
             this->_mask.clear();
         }
+    } catch (...) {
+        LYRA_TRACE(_T("Failed to get current thread affinity mask."));
+        this->_mask.clear();
     }
 #endif /* defined(_WIN32) && (_WIN32_WINNT >= 0x0601) */
 }
